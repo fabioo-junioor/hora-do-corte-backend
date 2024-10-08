@@ -3,7 +3,14 @@ const routerUser = Router();
 
 import userController from '../controllers/user.controller.js';
 
-routerUser.post('/login', userController.loginUser);
-routerUser.post('/create', userController.createUser);
+// Routes user
+routerUser.post('/login', userController.loginUserController);
+routerUser.post('/create', userController.createUserController);
+routerUser.put('/:pk/update', userController.updateUserController);
+
+
+// Routes userDetails
+routerUser.post('/:pk/createDetails', userController.createUserDetailsController);
+routerUser.put('/:pk/updateDetails', userController.updateUserDetailsController);
 
 export default routerUser;
