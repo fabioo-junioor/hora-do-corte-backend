@@ -3,6 +3,32 @@ import { getUserDetailsBySlugModel, getUserDetailsByFkModel,
 
 const dateToday = new Date();
 
+const getUserDetailsController = async (req, res) => {
+    try {
+        const slug = req.params.slug;
+       
+        const dataUserDetailsBySlug = await getUserDetailsBySlugModel(slug);
+        if(dataUserDetailsBySlug.length === 0){
+            return res.status(500).json({
+                statusCode: 500,
+                message: 'O usuário não existe!'
+                
+            });
+        };        
+        return res.status(500).json({
+            statusCode: 500,
+            message: 'Dados do usuário!',
+            data: dataUserDetailsBySlug
+
+        });
+    }catch(error){
+        res.status(500).json({
+            statusCode: 500,
+            message: 'Error ao criar o registro!'
+
+        });
+    };
+};
 const createUserDetailsController = async (req, res) => {
     try {
         const { name, slug, phone, instagram, image, state, city, street, number, pkUser } = req.body;
@@ -99,6 +125,7 @@ const uploadImage = (req, res) => {
     })
 };*/
 export default {
+    getUserDetailsController,
     createUserDetailsController,
     updateUserDetailsController
 };
