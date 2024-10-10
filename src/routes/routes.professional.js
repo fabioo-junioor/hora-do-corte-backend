@@ -8,4 +8,6 @@ routerProfessional.get('/:pk/getAllProfessional', professionalController.getAllP
 routerProfessional.post('/createProfessional', professionalController.createProfessionalController);
 routerProfessional.put('/:pk/updateProfessional', professionalController.updateProfessionalController);
 
+//routerProfessional.post('/:pk/createServices', professionalController);
+
 export default routerProfessional;
