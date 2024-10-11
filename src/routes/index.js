@@ -12,5 +12,7 @@ router.use('/userDetails', routerUserDetails);
 router.use('/professional', routerProfessional);
 router.use('/services', routerServices);
 router.use('/schedules', routerSchedules);
+// router create reservation
+// router reservations
 
 export default router;

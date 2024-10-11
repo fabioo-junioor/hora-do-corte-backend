@@ -6,8 +6,8 @@ const getServiceController = async (req, res) => {
     try{
         const pkProfessional = req.params.pk;
         
-        const dataServices = await getServiceModel(pkProfessional);
-        if(dataServices.length === 0){
+        const dataResult = await getServiceModel(pkProfessional);
+        if(dataResult.length === 0){
             return res.status(401).json({
                 statusCode: 401,
                 message: 'Serviço não existe!'
@@ -17,7 +17,7 @@ const getServiceController = async (req, res) => {
         return res.status(200).json({
             statusCode: 200,
             message: 'Todos seviços!',
-            data: dataServices
+            data: dataResult
 
         });
     } catch (error){
@@ -32,8 +32,16 @@ const createServiceController = async (req, res) => {
     try{
         const { pkProfessional, services } = req.body;
         
-        const dataServices = await createServiceModel(services, dateToday, pkProfessional);
-        if(dataServices.affectedRows === 0){
+        const dataService = await getServiceModel(pkProfessional);
+        if(dataService.length !== 0){
+            return res.status(401).json({
+                statusCode: 401,
+                message: 'Serviço ja existe!'
+                
+            });
+        };
+        const dataResult = await createServiceModel(services, dateToday, pkProfessional);
+        if(dataResult.affectedRows === 0){
             return res.status(401).json({
                 statusCode: 401,
                 message: 'Algo de errado na criação dos serviços!'
@@ -58,8 +66,8 @@ const updateServiceController = async (req, res) => {
         const pkProfessionalServices = req.params.pk;
         const { services } = req.body;
         
-        const dataServices = await updateServiceModel(services, pkProfessionalServices);
-        if(dataServices.changedRows === 0){
+        const dataResult = await updateServiceModel(services, pkProfessionalServices);
+        if(dataResult.changedRows === 0){
             return res.status(500).json({
                 statusCode: 500,
                 message: 'Algo de errado na atualização do serviço!'

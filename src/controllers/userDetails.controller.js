@@ -7,8 +7,8 @@ const getUserDetailsController = async (req, res) => {
     try {
         const slug = req.params.slug;
        
-        const dataUserDetailsBySlug = await getUserDetailsBySlugModel(slug);
-        if(dataUserDetailsBySlug.length === 0){
+        const dataUserDetails = await getUserDetailsBySlugModel(slug);
+        if(dataUserDetails.length === 0){
             return res.status(500).json({
                 statusCode: 500,
                 message: 'O usuário não existe!'
@@ -18,7 +18,7 @@ const getUserDetailsController = async (req, res) => {
         return res.status(500).json({
             statusCode: 500,
             message: 'Dados do usuário!',
-            data: dataUserDetailsBySlug
+            data: dataUserDetails
 
         });
     }catch(error){
@@ -33,8 +33,8 @@ const createUserDetailsController = async (req, res) => {
     try {
         const { name, slug, phone, instagram, image, state, city, street, number, pkUser } = req.body;
         
-        const dataUserDetailsByFk = await getUserDetailsByFkModel(pkUser);
-        if(dataUserDetailsByFk.length !== 0){
+        const dataUserDetails = await getUserDetailsByFkModel(pkUser);
+        if(dataUserDetails.length !== 0){
             return res.status(500).json({
                 statusCode: 500,
                 message: 'Dados do usuário já existe!'
@@ -42,8 +42,8 @@ const createUserDetailsController = async (req, res) => {
             });
         };
         
-        const dataUserDetailsBySlug = await getUserDetailsBySlugModel(slug);
-        if(dataUserDetailsBySlug.length !== 0){
+        const dataUserDetailsSlug = await getUserDetailsBySlugModel(slug);
+        if(dataUserDetailsSlug.length !== 0){
             return res.status(500).json({
                 statusCode: 500,
                 message: 'O nome de usuário já existe!'
@@ -51,8 +51,8 @@ const createUserDetailsController = async (req, res) => {
             });
         };
         
-        const dataUserDetails = await createUserDetailsModel(name, slug, phone, instagram, image, state, city, street, number, dateToday, pkUser);
-        if(dataUserDetails.affectedRows !== 0){
+        const dataResult = await createUserDetailsModel(name, slug, phone, instagram, image, state, city, street, number, dateToday, pkUser);
+        if(dataResult.affectedRows !== 0){
             return res.status(500).json({
                 statusCode: 500,
                 message: 'Dados salvos!'
@@ -72,8 +72,8 @@ const updateUserDetailsController = async (req, res) => {
         const pkUser = req.params.pk;
         const { name, slug, phone, instagram, image, state, city, street, number } = req.body;
         
-        const dataUserDetailsBySlug = await getUserDetailsBySlugModel(slug);
-        if((dataUserDetailsBySlug.length !== 0) && (dataUserDetailsBySlug[0]?.fkUser != pkUser)){
+        const dataUserDetails = await getUserDetailsBySlugModel(slug);
+        if((dataUserDetails.length !== 0) && (dataUserDetails[0]?.fkUser != pkUser)){
             return res.status(500).json({
                 statusCode: 500,
                 message: 'O nome de usuário já existe!'
@@ -81,8 +81,8 @@ const updateUserDetailsController = async (req, res) => {
             });
         };
         
-        const dataUserDetails = await updateUserDetailsModel(name, slug, phone, instagram, image, state, city, street, number, pkUser);
-        if(dataUserDetails.affectedRows !== 0){
+        const dataResult = await updateUserDetailsModel(name, slug, phone, instagram, image, state, city, street, number, pkUser);
+        if(dataResult.affectedRows !== 0){
             return res.status(500).json({
                 statusCode: 500,
                 message: 'Dados salvos!'
@@ -128,4 +128,5 @@ export default {
     getUserDetailsController,
     createUserDetailsController,
     updateUserDetailsController
+    
 };
