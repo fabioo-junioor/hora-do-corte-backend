@@ -1,9 +1,8 @@
 import connect from '../database/connect.js';
 
 const loginUserModel = async (email, password) => {
-    const conn = await connect();
-    
     try {
+        const conn = await connect();
         const [ result ] = await conn.query('SELECT * FROM `user` WHERE `email` = ? AND `password` = ?',
             [ email, password ]
         );
@@ -15,9 +14,8 @@ const loginUserModel = async (email, password) => {
     };
 };
 const getUserByIdModel = async (pkUser) => {
-    const conn = await connect();
-    
     try {
+        const conn = await connect();
         const [ result ] = await conn.query('SELECT * FROM `user` WHERE `pkUser` = ?',
             [ pkUser ]
         );
@@ -29,10 +27,9 @@ const getUserByIdModel = async (pkUser) => {
     };
 };
 const createUserModel = async (email, password, situationActive, dateTimeRegistration) => {
-    const conn = await connect();
-    
     try {
-        const [ result ] = await conn.query('INSERT INTO `user` (`email`, `password`, `situationActive`, `dateTimeRegistration`) VALUES (?, ?, ?, ?)',
+        const conn = await connect();
+        const [ result ] = await conn.execute('INSERT INTO `user` (`email`, `password`, `situationActive`, `dateTimeRegistration`) VALUES (?, ?, ?, ?)',
             [ email, password, situationActive, dateTimeRegistration ]
         );
         return result;
@@ -43,8 +40,8 @@ const createUserModel = async (email, password, situationActive, dateTimeRegistr
     };
 };
 const updateUserModel = async (pkUser, newPassword) => {
-    const conn = await connect();
     try {
+        const conn = await connect();
         const [ result ] = await conn.execute('UPDATE `user` SET `password` = ? WHERE `pkUser` = ?',
             [ newPassword, pkUser ]
         );

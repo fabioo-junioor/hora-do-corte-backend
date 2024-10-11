@@ -5,9 +5,9 @@ const dateToday = new Date();
 const getAllProfessionalController = async (req, res) => {
     try{
         const pkUser = req.params.pk;
-        const dataProfessionals = await getAllProfessionalModel(pkUser);
+        const dataResult = await getAllProfessionalModel(pkUser);
         
-        if(dataProfessionals.length === 0){
+        if(dataResult.length === 0){
             return res.status(401).json({
                 statusCode: 401,
                 message: 'Sem profissionais!'
@@ -17,7 +17,7 @@ const getAllProfessionalController = async (req, res) => {
         return res.status(200).json({
             statusCode: 200,
             message: 'Todos profissionais!',
-            data: dataProfessionals
+            data: dataResult
 
         });
     } catch (error){
@@ -27,14 +27,13 @@ const getAllProfessionalController = async (req, res) => {
 
         });
     };
-
 };
 const createProfessionalController = async (req, res) => {
     try{
         const { name, image, instagram, pkUser } = req.body;
-        const dataProfessional = await createProfessionalModel(name, image, instagram, dateToday, pkUser);
-
-        if(dataProfessional.affectedRows === 0){
+        
+        const dataResult = await createProfessionalModel(name, image, instagram, dateToday, pkUser);
+        if(dataResult.affectedRows === 0){
             return res.status(401).json({
                 statusCode: 401,
                 message: 'Algo de errado na criação do profissional!'
@@ -53,15 +52,14 @@ const createProfessionalController = async (req, res) => {
 
         });
     };
-
 };
 const updateProfessionalController = async (req, res) => {
     try{
         const pkProfessional = req.params.pk;
         const { name, image, instagram } = req.body;
         
-        const dataProfessional = await updateProfessionalModel(pkProfessional, name, image, instagram);
-        if(dataProfessional.changedRows === 0){
+        const dataResult = await updateProfessionalModel(pkProfessional, name, image, instagram);
+        if(dataResult.changedRows === 0){
             return res.status(401).json({
                 statusCode: 401,
                 message: 'Algo de errado na atualização do profissional!'
@@ -80,11 +78,11 @@ const updateProfessionalController = async (req, res) => {
 
         });
     };
-
 };
 
 export default {
     getAllProfessionalController,
     createProfessionalController,
     updateProfessionalController
+    
 };

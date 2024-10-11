@@ -1,8 +1,8 @@
 import connect from '../database/connect.js';
 
 const getAllProfessionalModel = async (pkuser) => {
-    const conn = await connect();    
     try {
+        const conn = await connect();    
         const [ result ] = await conn.query('SELECT * FROM `professional` WHERE `fkUser` = ?',
             [ pkuser ]
         );
@@ -14,8 +14,8 @@ const getAllProfessionalModel = async (pkuser) => {
     };
 };
 const createProfessionalModel = async (name, image, instagram, dateTimeRegistration, pkUser) => {
-    const conn = await connect();
     try {
+        const conn = await connect();
         const [ result ] = await conn.execute('INSERT INTO `professional` (`name`, `image`, `instagram`, `dateTimeRegistration`, `fkUser`) VALUES (?, ?, ?, ?, ?)',
             [ name, image, instagram, dateTimeRegistration, pkUser ]
         );
@@ -27,8 +27,8 @@ const createProfessionalModel = async (name, image, instagram, dateTimeRegistrat
     };
 };
 const updateProfessionalModel = async (pkProfessional, name, image, instagram) => {
-    const conn = await connect();
     try {
+        const conn = await connect();
         const [ result ] = await conn.execute('UPDATE `professional` SET `name` = ?, `image` = ?, `instagram` = ? WHERE `pkProfessional` = ?',
             [ name, image, instagram, pkProfessional ]
         );
@@ -43,4 +43,5 @@ export {
     getAllProfessionalModel,
     createProfessionalModel,
     updateProfessionalModel
+    
 };

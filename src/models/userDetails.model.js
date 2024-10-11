@@ -1,9 +1,8 @@
 import connect from '../database/connect.js';
 
 const getUserDetailsBySlugModel = async (slug) => {
-    const conn = await connect();
-    
     try {
+        const conn = await connect();
         const [ result ] = await conn.query('SELECT * FROM `userDetails` WHERE `slug` = ?',
             [ slug ]
         );
@@ -15,9 +14,8 @@ const getUserDetailsBySlugModel = async (slug) => {
     };
 };
 const getUserDetailsByFkModel = async (fkUser) => {
-    const conn = await connect();
-    
     try {
+        const conn = await connect();
         const [ result ] = await conn.query('SELECT * FROM `userDetails` WHERE `fkUser` = ?',
             [ fkUser ]
         );
@@ -29,9 +27,9 @@ const getUserDetailsByFkModel = async (fkUser) => {
     };
 };
 const createUserDetailsModel = async (name, slug, phone, instagram, image, state, city, street, number, dateTimeRegistration, pkUser) =>{
-    const conn = await connect();
     try {
-        const [ result ] = await conn.query('INSERT INTO `userDetails` (`name`, `slug`, `phone`, `instagram`, `image`, `state`, `city`, `street`, `number`, `dateTimeRegistration`, `fkUser`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+        const conn = await connect();
+        const [ result ] = await conn.execute('INSERT INTO `userDetails` (`name`, `slug`, `phone`, `instagram`, `image`, `state`, `city`, `street`, `number`, `dateTimeRegistration`, `fkUser`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
             [ name, slug, phone, instagram, image, state, city, street, number, dateTimeRegistration, pkUser ]
         );
         return result;
@@ -42,8 +40,8 @@ const createUserDetailsModel = async (name, slug, phone, instagram, image, state
     };
 };
 const updateUserDetailsModel = async (name, slug, phone, instagram, image, state, city, street, number, pkUser) =>{
-    const conn = await connect();
     try {
+        const conn = await connect();
         const [ result ] = await conn.execute('UPDATE `userDetails` SET `name` = ?, `slug` = ?, `phone` = ?, `instagram` = ?, `image` = ?, `state` = ?, `city` = ?, `street` = ?, `number` = ? WHERE `fkUser` = ?',
             [ name, slug, phone, instagram, image, state, city, street, number, pkUser ]
         );
@@ -60,4 +58,5 @@ export {
     getUserDetailsByFkModel,
     createUserDetailsModel,
     updateUserDetailsModel
+
 };

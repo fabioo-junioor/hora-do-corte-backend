@@ -6,8 +6,9 @@ const dateToday = new Date();
 const loginUserController = async (req, res) => {
     try{
         const { email, password } = req.body;
-        const result = await loginUserModel(email, password);
-        if(result.length === 0){
+
+        const dataResult = await loginUserModel(email, password);
+        if(dataResult.length === 0){
             return res.status(401).json({
                 statusCode: 401,
                 message: 'Email ou senha incorreto!'
@@ -24,7 +25,7 @@ const loginUserController = async (req, res) => {
         res.status(200).json({
             statusCode: 200,
             message: 'Login autorizado!',
-            data: { pkUser: result[0].pkUser, email: result[0].email, token: 'test-as54a65s' }
+            data: { pkUser: dataResult[0].pkUser, email: dataResult[0].email, token: 'test-as54a65s' }
 
         });
     } catch (error){
@@ -38,9 +39,9 @@ const loginUserController = async (req, res) => {
 const createUserController = async(req, res) => {
     try {
         const { email, password, confirmPassword } = req.body;
-        const userExists = await loginUserModel(email, password);
-
-        if(userExists.length !== 0){
+        
+        const dataUser = await loginUserModel(email, password);
+        if(dataUser.length !== 0){
             return res.status(500).json({
                 statusCode: 500,
                 message: 'Usuário já existe!'
@@ -54,9 +55,8 @@ const createUserController = async(req, res) => {
 
             });
         };
-        const resultCreate = await createUserModel(email, password, 1, dateToday);
-
-        if(resultCreate.affectedRows !== 0){
+        const dataResult = await createUserModel(email, password, 1, dateToday);
+        if(dataResult.affectedRows !== 0){
             return res.status(201).json({
                 statusCode: 201,
                 message: 'Usuário criado!'
@@ -77,15 +77,13 @@ const updateUserController = async (req, res) => {
         const { password, newPassword, confirmPassword } = req.body;
         
         const dataUser = await getUserByIdModel(pkUser);
-
         if(password !== dataUser[0].password){
             return res.status(500).json({
                 statusCode: 500,
                 message: 'Senha atual não corresponde!'
 
             });
-        };
-        
+        };        
         if(newPassword !== confirmPassword){
             return res.status(500).json({
                 statusCode: 500,
@@ -93,9 +91,8 @@ const updateUserController = async (req, res) => {
 
             });
         };
-        const updateUser = await updateUserModel(pkUser, newPassword);
-        
-        if(updateUser.changedRows !== 0){
+        const dataResult = await updateUserModel(pkUser, newPassword);
+        if(dataResult.changedRows !== 0){
             return res.status(201).json({
                 statusCode: 201,
                 message: 'Dados atualizados!'
@@ -116,4 +113,5 @@ export default {
     loginUserController,
     createUserController,
     updateUserController
+    
 };
