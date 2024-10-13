@@ -7,5 +7,6 @@ import professionalController from '../controllers/professional.controller.js';
 routerProfessional.get('/:pk/getAllProfessional', professionalController.getAllProfessionalController);
 routerProfessional.post('/createProfessional', professionalController.createProfessionalController);
 routerProfessional.put('/:pk/updateProfessional', professionalController.updateProfessionalController);
+routerProfessional.delete('/:pk/deleteProfessional', professionalController.deleteProfessionalController);
 
 export default routerProfessional;

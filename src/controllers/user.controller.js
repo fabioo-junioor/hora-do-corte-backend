@@ -1,5 +1,7 @@
 import { loginUserModel, getUserByIdModel,
-        createUserModel, updateUserModel } from '../models/user.model.js';
+        createUserModel, updateUserModel,
+        deleteUserModel } from '../models/user.model.js';
+import { getAllProfessionalModel } from '../models/professional.model.js';
 
 const dateToday = new Date();
 const isActive = 1;
@@ -108,11 +110,44 @@ const updateUserController = async (req, res) => {
         });
     };
 };
+const deleteUserController = async (req, res) => {
+    try{
+        const pkUser = req.params.pk;
+        
+        const dataProfessional = await getAllProfessionalModel(pkUser);
+        if(dataProfessional.length !== 0){
+            return res.status(401).json({
+                statusCode: 401,
+                message: 'Primeiramente excluir os profissionais cadastrados!'
 
+            });
+        };        
+        const dataResult = await deleteUserModel(pkUser, !isActive);
+        if(dataResult.changedRows === 0){
+            return res.status(401).json({
+                statusCode: 401,
+                message: 'Algo deu errado ao excluir o usuário!'
+
+            });
+        };
+        return res.status(200).json({
+            statusCode: 200,
+            message: 'Usuário excluido!'
+
+        });
+    } catch (error){
+        res.status(500).json({
+            statusCode: 500,
+            message: error.message
+
+        });
+    };
+};
 
 export default {
     loginUserController,
     createUserController,
-    updateUserController
+    updateUserController,
+    deleteUserController
     
 };

@@ -1,4 +1,4 @@
-import { getAllProfessionalModel, createProfessionalModel, updateProfessionalModel } from '../models/professional.model.js';
+import { getAllProfessionalModel, createProfessionalModel, updateProfessionalModel, deleteProfessionalModel } from '../models/professional.model.js';
 
 const dateToday = new Date();
 const isActive = 1;
@@ -80,10 +80,36 @@ const updateProfessionalController = async (req, res) => {
         });
     };
 };
+const deleteProfessionalController = async (req, res) => {
+    try{
+        const pkProfessional = req.params.pk;
+        
+        const dataResult = await deleteProfessionalModel(pkProfessional, !isActive);
+        if(dataResult.changedRows === 0){
+            return res.status(401).json({
+                statusCode: 401,
+                message: 'Algo deu errado ao excluir o profissional!'
+
+            });
+        };
+        return res.status(200).json({
+            statusCode: 200,
+            message: 'Profissional excluido!'
+
+        });
+    } catch (error){
+        res.status(500).json({
+            statusCode: 500,
+            message: error.message
+
+        });
+    };
+};
 
 export default {
     getAllProfessionalController,
     createProfessionalController,
-    updateProfessionalController
+    updateProfessionalController,
+    deleteProfessionalController
     
 };

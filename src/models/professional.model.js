@@ -1,6 +1,6 @@
 import connect from '../database/connect.js';
 
-const getAllProfessionalModel = async (pkuser, isActive) => {
+const getAllProfessionalModel = async (pkuser, isActive = 1) => {
     try {
         const conn = await connect();    
         const [ result ] = await conn.query('SELECT * FROM `professional` WHERE `fkUser` = ? AND `isActive` = ?',
@@ -39,9 +39,23 @@ const updateProfessionalModel = async (pkProfessional, name, image, instagram) =
 
     };
 };
+const deleteProfessionalModel = async (pkProfessional, isActive) => {
+    try {
+        const conn = await connect();
+        const [ result ] = await conn.execute('UPDATE `professional` SET `isActive` = ? WHERE `pkProfessional` = ?',
+            [ isActive, pkProfessional ]
+        );
+        return result;
+
+    }catch(error){
+        return false;
+
+    };
+};
 export {
     getAllProfessionalModel,
     createProfessionalModel,
-    updateProfessionalModel
+    updateProfessionalModel,
+    deleteProfessionalModel
     
 };

@@ -7,5 +7,6 @@ import userController from '../controllers/user.controller.js';
 routerUser.post('/login', userController.loginUserController);
 routerUser.post('/create', userController.createUserController);
 routerUser.put('/:pk/update', userController.updateUserController);
+routerUser.delete('/:pk/delete', userController.deleteUserController);
 
 export default routerUser;

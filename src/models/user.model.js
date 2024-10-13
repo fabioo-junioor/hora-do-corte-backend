@@ -52,11 +52,25 @@ const updateUserModel = async (pkUser, newPassword) => {
 
     };
 };
+const deleteUserModel = async (pkUser, isActive) => {
+    try {
+        const conn = await connect();
+        const [ result ] = await conn.execute('UPDATE `user` SET `isActive` = ? WHERE `pkUser` = ?',
+            [ isActive, pkUser ]
+        );
+        return result;
+
+    }catch(error){
+        return false;
+
+    };
+};
 
 export {
     loginUserModel,
     getUserByIdModel,
     createUserModel,
-    updateUserModel
+    updateUserModel,
+    deleteUserModel
 
 };
