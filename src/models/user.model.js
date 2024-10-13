@@ -26,11 +26,11 @@ const getUserByIdModel = async (pkUser) => {
         
     };
 };
-const createUserModel = async (email, password, situationActive, dateTimeRegistration) => {
+const createUserModel = async (email, password, isActive, dateTimeRegistration) => {
     try {
         const conn = await connect();
-        const [ result ] = await conn.execute('INSERT INTO `user` (`email`, `password`, `situationActive`, `dateTimeRegistration`) VALUES (?, ?, ?, ?)',
-            [ email, password, situationActive, dateTimeRegistration ]
+        const [ result ] = await conn.execute('INSERT INTO `user` (`email`, `password`, `isActive`, `dateTimeRegistration`) VALUES (?, ?, ?, ?)',
+            [ email, password, isActive, dateTimeRegistration ]
         );
         return result;
         
@@ -52,11 +52,25 @@ const updateUserModel = async (pkUser, newPassword) => {
 
     };
 };
+const deleteUserModel = async (pkUser, isActive) => {
+    try {
+        const conn = await connect();
+        const [ result ] = await conn.execute('UPDATE `user` SET `isActive` = ? WHERE `pkUser` = ?',
+            [ isActive, pkUser ]
+        );
+        return result;
+
+    }catch(error){
+        return false;
+
+    };
+};
 
 export {
     loginUserModel,
     getUserByIdModel,
     createUserModel,
-    updateUserModel
+    updateUserModel,
+    deleteUserModel
 
 };

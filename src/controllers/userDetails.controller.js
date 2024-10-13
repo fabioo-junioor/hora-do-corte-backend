@@ -8,6 +8,13 @@ const getUserDetailsController = async (req, res) => {
         const slug = req.params.slug;
        
         const dataUserDetails = await getUserDetailsBySlugModel(slug);
+        if(!dataUserDetails){
+            return res.status(401).json({
+                statusCode: 401,
+                message: 'Algo deu errado na conexão!'
+
+            });
+        };
         if(dataUserDetails.length === 0){
             return res.status(500).json({
                 statusCode: 500,
@@ -34,6 +41,13 @@ const createUserDetailsController = async (req, res) => {
         const { name, slug, phone, instagram, image, state, city, street, number, pkUser } = req.body;
         
         const dataUserDetails = await getUserDetailsByFkModel(pkUser);
+        if(!dataUserDetails){
+            return res.status(401).json({
+                statusCode: 401,
+                message: 'Algo deu errado na conexão!'
+
+            });
+        };
         if(dataUserDetails.length !== 0){
             return res.status(500).json({
                 statusCode: 500,
@@ -43,15 +57,28 @@ const createUserDetailsController = async (req, res) => {
         };
         
         const dataUserDetailsSlug = await getUserDetailsBySlugModel(slug);
+        if(!dataUserDetailsSlug){
+            return res.status(401).json({
+                statusCode: 401,
+                message: 'Algo deu errado na conexão!'
+
+            });
+        };
         if(dataUserDetailsSlug.length !== 0){
             return res.status(500).json({
                 statusCode: 500,
                 message: 'O nome de usuário já existe!'
                 
             });
-        };
-        
+        };        
         const dataResult = await createUserDetailsModel(name, slug, phone, instagram, image, state, city, street, number, dateToday, pkUser);
+        if(!dataResult){
+            return res.status(401).json({
+                statusCode: 401,
+                message: 'Algo deu errado na conexão!'
+
+            });
+        };
         if(dataResult.affectedRows !== 0){
             return res.status(500).json({
                 statusCode: 500,
@@ -73,6 +100,13 @@ const updateUserDetailsController = async (req, res) => {
         const { name, slug, phone, instagram, image, state, city, street, number } = req.body;
         
         const dataUserDetails = await getUserDetailsBySlugModel(slug);
+        if(!dataUserDetails){
+            return res.status(401).json({
+                statusCode: 401,
+                message: 'Algo deu errado na conexão!'
+
+            });
+        };
         if((dataUserDetails.length !== 0) && (dataUserDetails[0]?.fkUser != pkUser)){
             return res.status(500).json({
                 statusCode: 500,
@@ -80,8 +114,14 @@ const updateUserDetailsController = async (req, res) => {
                 
             });
         };
-        
         const dataResult = await updateUserDetailsModel(name, slug, phone, instagram, image, state, city, street, number, pkUser);
+        if(!dataResult){
+            return res.status(401).json({
+                statusCode: 401,
+                message: 'Algo deu errado na conexão!'
+
+            });
+        };
         if(dataResult.affectedRows !== 0){
             return res.status(500).json({
                 statusCode: 500,

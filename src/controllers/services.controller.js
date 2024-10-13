@@ -7,6 +7,13 @@ const getServiceController = async (req, res) => {
         const pkProfessional = req.params.pk;
         
         const dataResult = await getServiceModel(pkProfessional);
+        if(!dataResult){
+            return res.status(401).json({
+                statusCode: 401,
+                message: 'Algo deu errado na conexão!'
+
+            });
+        };
         if(dataResult.length === 0){
             return res.status(401).json({
                 statusCode: 401,
@@ -33,6 +40,13 @@ const createServiceController = async (req, res) => {
         const { pkProfessional, services } = req.body;
         
         const dataService = await getServiceModel(pkProfessional);
+        if(!dataService){
+            return res.status(401).json({
+                statusCode: 401,
+                message: 'Algo deu errado na conexão!'
+
+            });
+        };
         if(dataService.length !== 0){
             return res.status(401).json({
                 statusCode: 401,
@@ -41,6 +55,13 @@ const createServiceController = async (req, res) => {
             });
         };
         const dataResult = await createServiceModel(services, dateToday, pkProfessional);
+        if(!dataResult){
+            return res.status(401).json({
+                statusCode: 401,
+                message: 'Algo deu errado na conexão!'
+
+            });
+        };
         if(dataResult.affectedRows === 0){
             return res.status(401).json({
                 statusCode: 401,
@@ -67,6 +88,13 @@ const updateServiceController = async (req, res) => {
         const { services } = req.body;
         
         const dataResult = await updateServiceModel(services, pkProfessionalServices);
+        if(!dataResult){
+            return res.status(401).json({
+                statusCode: 401,
+                message: 'Algo deu errado na conexão!'
+
+            });
+        };
         if(dataResult.changedRows === 0){
             return res.status(500).json({
                 statusCode: 500,
