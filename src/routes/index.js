@@ -6,13 +6,13 @@ import routerUserDetails from './routes.userDetails.js';
 import routerProfessional from './routes.professional.js';
 import routerServices from './routes.services.js';
 import routerSchedules from './routes.schedules.js';
+import routerReservation from './routes.reservation.js';
 
 router.use('/user', routerUser);
 router.use('/userDetails', routerUserDetails);
 router.use('/professional', routerProfessional);
 router.use('/services', routerServices);
 router.use('/schedules', routerSchedules);
-// router create reservation
-// router reservations
+router.use('/reservation', routerReservation);
 
 export default router;
