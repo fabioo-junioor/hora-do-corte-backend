@@ -1,10 +1,10 @@
 import connect from '../database/connect.js';
 
-const getAllProfessionalModel = async (pkuser) => {
+const getAllProfessionalModel = async (pkuser, isActive) => {
     try {
         const conn = await connect();    
-        const [ result ] = await conn.query('SELECT * FROM `professional` WHERE `fkUser` = ?',
-            [ pkuser ]
+        const [ result ] = await conn.query('SELECT * FROM `professional` WHERE `fkUser` = ? AND `isActive` = ?',
+            [ pkuser, isActive ]
         );
         return result;
         
@@ -13,11 +13,11 @@ const getAllProfessionalModel = async (pkuser) => {
         
     };
 };
-const createProfessionalModel = async (name, image, instagram, dateTimeRegistration, pkUser) => {
+const createProfessionalModel = async (name, image, instagram, isActive, dateTimeRegistration, pkUser) => {
     try {
         const conn = await connect();
-        const [ result ] = await conn.execute('INSERT INTO `professional` (`name`, `image`, `instagram`, `dateTimeRegistration`, `fkUser`) VALUES (?, ?, ?, ?, ?)',
-            [ name, image, instagram, dateTimeRegistration, pkUser ]
+        const [ result ] = await conn.execute('INSERT INTO `professional` (`name`, `image`, `instagram`, `isActive`, `dateTimeRegistration`, `fkUser`) VALUES (?, ?, ?, ?, ?)',
+            [ name, image, instagram, isActive, dateTimeRegistration, pkUser ]
         );
         return result;
 

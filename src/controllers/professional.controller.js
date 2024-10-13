@@ -1,11 +1,12 @@
 import { getAllProfessionalModel, createProfessionalModel, updateProfessionalModel } from '../models/professional.model.js';
 
 const dateToday = new Date();
+const isActive = 1;
 
 const getAllProfessionalController = async (req, res) => {
     try{
         const pkUser = req.params.pk;
-        const dataResult = await getAllProfessionalModel(pkUser);
+        const dataResult = await getAllProfessionalModel(pkUser, isActive);
         
         if(dataResult.length === 0){
             return res.status(401).json({
@@ -32,7 +33,7 @@ const createProfessionalController = async (req, res) => {
     try{
         const { name, image, instagram, pkUser } = req.body;
         
-        const dataResult = await createProfessionalModel(name, image, instagram, dateToday, pkUser);
+        const dataResult = await createProfessionalModel(name, image, instagram, isActive, dateToday, pkUser);
         if(dataResult.affectedRows === 0){
             return res.status(401).json({
                 statusCode: 401,

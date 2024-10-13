@@ -2,6 +2,7 @@ import { loginUserModel, getUserByIdModel,
         createUserModel, updateUserModel } from '../models/user.model.js';
 
 const dateToday = new Date();
+const isActive = 1;
 
 const loginUserController = async (req, res) => {
     try{
@@ -55,7 +56,7 @@ const createUserController = async(req, res) => {
 
             });
         };
-        const dataResult = await createUserModel(email, password, 1, dateToday);
+        const dataResult = await createUserModel(email, password, isActive, dateToday);
         if(dataResult.affectedRows !== 0){
             return res.status(201).json({
                 statusCode: 201,
