@@ -11,20 +11,20 @@ const loginUserController = async (req, res) => {
         const { email, password } = req.body;
 
         const dataResult = await loginUserModel(email, password);
+        if(!dataResult){
+            return res.status(401).json({
+                statusCode: 401,
+                message: 'Algo deu errado na conexão!'
+
+            });
+        };
         if(dataResult.length === 0){
             return res.status(401).json({
                 statusCode: 401,
                 message: 'Email ou senha incorreto!'
 
             });
-        };/*
-        if(result[0].password !== password){
-            return res.status(401).json({
-                statusCode: 401,
-                message: 'Senha incorreta!'
-
-            });
-        };*/
+        };
         res.status(200).json({
             statusCode: 200,
             message: 'Login autorizado!',
@@ -44,6 +44,13 @@ const createUserController = async(req, res) => {
         const { email, password, confirmPassword } = req.body;
         
         const dataUser = await loginUserModel(email, password);
+        if(!dataUser){
+            return res.status(401).json({
+                statusCode: 401,
+                message: 'Algo deu errado na conexão!'
+
+            });
+        };
         if(dataUser.length !== 0){
             return res.status(500).json({
                 statusCode: 500,
@@ -59,6 +66,13 @@ const createUserController = async(req, res) => {
             });
         };
         const dataResult = await createUserModel(email, password, isActive, dateToday);
+        if(!dataResult){
+            return res.status(401).json({
+                statusCode: 401,
+                message: 'Algo deu errado na conexão!'
+
+            });
+        };
         if(dataResult.affectedRows !== 0){
             return res.status(201).json({
                 statusCode: 201,
@@ -80,6 +94,13 @@ const updateUserController = async (req, res) => {
         const { password, newPassword, confirmPassword } = req.body;
         
         const dataUser = await getUserByIdModel(pkUser);
+        if(!dataUser){
+            return res.status(401).json({
+                statusCode: 401,
+                message: 'Algo deu errado na conexão!'
+
+            });
+        };
         if(password !== dataUser[0].password){
             return res.status(500).json({
                 statusCode: 500,
@@ -95,6 +116,13 @@ const updateUserController = async (req, res) => {
             });
         };
         const dataResult = await updateUserModel(pkUser, newPassword);
+        if(!dataResult){
+            return res.status(401).json({
+                statusCode: 401,
+                message: 'Algo deu errado na conexão!'
+
+            });
+        };
         if(dataResult.changedRows !== 0){
             return res.status(201).json({
                 statusCode: 201,
@@ -115,6 +143,13 @@ const deleteUserController = async (req, res) => {
         const pkUser = req.params.pk;
         
         const dataProfessional = await getAllProfessionalModel(pkUser);
+        if(!dataProfessional){
+            return res.status(401).json({
+                statusCode: 401,
+                message: 'Algo deu errado na conexão!'
+
+            });
+        };
         if(dataProfessional.length !== 0){
             return res.status(401).json({
                 statusCode: 401,
@@ -123,6 +158,13 @@ const deleteUserController = async (req, res) => {
             });
         };        
         const dataResult = await deleteUserModel(pkUser, !isActive);
+        if(!dataResult){
+            return res.status(401).json({
+                statusCode: 401,
+                message: 'Algo deu errado na conexão!'
+
+            });
+        };
         if(dataResult.changedRows === 0){
             return res.status(401).json({
                 statusCode: 401,

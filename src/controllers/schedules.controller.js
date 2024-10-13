@@ -7,6 +7,13 @@ const getScheduleController = async (req, res) => {
         const pkProfessional = req.params.pk;
         
         const dataResult = await getScheduleModel(pkProfessional);
+        if(!dataResult){
+            return res.status(401).json({
+                statusCode: 401,
+                message: 'Algo deu errado na conexão!'
+
+            });
+        };
         if(dataResult.length === 0){
             return res.status(401).json({
                 statusCode: 401,
@@ -33,6 +40,13 @@ const createScheduleController = async (req, res) => {
         const { pkProfessional, schedules } = req.body;
 
         const dataSchedule = await getScheduleModel(pkProfessional);
+        if(!dataSchedule){
+            return res.status(401).json({
+                statusCode: 401,
+                message: 'Algo deu errado na conexão!'
+
+            });
+        };
         if(dataSchedule.length !== 0){
             return res.status(401).json({
                 statusCode: 401,
@@ -41,6 +55,13 @@ const createScheduleController = async (req, res) => {
             });
         };
         const dataResult = await createScheduleModel(schedules, dateToday, pkProfessional);
+        if(!dataResult){
+            return res.status(401).json({
+                statusCode: 401,
+                message: 'Algo deu errado na conexão!'
+
+            });
+        };
         if(dataResult.affectedRows === 0){
             return res.status(401).json({
                 statusCode: 401,
@@ -67,6 +88,13 @@ const updateScheduleController = async (req, res) => {
         const { schedules } = req.body;
 
         const dataResult = await updateScheduleModel(schedules, pkProfessionalSchedule);
+        if(!dataResult){
+            return res.status(401).json({
+                statusCode: 401,
+                message: 'Algo deu errado na conexão!'
+
+            });
+        };
         if(dataResult.changedRows === 0){
             return res.status(500).json({
                 statusCode: 500,

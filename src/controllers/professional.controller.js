@@ -6,8 +6,15 @@ const isActive = 1;
 const getAllProfessionalController = async (req, res) => {
     try{
         const pkUser = req.params.pk;
-        const dataResult = await getAllProfessionalModel(pkUser, isActive);
         
+        const dataResult = await getAllProfessionalModel(pkUser, isActive);
+        if(!dataResult){
+            return res.status(401).json({
+                statusCode: 401,
+                message: 'Algo deu errado na conexão!'
+
+            });
+        };
         if(dataResult.length === 0){
             return res.status(401).json({
                 statusCode: 401,
@@ -34,6 +41,13 @@ const createProfessionalController = async (req, res) => {
         const { name, image, instagram, pkUser } = req.body;
         
         const dataResult = await createProfessionalModel(name, image, instagram, isActive, dateToday, pkUser);
+        if(!dataResult){
+            return res.status(401).json({
+                statusCode: 401,
+                message: 'Algo deu errado na conexão!'
+
+            });
+        };
         if(dataResult.affectedRows === 0){
             return res.status(401).json({
                 statusCode: 401,
@@ -60,6 +74,13 @@ const updateProfessionalController = async (req, res) => {
         const { name, image, instagram } = req.body;
         
         const dataResult = await updateProfessionalModel(pkProfessional, name, image, instagram);
+        if(!dataResult){
+            return res.status(401).json({
+                statusCode: 401,
+                message: 'Algo deu errado na conexão!'
+
+            });
+        };
         if(dataResult.changedRows === 0){
             return res.status(401).json({
                 statusCode: 401,
@@ -85,6 +106,13 @@ const deleteProfessionalController = async (req, res) => {
         const pkProfessional = req.params.pk;
         
         const dataResult = await deleteProfessionalModel(pkProfessional, !isActive);
+        if(!dataResult){
+            return res.status(401).json({
+                statusCode: 401,
+                message: 'Algo deu errado na conexão!'
+
+            });
+        };
         if(dataResult.changedRows === 0){
             return res.status(401).json({
                 statusCode: 401,
