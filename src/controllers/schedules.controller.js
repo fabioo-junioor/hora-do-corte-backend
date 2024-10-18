@@ -17,7 +17,8 @@ const getScheduleController = async (req, res) => {
         if(dataResult.length === 0){
             return res.status(401).json({
                 statusCode: 401,
-                message: 'Serviço não existe!'
+                message: 'Serviço não existe!',
+                data: dataResult
 
             });
         };
@@ -37,7 +38,7 @@ const getScheduleController = async (req, res) => {
 };
 const createScheduleController = async (req, res) => {
     try{
-        const { pkProfessional, schedules } = req.body;
+        const { schedules, pkProfessional } = req.body;
 
         const dataSchedule = await getScheduleModel(pkProfessional);
         if(!dataSchedule){
@@ -58,7 +59,7 @@ const createScheduleController = async (req, res) => {
         if(!dataResult){
             return res.status(401).json({
                 statusCode: 401,
-                message: 'Algo deu errado na conexão!'
+                message: 'Algo deu errado na conexão!!'
 
             });
         };
@@ -95,7 +96,7 @@ const updateScheduleController = async (req, res) => {
 
             });
         };
-        if(dataResult.changedRows === 0){
+        if(dataResult.affectedRows === 0){
             return res.status(500).json({
                 statusCode: 500,
                 message: 'Algo de errado na atualização do horário!'
