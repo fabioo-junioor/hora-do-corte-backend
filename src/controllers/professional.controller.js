@@ -18,7 +18,8 @@ const getAllProfessionalController = async (req, res) => {
         if(dataResult.length === 0){
             return res.status(401).json({
                 statusCode: 401,
-                message: 'Sem profissionais!'
+                message: 'Sem profissionais!',
+                data: dataResult
 
             });
         };

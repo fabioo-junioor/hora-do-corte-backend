@@ -16,7 +16,7 @@ const getAllProfessionalModel = async (pkuser, isActive = 1) => {
 const createProfessionalModel = async (name, image, instagram, isActive, dateTimeRegistration, pkUser) => {
     try {
         const conn = await connect();
-        const [ result ] = await conn.execute('INSERT INTO `professional` (`name`, `image`, `instagram`, `isActive`, `dateTimeRegistration`, `fkUser`) VALUES (?, ?, ?, ?, ?)',
+        const [ result ] = await conn.execute('INSERT INTO `professional` (`name`, `image`, `instagram`, `isActive`, `dateTimeRegistration`, `fkUser`) VALUES (?, ?, ?, ?, ?, ?)',
             [ name, image, instagram, isActive, dateTimeRegistration, pkUser ]
         );
         return result;

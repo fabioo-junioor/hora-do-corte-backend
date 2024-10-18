@@ -1,6 +1,6 @@
 import { loginUserModel, getUserByIdModel,
-        createUserModel, updateUserModel,
-        deleteUserModel } from '../models/user.model.js';
+        getUserByEmailModel, createUserModel, 
+        updateUserModel, deleteUserModel } from '../models/user.model.js';
 import { getAllProfessionalModel } from '../models/professional.model.js';
 
 const dateToday = new Date();
@@ -21,7 +21,8 @@ const loginUserController = async (req, res) => {
         if(dataResult.length === 0){
             return res.status(401).json({
                 statusCode: 401,
-                message: 'Email ou senha incorreto!'
+                message: 'Email ou senha incorreto!',
+                data: dataResult
 
             });
         };
@@ -43,7 +44,7 @@ const createUserController = async(req, res) => {
     try {
         const { email, password, confirmPassword } = req.body;
         
-        const dataUser = await loginUserModel(email, password);
+        const dataUser = await getUserByEmailModel(email);
         if(!dataUser){
             return res.status(401).json({
                 statusCode: 401,
@@ -107,7 +108,7 @@ const updateUserController = async (req, res) => {
                 message: 'Senha atual não corresponde!'
 
             });
-        };        
+        };   
         if(newPassword !== confirmPassword){
             return res.status(500).json({
                 statusCode: 500,
@@ -129,7 +130,7 @@ const updateUserController = async (req, res) => {
                 message: 'Dados atualizados!'
     
             });
-        }
+        };
     }catch(error){
         res.status(500).json({
             statusCode: 500,

@@ -17,7 +17,8 @@ const getServiceController = async (req, res) => {
         if(dataResult.length === 0){
             return res.status(401).json({
                 statusCode: 401,
-                message: 'Serviço não existe!'
+                message: 'Serviço não existe!',
+                data: dataResult
 
             });
         };
@@ -50,7 +51,8 @@ const createServiceController = async (req, res) => {
         if(dataService.length !== 0){
             return res.status(401).json({
                 statusCode: 401,
-                message: 'Serviço ja existe!'
+                message: 'Serviço ja existe!',
+                data: dataService
                 
             });
         };
