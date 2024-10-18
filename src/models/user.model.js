@@ -26,6 +26,19 @@ const getUserByIdModel = async (pkUser) => {
         
     };
 };
+const getUserByEmailModel = async (email) => {
+    try {
+        const conn = await connect();
+        const [ result ] = await conn.query('SELECT * FROM `user` WHERE `email` = ?',
+            [ email ]
+        );
+        return result;
+        
+    }catch(error){
+        return false;
+        
+    };
+};
 const createUserModel = async (email, password, isActive, dateTimeRegistration) => {
     try {
         const conn = await connect();
@@ -69,6 +82,7 @@ const deleteUserModel = async (pkUser, isActive) => {
 export {
     loginUserModel,
     getUserByIdModel,
+    getUserByEmailModel,
     createUserModel,
     updateUserModel,
     deleteUserModel
