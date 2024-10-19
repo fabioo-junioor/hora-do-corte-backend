@@ -9,15 +9,15 @@ const getUserDetailsController = async (req, res) => {
        
         const dataUserDetails = await getUserDetailsBySlugModel(slug);
         if(!dataUserDetails){
-            return res.status(401).json({
-                statusCode: 401,
+            return res.status(502).json({
+                statusCode: 502,
                 message: 'Algo deu errado na conexão!'
 
             });
         };
         if(dataUserDetails.length === 0){
-            return res.status(500).json({
-                statusCode: 500,
+            return res.status(200).json({
+                statusCode: 200,
                 message: 'O usuário não existe!',
                 data: dataUserDetails
                 
@@ -43,15 +43,15 @@ const createUserDetailsController = async (req, res) => {
         
         const dataUserDetails = await getUserDetailsByFkModel(pkUser);
         if(!dataUserDetails){
-            return res.status(401).json({
-                statusCode: 401,
+            return res.status(502).json({
+                statusCode: 502,
                 message: 'Algo deu errado na conexão!'
 
             });
         };
         if(dataUserDetails.length !== 0){
-            return res.status(500).json({
-                statusCode: 500,
+            return res.status(200).json({
+                statusCode: 200,
                 message: 'Dados do usuário já existe!'
                 
             });
@@ -59,30 +59,30 @@ const createUserDetailsController = async (req, res) => {
         
         const dataUserDetailsSlug = await getUserDetailsBySlugModel(slug);
         if(!dataUserDetailsSlug){
-            return res.status(401).json({
-                statusCode: 401,
+            return res.status(502).json({
+                statusCode: 502,
                 message: 'Algo deu errado na conexão!'
 
             });
         };
         if(dataUserDetailsSlug.length !== 0){
-            return res.status(500).json({
-                statusCode: 500,
+            return res.status(200).json({
+                statusCode: 200,
                 message: 'O nome de usuário já existe!'
                 
             });
         };        
         const dataResult = await createUserDetailsModel(name, slug, phone, instagram, image, state, city, street, number, dateToday, pkUser);
         if(!dataResult){
-            return res.status(401).json({
-                statusCode: 401,
+            return res.status(502).json({
+                statusCode: 502,
                 message: 'Algo deu errado na conexão!'
 
             });
         };
         if(dataResult.affectedRows !== 0){
-            return res.status(500).json({
-                statusCode: 500,
+            return res.status(201).json({
+                statusCode: 201,
                 message: 'Dados salvos!'
 
             });
@@ -102,30 +102,30 @@ const updateUserDetailsController = async (req, res) => {
         
         const dataUserDetails = await getUserDetailsBySlugModel(slug);
         if(!dataUserDetails){
-            return res.status(401).json({
-                statusCode: 401,
+            return res.status(502).json({
+                statusCode: 502,
                 message: 'Algo deu errado na conexão!'
 
             });
         };
         if((dataUserDetails.length !== 0) && (dataUserDetails[0]?.fkUser != pkUser)){
-            return res.status(500).json({
-                statusCode: 500,
+            return res.status(200).json({
+                statusCode: 200,
                 message: 'O nome de usuário já existe!'
                 
             });
         };
         const dataResult = await updateUserDetailsModel(name, slug, phone, instagram, image, state, city, street, number, pkUser);
         if(!dataResult){
-            return res.status(401).json({
-                statusCode: 401,
+            return res.status(502).json({
+                statusCode: 502,
                 message: 'Algo deu errado na conexão!'
 
             });
         };
         if(dataResult.affectedRows !== 0){
-            return res.status(500).json({
-                statusCode: 500,
+            return res.status(201).json({
+                statusCode: 201,
                 message: 'Dados salvos!'
     
             });

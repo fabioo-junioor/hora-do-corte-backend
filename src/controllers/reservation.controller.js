@@ -8,9 +8,16 @@ const getReservationController = async (req, res) => {
     const pkUser = req.params.pk;
 
     const dataResult = await getAllReservationModel(pkUser, isReservation);
+    if(!dataResult){
+        return res.status(502).json({
+            statusCode: 502,
+            message: 'Algo deu errado na conexão!'
+
+        });
+    };
     if(dataResult.length === 0){
-        return res.status(401).json({
-            statusCode: 401,
+        return res.status(200).json({
+            statusCode: 200,
             message: 'Sem reservas!'
 
         });
@@ -36,14 +43,14 @@ const createReservationController = async (req, res) => {
                 
         const dataResult = await createReservationModel(pkUser, pkProfessional, services, dateReservation, timeReservation, price, duration, dateToday, isReservation, name, email, phone, observation);
         if(dataResult.affectedRows === 0 || !dataResult){
-            return res.status(401).json({
-                statusCode: 401,
+            return res.status(502).json({
+                statusCode: 502,
                 message: 'Algo de errado no agendamento!'
 
             });
         };
-        return res.status(200).json({
-            statusCode: 200,
+        return res.status(201).json({
+            statusCode: 201,
             message: 'Agendamento criado!'
 
         });
@@ -60,9 +67,9 @@ const deleteReservationController = async (req, res) => {
         const pkReservation = req.params.pk;
         
         const dataResult = await deleteReservationModel(pkReservation, !isReservation);
-        if(dataResult.changedRows === 0 || !dataResult){
-            return res.status(401).json({
-                statusCode: 401,
+        if(dataResult.affectedRows === 0 || !dataResult){
+            return res.status(502).json({
+                statusCode: 502,
                 message: 'Algo deu errado ao excluir o agendamento!'
 
             });

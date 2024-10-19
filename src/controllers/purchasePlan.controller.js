@@ -7,17 +7,18 @@ const dateToday = new Date();
 const getLastPurchasePlanController = async (req, res) => {
     try{
         const pkUser = req.params.pk;
+        
         const dataResult = await getLastPurchasePlanByPkModel(pkUser);
         if(!dataResult){
-            return res.status(401).json({
-                statusCode: 401,
+            return res.status(502).json({
+                statusCode: 502,
                 message: 'Algo deu errado na conexão!'
 
             });
         };
         if(dataResult.length === 0){
-            return res.status(401).json({
-                statusCode: 401,
+            return res.status(200).json({
+                statusCode: 200,
                 message: 'Nenhum plano comprado!'
 
             });
@@ -44,8 +45,8 @@ const createPurchasePlanController = async (req, res) => {
         if(dataPlansLastBuy.length === 0 && pkPlan == 1){
             const dataPlans = await getPlanByPkModel(pkPlan);
             if(!dataPlans){
-                return res.status(401).json({
-                    statusCode: 401,
+                return res.status(502).json({
+                    statusCode: 502,
                     message: 'Algo deu errado na conexão!'
 
                 });
@@ -54,14 +55,14 @@ const createPurchasePlanController = async (req, res) => {
             const purchaseValidity = buyPlan(purchaseDate, time);
             const dataResult = await createPurchasePlanModel(pkUser, pkPlan, purchaseDate, purchaseTime, purchaseValidity, price, time, dateToday);
             if(dataResult.affectedRows === 0 || !dataResult){
-                return res.status(401).json({
-                    statusCode: 401,
+                return res.status(502).json({
+                    statusCode: 502,
                     message: 'Algo deu errado na compra do plano!'
 
                 });
             };
-            return res.status(200).json({
-                statusCode: 200,
+            return res.status(201).json({
+                statusCode: 201,
                 message: `Compra realizada, plano [${name}]!`,
                 data: { "validade": purchaseValidity }
 
@@ -72,9 +73,10 @@ const createPurchasePlanController = async (req, res) => {
             const timeLastBuy = dataPlansLastBuy[0].purchaseTime;
             const dataValidityBuy = checkLastPurchaseValidity(purchaseDate, dateLastBuy, purchaseTime, timeLastBuy);
             if(dataValidityBuy){
-                return res.status(401).json({
-                    statusCode: 401,
-                    message: 'Sua ultima compra aida está vigente!'
+                return res.status(200).json({
+                    statusCode: 200,
+                    message: 'Sua ultima compra aida está vigente!',
+                    data: dataValidityBuy
 
                 });
             };
@@ -87,8 +89,8 @@ const createPurchasePlanController = async (req, res) => {
         if(dataPlansLastBuy.length === 0 && pkPlan != 1){
             const dataPlans = await getPlanByPkModel(pkPlan);
             if(!dataPlans){
-                return res.status(401).json({
-                    statusCode: 401,
+                return res.status(502).json({
+                    statusCode: 502,
                     message: 'Algo deu errado na conexão!'
 
                 });
@@ -97,14 +99,14 @@ const createPurchasePlanController = async (req, res) => {
             const purchaseValidity = buyPlan(purchaseDate, time);
             const dataResult = await createPurchasePlanModel(pkUser, pkPlan, purchaseDate, purchaseTime, purchaseValidity, price, time, dateToday);
             if(dataResult.affectedRows === 0 || !dataResult){
-                return res.status(401).json({
-                    statusCode: 401,
+                return res.status(502).json({
+                    statusCode: 502,
                     message: 'Algo deu errado na compra do plano!'
 
                 });
             };
-            return res.status(200).json({
-                statusCode: 200,
+            return res.status(201).json({
+                statusCode: 201,
                 message: `Compra realizada, plano [${name}]!`,
                 data: { "validade": purchaseValidity }
 
@@ -115,16 +117,17 @@ const createPurchasePlanController = async (req, res) => {
         const timeLastBuy = dataPlansLastBuy[0].purchaseTime;
         const dataValidityBuy = checkLastPurchaseValidity(purchaseDate, dateLastBuy, purchaseTime, timeLastBuy);
         if(dataValidityBuy){
-            return res.status(401).json({
-                statusCode: 401,
-                message: 'Sua ultima compra aida está vigente!'
+            return res.status(200).json({
+                statusCode: 200,
+                message: 'Sua ultima compra aida está vigente!',
+                data: dataValidityBuy
 
             });
         };
         const dataPlans = await getPlanByPkModel(pkPlan);
         if(!dataPlans){
-            return res.status(401).json({
-                statusCode: 401,
+            return res.status(502).json({
+                statusCode: 502,
                 message: 'Algo deu errado na conexão!'
 
             });
@@ -133,14 +136,14 @@ const createPurchasePlanController = async (req, res) => {
         const purchaseValidity = buyPlan(purchaseDate, time);
         const dataResult = await createPurchasePlanModel(pkUser, pkPlan, purchaseDate, purchaseTime, purchaseValidity, price, time, dateToday);
         if(dataResult.affectedRows === 0 || !dataResult){
-            return res.status(401).json({
-                statusCode: 401,
+            return res.status(502).json({
+                statusCode: 502,
                 message: 'Algo deu errado na compra do plano!'
 
             });
         };
-        return res.status(200).json({
-            statusCode: 200,
+        return res.status(201).json({
+            statusCode: 201,
             message: `Compra realizada, plano [${name}]!`,
             data: { "validade": purchaseValidity }
 
