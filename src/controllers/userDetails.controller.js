@@ -18,12 +18,13 @@ const getUserDetailsController = async (req, res) => {
         if(dataUserDetails.length === 0){
             return res.status(500).json({
                 statusCode: 500,
-                message: 'O usuário não existe!'
+                message: 'O usuário não existe!',
+                data: dataUserDetails
                 
             });
         };        
-        return res.status(500).json({
-            statusCode: 500,
+        return res.status(200).json({
+            statusCode: 200,
             message: 'Dados do usuário!',
             data: dataUserDetails
 
