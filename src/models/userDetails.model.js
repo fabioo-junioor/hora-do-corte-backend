@@ -26,11 +26,11 @@ const getUserDetailsByFkModel = async (fkUser) => {
         
     };
 };
-const createUserDetailsModel = async (name, slug, phone, instagram, image, state, city, street, number, dateTimeRegistration, pkUser) =>{
+const createUserDetailsModel = async (name, slug, phone, instagram, image, cep, state, city, street, number, dateTimeRegistration, pkUser) =>{
     try {
         const conn = await connect();
-        const [ result ] = await conn.execute('INSERT INTO `userDetails` (`name`, `slug`, `phone`, `instagram`, `image`, `state`, `city`, `street`, `number`, `dateTimeRegistration`, `fkUser`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-            [ name, slug, phone, instagram, image, state, city, street, number, dateTimeRegistration, pkUser ]
+        const [ result ] = await conn.execute('INSERT INTO `userDetails` (`name`, `slug`, `phone`, `instagram`, `image`, `cep`, `state`, `city`, `street`, `number`, `dateTimeRegistration`, `fkUser`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+            [ name, slug, phone, instagram, image, cep, state, city, street, number, dateTimeRegistration, pkUser ]
         );
         return result;
 
@@ -39,11 +39,11 @@ const createUserDetailsModel = async (name, slug, phone, instagram, image, state
 
     };
 };
-const updateUserDetailsModel = async (name, slug, phone, instagram, image, state, city, street, number, pkUser) =>{
+const updateUserDetailsModel = async (name, slug, phone, instagram, image, cep, state, city, street, number, pkUser) =>{
     try {
         const conn = await connect();
-        const [ result ] = await conn.execute('UPDATE `userDetails` SET `name` = ?, `slug` = ?, `phone` = ?, `instagram` = ?, `image` = ?, `state` = ?, `city` = ?, `street` = ?, `number` = ? WHERE `fkUser` = ?',
-            [ name, slug, phone, instagram, image, state, city, street, number, pkUser ]
+        const [ result ] = await conn.execute('UPDATE `userDetails` SET `name` = ?, `slug` = ?, `phone` = ?, `instagram` = ?, `image` = ?, `cep` = ?, `state` = ?, `city` = ?, `street` = ?, `number` = ? WHERE `fkUser` = ?',
+            [ name, slug, phone, instagram, image, cep, state, city, street, number, pkUser ]
         );
         return result;
 
