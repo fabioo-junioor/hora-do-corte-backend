@@ -17,14 +17,14 @@ const getScheduleController = async (req, res) => {
         if(dataResult.length === 0){
             return res.status(200).json({
                 statusCode: 200,
-                message: 'Serviço não existe!',
+                message: 'Horário não definido!',
                 data: dataResult
 
             });
         };
         return res.status(200).json({
             statusCode: 200,
-            message: 'Todos os seviços!',
+            message: 'Todos os horários!',
             data: dataResult
 
         });
