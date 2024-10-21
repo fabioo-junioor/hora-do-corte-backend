@@ -38,8 +38,7 @@ const getReservationController = async (req, res) => {
 };
 const createReservationController = async (req, res) => {
     try{
-        const { pkUser, pkProfessional, services, dateReservation, timeReservation, price, duration } = req.body.dataReservation;
-        const { name, email, phone, observation } = req.body.dataClient;
+        const { pkUser, pkProfessional, services, dateReservation, timeReservation, price, duration, name, email, phone, observation } = req.body;
                 
         const dataResult = await createReservationModel(pkUser, pkProfessional, services, dateReservation, timeReservation, price, duration, dateToday, isReservation, name, email, phone, observation);
         if(dataResult.affectedRows === 0 || !dataResult){

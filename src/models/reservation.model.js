@@ -3,13 +3,13 @@ import connect from '../database/connect.js';
 const getAllReservationModel = async (pkUser, isReservation = 1) => {
     try {
         const conn = await connect();
-        const [ result ] = await conn.query('SELECT * FROM `reservation` WHERE `fkUser` = ? AND `isReservation` = ?',
+        const [ result ] = await conn.query('SELECT *, (SELECT name FROM `professional` AS pro WHERE `pro`.pkProfessional = `res`.fkProfessional) AS nameProfessional FROM `reservation` AS res WHERE `fkUser` = ? AND `isReservation` = ?',
             [ pkUser, isReservation ]
         );
         return result;
         
     }catch(error){
-        return false;
+        return error;
         
     };
 };
