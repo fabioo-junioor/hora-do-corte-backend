@@ -13,6 +13,19 @@ const getAllReservationModel = async (pkUser, isReservation = 1) => {
         
     };
 };
+const getAllReservationByProfessionalModel = async (pkProfessional, dateReservation, isReservation = 1) => {
+    try {
+        const conn = await connect();
+        const [ result ] = await conn.query('SELECT * FROM `reservation` WHERE `fkProfessional` = ? AND `dateReservation` = ? AND `isReservation` = ?',
+            [ pkProfessional, dateReservation, isReservation ]
+        );
+        return result;
+        
+    }catch(error){
+        return error;
+        
+    };
+};
 const createReservationModel = async (pkUser, pkProfessional, services, dateReservation, timeReservation, price, duration, dateTimeRegistration, isReservation, name, email, phone, observation) => {
     try {
         const conn = await connect();
@@ -42,6 +55,7 @@ const deleteReservationModel = async (pkReservation, isReservation) => {
 
 export {
     getAllReservationModel,
+    getAllReservationByProfessionalModel,
     createReservationModel,
     deleteReservationModel
 

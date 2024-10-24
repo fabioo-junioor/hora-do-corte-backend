@@ -1,4 +1,5 @@
-import { getAllReservationModel, createReservationModel, deleteReservationModel } from '../models/reservation.model.js';
+import { getAllReservationModel, getAllReservationByProfessionalModel, 
+        createReservationModel, deleteReservationModel } from '../models/reservation.model.js';
 
 const dateToday = new Date();
 const isReservation = 1;
@@ -18,7 +19,7 @@ const getReservationController = async (req, res) => {
     if(dataResult.length === 0){
         return res.status(200).json({
             statusCode: 200,
-            message: 'Sem reservas!'
+            message: 'Sem agendamentos!'
 
         });
     };
@@ -36,6 +37,40 @@ const getReservationController = async (req, res) => {
     });
    };
 };
+const getReservationByProfessionalController = async (req, res) => {
+    try{
+     const pkProfessional = req.params.pk;
+     const { dateReservation } = req.body;
+
+     const dataResult = await getAllReservationByProfessionalModel(pkProfessional, dateReservation, isReservation)
+     if(!dataResult){
+         return res.status(502).json({
+             statusCode: 502,
+             message: 'Algo deu errado na conexão!'
+ 
+         });
+     };
+     if(dataResult.length === 0){
+         return res.status(200).json({
+             statusCode: 200,
+             message: 'Sem agendamentos!'
+ 
+         });
+     };
+     return res.status(200).json({
+         statusCode: 200,
+         message: 'Todos os agendamento!',
+         data: dataResult
+ 
+     });
+    }catch(error){
+     res.status(500).json({
+         statusCode: 500,
+         message: error.message
+ 
+     });
+    };
+ };
 const createReservationController = async (req, res) => {
     try{
         const { pkUser, pkProfessional, services, dateReservation, timeReservation, price, duration, name, email, phone, observation } = req.body;
@@ -89,6 +124,7 @@ const deleteReservationController = async (req, res) => {
 
 export default {
     getReservationController,
+    getReservationByProfessionalController,
     createReservationController,
     deleteReservationController
 
