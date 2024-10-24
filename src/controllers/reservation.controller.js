@@ -1,5 +1,6 @@
 import { getAllReservationModel, getAllReservationByProfessionalModel, 
         createReservationModel, deleteReservationModel } from '../models/reservation.model.js';
+import { validatorIsReserved } from '../helpers/reservation.helper.js';
 
 const dateToday = new Date();
 const isReservation = 1;
@@ -74,7 +75,23 @@ const getReservationByProfessionalController = async (req, res) => {
 const createReservationController = async (req, res) => {
     try{
         const { pkUser, pkProfessional, services, dateReservation, timeReservation, price, duration, name, email, phone, observation } = req.body;
-                
+        
+        let dataReservations = await getAllReservationByProfessionalModel(pkProfessional, dateReservation, isReservation);
+        if(!dataReservations){
+            return res.status(502).json({
+                statusCode: 502,
+                message: 'Algo de errado no agendamento!'
+
+            });
+        };
+        let validatorReserved = validatorIsReserved(dataReservations, timeReservation, duration);
+        if(validatorReserved){
+            return res.status(200).json({
+                statusCode: 200,
+                message: 'Esse horário já foi agendado!'
+
+            });
+        };
         const dataResult = await createReservationModel(pkUser, pkProfessional, services, dateReservation, timeReservation, price, duration, dateToday, isReservation, name, email, phone, observation);
         if(dataResult.affectedRows === 0 || !dataResult){
             return res.status(502).json({
