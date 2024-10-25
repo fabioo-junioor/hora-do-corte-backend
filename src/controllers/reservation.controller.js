@@ -1,48 +1,101 @@
-import { getAllReservationModel, createReservationModel, deleteReservationModel } from '../models/reservation.model.js';
+import {
+    getAllReservationModel, getAllReservationByProfessionalModel,
+    createReservationModel, deleteReservationModel
+} from '../models/reservation.model.js';
+import { validatorIsReserved } from '../helpers/reservation.helper.js';
 
 const dateToday = new Date();
 const isReservation = 1;
 
 const getReservationController = async (req, res) => {
-   try{
-    const pkUser = req.params.pk;
+    try {
+        const pkUser = req.params.pk;
 
-    const dataResult = await getAllReservationModel(pkUser, isReservation);
-    if(!dataResult){
-        return res.status(502).json({
-            statusCode: 502,
-            message: 'Algo deu errado na conexão!'
+        const dataResult = await getAllReservationModel(pkUser, isReservation);
+        if (!dataResult) {
+            return res.status(502).json({
+                statusCode: 502,
+                message: 'Algo deu errado na conexão!'
 
-        });
-    };
-    if(dataResult.length === 0){
+            });
+        };
+        if (dataResult.length === 0) {
+            return res.status(200).json({
+                statusCode: 200,
+                message: 'Sem agendamentos!'
+
+            });
+        };
         return res.status(200).json({
             statusCode: 200,
-            message: 'Sem reservas!'
+            message: 'Todos os agendamento!',
+            data: dataResult
+
+        });
+    } catch (error) {
+        res.status(500).json({
+            statusCode: 500,
+            message: error.message
 
         });
     };
-    return res.status(200).json({
-        statusCode: 200,
-        message: 'Todos os agendamento!',
-        data: dataResult
+};
+const getReservationByProfessionalController = async (req, res) => {
+    try {
+        const pkProfessional = req.params.pk;
+        const { dateReservation } = req.body;
 
-    });
-   }catch(error){
-    res.status(500).json({
-        statusCode: 500,
-        message: error.message
+        const dataResult = await getAllReservationByProfessionalModel(pkProfessional, dateReservation, isReservation)
+        if (!dataResult) {
+            return res.status(502).json({
+                statusCode: 502,
+                message: 'Algo deu errado na conexão!'
 
-    });
-   };
+            });
+        };
+        if (dataResult.length === 0) {
+            return res.status(200).json({
+                statusCode: 200,
+                message: 'Sem agendamentos!'
+
+            });
+        };
+        return res.status(200).json({
+            statusCode: 200,
+            message: 'Todos os agendamento!',
+            data: dataResult
+
+        });
+    } catch (error) {
+        res.status(500).json({
+            statusCode: 500,
+            message: error.message
+
+        });
+    };
 };
 const createReservationController = async (req, res) => {
-    try{
-        const { pkUser, pkProfessional, services, dateReservation, timeReservation, price, duration } = req.body.dataReservation;
-        const { name, email, phone, observation } = req.body.dataClient;
-                
+    try {
+        const { pkUser, pkProfessional, services, dateReservation, timeReservation, price, duration, name, email, phone, observation } = req.body;
+
+        let dataReservations = await getAllReservationByProfessionalModel(pkProfessional, dateReservation, isReservation);
+        if (!dataReservations) {
+            return res.status(502).json({
+                statusCode: 502,
+                message: 'Algo de errado no agendamento!'
+
+            });
+        };
+        let validatorReserved = validatorIsReserved(dataReservations, timeReservation, duration);
+        if (validatorReserved) {
+            return res.status(200).json({
+                statusCode: 200,
+                message: 'Esse horário já foi agendado!'
+
+            });
+        };
         const dataResult = await createReservationModel(pkUser, pkProfessional, services, dateReservation, timeReservation, price, duration, dateToday, isReservation, name, email, phone, observation);
-        if(dataResult.affectedRows === 0 || !dataResult){
+        if (dataResult.affectedRows === 0 || !dataResult) {
             return res.status(502).json({
                 statusCode: 502,
                 message: 'Algo de errado no agendamento!'
@@ -54,7 +107,7 @@ const createReservationController = async (req, res) => {
             message: 'Agendamento criado!'
 
         });
-    } catch (error){
+    } catch (error) {
         res.status(500).json({
             statusCode: 500,
             message: error.message
@@ -63,11 +116,11 @@ const createReservationController = async (req, res) => {
     };
 };
 const deleteReservationController = async (req, res) => {
-    try{
+    try {
         const pkReservation = req.params.pk;
-        
+
         const dataResult = await deleteReservationModel(pkReservation, !isReservation);
-        if(dataResult.affectedRows === 0 || !dataResult){
+        if (dataResult.affectedRows === 0 || !dataResult) {
             return res.status(502).json({
                 statusCode: 502,
                 message: 'Algo deu errado ao excluir o agendamento!'
@@ -79,7 +132,7 @@ const deleteReservationController = async (req, res) => {
             message: 'Agendamento excluido!'
 
         });
-    } catch (error){
+    } catch (error) {
         res.status(500).json({
             statusCode: 500,
             message: error.message
@@ -90,6 +143,7 @@ const deleteReservationController = async (req, res) => {
 
 export default {
     getReservationController,
+    getReservationByProfessionalController,
     createReservationController,
     deleteReservationController
 
