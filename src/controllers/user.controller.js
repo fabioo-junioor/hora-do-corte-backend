@@ -26,7 +26,7 @@ const loginUserController = async (req, res) => {
 
             });
         };
-        res.status(200).json({
+        return res.status(200).json({
             statusCode: 200,
             message: 'Login autorizado!',
             data: { pkUser: dataResult[0].pkUser, email: dataResult[0].email, token: 'test-as54a65s' }
@@ -77,7 +77,7 @@ const createUserController = async(req, res) => {
         if(dataResult.affectedRows !== 0){
             return res.status(201).json({
                 statusCode: 201,
-                message: 'Usuário criado!'
+                message: 'Usuário criado. Agora Efetue o login!'
     
             });
         }
