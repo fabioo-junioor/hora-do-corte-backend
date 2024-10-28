@@ -13,11 +13,11 @@ const getAllProfessionalModel = async (pkuser, isActive = 1) => {
         
     };
 };
-const createProfessionalModel = async (name, image, instagram, isActive, dateTimeRegistration, pkUser) => {
+const createProfessionalModel = async (name, image, instagram, isUnavailable, isActive, dateTimeRegistration, pkUser) => {
     try {
         const conn = await connect();
-        const [ result ] = await conn.execute('INSERT INTO `professional` (`name`, `image`, `instagram`, `isActive`, `dateTimeRegistration`, `fkUser`) VALUES (?, ?, ?, ?, ?, ?)',
-            [ name, image, instagram, isActive, dateTimeRegistration, pkUser ]
+        const [ result ] = await conn.execute('INSERT INTO `professional` (`name`, `image`, `instagram`, `isUnavailable`, `isActive`, `dateTimeRegistration`, `fkUser`) VALUES (?, ?, ?, ?, ?, ?)',
+            [ name, image, instagram, isUnavailable, isActive, dateTimeRegistration, pkUser ]
         );
         return result;
 
@@ -26,11 +26,11 @@ const createProfessionalModel = async (name, image, instagram, isActive, dateTim
 
     };
 };
-const updateProfessionalModel = async (pkProfessional, name, image, instagram) => {
+const updateProfessionalModel = async (pkProfessional, name, image, instagram, isUnavailable) => {
     try {
         const conn = await connect();
-        const [ result ] = await conn.execute('UPDATE `professional` SET `name` = ?, `image` = ?, `instagram` = ? WHERE `pkProfessional` = ?',
-            [ name, image, instagram, pkProfessional ]
+        const [ result ] = await conn.execute('UPDATE `professional` SET `name` = ?, `image` = ?, `instagram` = ?, `isUnavailable` = ? WHERE `pkProfessional` = ?',
+            [ name, image, instagram, isUnavailable, pkProfessional ]
         );
         return result;
 
