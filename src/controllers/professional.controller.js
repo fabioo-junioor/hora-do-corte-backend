@@ -39,9 +39,9 @@ const getAllProfessionalController = async (req, res) => {
 };
 const createProfessionalController = async (req, res) => {
     try{
-        const { name, image, instagram, pkUser } = req.body;
+        const { name, image, instagram, isUnavailable, pkUser } = req.body;
         
-        const dataResult = await createProfessionalModel(name, image, instagram, isActive, dateToday, pkUser);
+        const dataResult = await createProfessionalModel(name, image, instagram, isUnavailable, isActive, dateToday, pkUser);
         if(!dataResult){
             return res.status(502).json({
                 statusCode: 502,
@@ -72,9 +72,9 @@ const createProfessionalController = async (req, res) => {
 const updateProfessionalController = async (req, res) => {
     try{
         const pkProfessional = req.params.pk;
-        const { name, image, instagram } = req.body;
+        const { name, image, instagram, isUnavailable } = req.body;
         
-        const dataResult = await updateProfessionalModel(pkProfessional, name, image, instagram);
+        const dataResult = await updateProfessionalModel(pkProfessional, name, image, instagram, isUnavailable);
         if(!dataResult){
             return res.status(502).json({
                 statusCode: 502,
