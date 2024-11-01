@@ -3,7 +3,7 @@ import connect from '../database/connect.js';
 const getUserDetailsBySlugModel = async (slug) => {
     try {
         const conn = await connect();
-        const [ result ] = await conn.query('SELECT * FROM `userDetails` WHERE `slug` = ?',
+        const [ result ] = await conn.query('SELECT * FROM `userdetails` WHERE `slug` = ?',
             [ slug ]
         );
         return result;
@@ -16,7 +16,7 @@ const getUserDetailsBySlugModel = async (slug) => {
 const getUserDetailsByFkModel = async (fkUser) => {
     try {
         const conn = await connect();
-        const [ result ] = await conn.query('SELECT * FROM `userDetails` WHERE `fkUser` = ?',
+        const [ result ] = await conn.query('SELECT * FROM `userdetails` WHERE `fkUser` = ?',
             [ fkUser ]
         );
         return result;
@@ -29,7 +29,7 @@ const getUserDetailsByFkModel = async (fkUser) => {
 const createUserDetailsModel = async (name, slug, phone, instagram, image, cep, state, city, street, number, dateTimeRegistration, pkUser) =>{
     try {
         const conn = await connect();
-        const [ result ] = await conn.execute('INSERT INTO `userDetails` (`name`, `slug`, `phone`, `instagram`, `image`, `cep`, `state`, `city`, `street`, `number`, `dateTimeRegistration`, `fkUser`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+        const [ result ] = await conn.execute('INSERT INTO `userdetails` (`name`, `slug`, `phone`, `instagram`, `image`, `cep`, `state`, `city`, `street`, `number`, `dateTimeRegistration`, `fkUser`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
             [ name, slug, phone, instagram, image, cep, state, city, street, number, dateTimeRegistration, pkUser ]
         );
         return result;
@@ -42,7 +42,7 @@ const createUserDetailsModel = async (name, slug, phone, instagram, image, cep, 
 const updateUserDetailsModel = async (name, slug, phone, instagram, image, cep, state, city, street, number, pkUser) =>{
     try {
         const conn = await connect();
-        const [ result ] = await conn.execute('UPDATE `userDetails` SET `name` = ?, `slug` = ?, `phone` = ?, `instagram` = ?, `image` = ?, `cep` = ?, `state` = ?, `city` = ?, `street` = ?, `number` = ? WHERE `fkUser` = ?',
+        const [ result ] = await conn.execute('UPDATE `userdetails` SET `name` = ?, `slug` = ?, `phone` = ?, `instagram` = ?, `image` = ?, `cep` = ?, `state` = ?, `city` = ?, `street` = ?, `number` = ? WHERE `fkUser` = ?',
             [ name, slug, phone, instagram, image, cep, state, city, street, number, pkUser ]
         );
         return result;
