@@ -40,7 +40,7 @@ const getUserDetailsByPkController = async (req, res) => {
 const getUserDetailsController = async (req, res) => {
     try {
         const slug = req.params.slug;
-       
+        
         const dataUserDetails = await getUserDetailsBySlugModel(slug);
         if(!dataUserDetails){
             return res.status(502).json({

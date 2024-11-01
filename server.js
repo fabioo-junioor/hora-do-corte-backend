@@ -1,5 +1,6 @@
 import app from './src/app.js';
 const PORT = process.env.SERVER_PORT;
+const DBHOST = process.env.DBHOST
 
 app.listen(PORT, (error) => {
     if(error){
@@ -7,6 +8,6 @@ app.listen(PORT, (error) => {
         return;
 
     };
-    console.log('Servidor rodando na porta ' + PORT + '!');
+    console.log('Servidor rodando [' + DBHOST + ':' + PORT + ']');
 
 });
