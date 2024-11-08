@@ -172,33 +172,7 @@ const updateUserDetailsController = async (req, res) => {
         });
     };
 };
-/*
-const uploadImage = (req, res) => {
-    const storage = multer.diskStorage({
-        destination: (req, file, cb) => {
-            cb(null, '../assets/user');
 
-        },
-        filename: (req, file, cb) => {
-            const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9) + '.jpg';
-            cb(null, uniqueSuffix);
-
-        }
-    });
-    const upload = multer({ storage }).single('file');
-    upload(req, res, (err) => {
-        if(err instanceof multer.MulterError){
-            return false;
-
-        };
-        if(err){
-            return false;
-
-        };
-        
-        return;
-    })
-};*/
 export default {
     getUserDetailsController,
     getUserDetailsByPkController,
