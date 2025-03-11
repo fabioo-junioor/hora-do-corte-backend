@@ -5,6 +5,6 @@ import purchasePlanController from '../controllers/purchasePlan.controller.js';
 
 // Routes Purchase plan
 routerPurchasePlan.get('/:pk/getLastPurchasePlan', purchasePlanController.getLastPurchasePlanController);
-routerPurchasePlan.post('/createPurchasePlan', purchasePlanController.createPurchasePlanController);
+routerPurchasePlan.post('/:pk/createPurchasePlan', purchasePlanController.createPurchasePlanController);
 
 export default routerPurchasePlan;
