@@ -9,5 +9,6 @@ routerUser.post('/login', userController.loginUserController);
 routerUser.post('/create', userController.createUserController);
 routerUser.put('/:pk/update', verifyToken, userController.updateUserController);
 routerUser.delete('/:pk/delete', verifyToken, userController.deleteUserController);
+routerUser.post('/recoverPassUser', userController.recoverPassUser);
 
 export default routerUser;

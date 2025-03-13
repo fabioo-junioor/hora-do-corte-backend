@@ -10,7 +10,7 @@ const isReservation = 1;
 const getReservationController = async (req, res) => {
     try {
         const pkUser = req.params.pk;
-
+        
         const dataResult = await getAllReservationModel(pkUser, isReservation);
         if (!dataResult) {
             return res.status(502).json({
