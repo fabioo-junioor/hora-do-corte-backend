@@ -2,6 +2,7 @@ import { loginUserModel, getUserByIdModel,
         getUserByEmailModel, createUserModel, 
         updateUserModel, deleteUserModel } from '../models/user.model.js';
 import { getAllProfessionalModel } from '../models/professional.model.js';
+import { createToken } from '../core/auth/auth.jwt.js';
 
 const dateToday = new Date();
 const isActive = 1;
@@ -26,10 +27,11 @@ const loginUserController = async (req, res) => {
 
             });
         };
+        const token = createToken(email);
         return res.status(200).json({
             statusCode: 200,
             message: 'Login autorizado!',
-            data: { pkUser: dataResult[0].pkUser, email: dataResult[0].email, token: 'test-as54a65s' }
+            data: { pkUser: dataResult[0].pkUser, email: dataResult[0].email, token: token }
 
         });
     } catch (error){
