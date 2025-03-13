@@ -1,10 +1,10 @@
 import connect from '../database/connect.js';
 
-const loginUserModel = async (email, password) => {
+const loginUserModel = async (email) => {
     try {
         const conn = await connect();
-        const [ result ] = await conn.query('SELECT * FROM `user` WHERE `email` = ? AND `password` = ?',
-            [ email, password ]
+        const [ result ] = await conn.query('SELECT * FROM `user` WHERE `email` = ?',
+            [ email ]
         );
         return result;
         
