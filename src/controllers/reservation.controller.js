@@ -110,7 +110,13 @@ const createReservationController = async (req, res) => {
         };
 
         let dataUser = await getUserByIdModel(pkUser);
-        let responseEmail = await sendEmail(dataUser[0].email, 'Reserva realizada', `Dia: ${dateReservation}`);
+        let responseEmail = await sendEmail(
+            dataUser[0].email,
+            'Reserva realizada',
+            `Cliente: ${name} / 
+            Data: ${dateReservation} - ${timeReservation} /
+            Serviços: ${services} /
+            Contato: ${phone}`);
         return res.status(201).json({
             statusCode: 201,
             message: 'Agendamento criado!',

@@ -1,6 +1,8 @@
 import { getPlanByPkModel } from '../models/plan.model.js';
 import { createPurchasePlanModel, getLastPurchasePlanByPkModel } from '../models/purchasePlan.model.js';
+import { getUserByIdModel } from '../models/user.model.js';
 import { buyPlan, checkLastPurchaseValidity } from '../helpers/purchaseCalculations.helper.js';
+import { sendEmail } from '../core/communication/config.email.js';
 import { getTimeZone } from '../helpers/global.helper.js';
 
 const dateToday = getTimeZone();
@@ -44,15 +46,17 @@ const createPurchasePlanController = async (req, res) => {
         const pkUser = req.params.pk;
         const { pkPlan, purchaseDate, purchaseTime } = req.body;
         
-        const dataPlans = await getPlanByPkModel(pkPlan);
-        if(dataPlans[0].name === 'Free'){
-            const { name, price, time } = dataPlans[0];
-            const purchaseValidity = buyPlan(purchaseDate, time);
-            const dataPlansLastBuy = await getLastPurchasePlanByPkModel(pkUser);
+        const dataPlan = await getPlanByPkModel(pkPlan);
+        const dataUser = await getUserByIdModel(pkUser);
+        const { name, price, time } = dataPlan[0];
+        const purchaseValidity = buyPlan(purchaseDate, time);
+        const dataPlansLastBuy = await getLastPurchasePlanByPkModel(pkUser);
+        
+        if(name === 'Free'){
             if(dataPlansLastBuy.length !== 0){
                 return res.status(200).json({
                     statusCode: 200,
-                    message: `O plano ${dataPlans[0].name} já foi utilizado!`,
+                    message: `O plano ${name} já foi utilizado!`,
                     data: []
                     
                 });
@@ -67,6 +71,13 @@ const createPurchasePlanController = async (req, res) => {
             };
 
             /* Enviar email com dados da compra */
+            let responseEmail = await sendEmail(
+                dataUser[0].email,
+                'Plano adiquirido',
+                `Nome: ${name} / 
+                Preço: ${price} /
+                Duração: ${time} /
+                Data da compra: ${purchaseDate} - ${purchaseTime}`);
             
             return res.status(201).json({
                 statusCode: 201,
@@ -75,11 +86,17 @@ const createPurchasePlanController = async (req, res) => {
     
             });
         };
-        const { name, price, time } = dataPlans[0];
-        const purchaseValidity = buyPlan(purchaseDate, time);
 
         /* Adicionar integração mercado pago */
+        
         /* Enviar email com dados da compra */
+        let responseEmail = await sendEmail(
+            dataUser[0].email,
+            'Plano adiquirido',
+            `Nome: ${name} / 
+            Preço: ${price} /
+            Duração: ${time} /
+            Data da compra: ${purchaseDate} - ${purchaseTime}`);
 
         let dataResult = await createPurchasePlanModel(pkUser, purchaseDate, purchaseTime, purchaseValidity, price, time, dateToday);
         if(dataResult.affectedRows === 0){
