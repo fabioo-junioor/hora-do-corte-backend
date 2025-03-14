@@ -2,12 +2,13 @@ import { loginUserModel, getUserByIdModel,
         getUserByEmailModel, createUserModel, 
         updateUserModel, deleteUserModel } from '../models/user.model.js';
 import { getAllProfessionalModel } from '../models/professional.model.js';
+import { getTimeZone } from '../helpers/global.helper.js';
 import { createToken } from '../core/auth/auth.jwt.js';
 import { encryptPass, comparePass } from '../core/security/bcryptjs.js';
 import { generatorPass } from '../core/security/passwordGenerator.js';
 import { sendEmail } from '../core/communication/config.email.js';
 
-const dateToday = new Date();
+const dateToday = getTimeZone();
 const isActive = 1;
 
 const loginUserController = async (req, res) => {

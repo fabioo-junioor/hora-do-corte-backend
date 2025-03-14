@@ -21,12 +21,12 @@ const getAllPlansController = async (req, res) => {
         };
         return res.status(200).json({
             statusCode: 200,
-            message: 'Todos planos!',
+            message: 'Todos os planos!',
             data: dataResult
 
         });
     } catch (error){
-        res.status(500).json({
+        return res.status(500).json({
             statusCode: 500,
             message: error.message
 

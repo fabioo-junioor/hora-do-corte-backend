@@ -1,7 +1,8 @@
 import { getUserDetailsBySlugModel, getUserDetailsByFkModel,
     createUserDetailsModel, updateUserDetailsModel } from '../models/userDetails.model.js';
+import { getTimeZone } from '../helpers/global.helper.js';
 
-const dateToday = new Date();
+const dateToday = getTimeZone();
 
 const getUserDetailsByPkController = async (req, res) => {
     try {
@@ -19,7 +20,7 @@ const getUserDetailsByPkController = async (req, res) => {
             return res.status(200).json({
                 statusCode: 200,
                 message: 'O usuário não completou o cadastro!',
-                data: dataUserDetails
+                data: []
                 
             });
         };        
@@ -30,7 +31,7 @@ const getUserDetailsByPkController = async (req, res) => {
 
         });
     }catch(error){
-        res.status(500).json({
+        return res.status(500).json({
             statusCode: 500,
             message: 'Error ao criar o registro!'
 
@@ -53,7 +54,7 @@ const getUserDetailsController = async (req, res) => {
             return res.status(200).json({
                 statusCode: 200,
                 message: 'O usuário não existe!',
-                data: dataUserDetails
+                data: []
                 
             });
         };        
@@ -64,7 +65,7 @@ const getUserDetailsController = async (req, res) => {
 
         });
     }catch(error){
-        res.status(500).json({
+        return res.status(500).json({
             statusCode: 500,
             message: 'Error ao criar o registro!'
 
@@ -86,7 +87,8 @@ const createUserDetailsController = async (req, res) => {
         if(dataUserDetails.length !== 0){
             return res.status(200).json({
                 statusCode: 200,
-                message: 'Dados de usuário já existe!'
+                message: 'Dados de usuário já existe!',
+                data: []
                 
             });
         };
@@ -102,7 +104,8 @@ const createUserDetailsController = async (req, res) => {
         if(dataUserDetailsSlug.length !== 0){
             return res.status(200).json({
                 statusCode: 200,
-                message: 'O nome de usuário já existe!'
+                message: 'O nome de usuário já existe!',
+                data: []
                 
             });
         };        
@@ -117,12 +120,13 @@ const createUserDetailsController = async (req, res) => {
         if(dataResult.affectedRows !== 0){
             return res.status(201).json({
                 statusCode: 201,
-                message: 'Dados salvos!'
+                message: 'Dados salvos!',
+                data: []
 
             });
         };
     }catch(error){
-        res.status(500).json({
+        return res.status(500).json({
             statusCode: 500,
             message: 'Error ao criar o registro!'
 
@@ -145,7 +149,8 @@ const updateUserDetailsController = async (req, res) => {
         if((dataUserDetails.length !== 0) && (dataUserDetails[0]?.fkUser != pkUser)){
             return res.status(200).json({
                 statusCode: 200,
-                message: 'O nome de usuário já existe!'
+                message: 'O nome de usuário já existe!',
+                data: []
                 
             });
         };
@@ -160,12 +165,13 @@ const updateUserDetailsController = async (req, res) => {
         if(dataResult.affectedRows !== 0){
             return res.status(201).json({
                 statusCode: 201,
-                message: 'Dados salvos!'
+                message: 'Dados salvos!',
+                data: []
     
             });
         };
     }catch(error){
-        res.status(500).json({
+        return res.status(500).json({
             statusCode: 500,
             message: 'Error ao criar o registro!'
 

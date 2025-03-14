@@ -4,9 +4,10 @@ import {
 } from '../models/reservation.model.js';
 import { getUserByIdModel } from '../models/user.model.js';
 import { validatorIsReserved } from '../helpers/reservation.helper.js';
+import { getTimeZone } from '../helpers/global.helper.js';
 import { sendEmail } from '../core/communication/config.email.js';
 
-const dateToday = new Date();
+const dateToday = getTimeZone();
 const isReservation = 1;
 
 const getReservationController = async (req, res) => {

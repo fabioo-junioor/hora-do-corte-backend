@@ -1,6 +1,7 @@
 import { getScheduleModel, createScheduleModel, updateScheduleModel } from '../models/schedules.model.js';
+import { getTimeZone } from '../helpers/global.helper.js';
 
-const dateToday = new Date();
+const dateToday = getTimeZone();
 
 const getScheduleController = async (req, res) => {
     try{
@@ -18,7 +19,7 @@ const getScheduleController = async (req, res) => {
             return res.status(200).json({
                 statusCode: 200,
                 message: 'Horário não definido!',
-                data: dataResult
+                data: []
 
             });
         };
@@ -29,7 +30,7 @@ const getScheduleController = async (req, res) => {
 
         });
     } catch (error){
-        res.status(500).json({
+        return res.status(500).json({
             statusCode: 500,
             message: error.message
 
@@ -51,7 +52,8 @@ const createScheduleController = async (req, res) => {
         if(dataSchedule.length !== 0){
             return res.status(200).json({
                 statusCode: 200,
-                message: 'Horários já existe!'
+                message: 'Horários já existe!',
+                data: []
                 
             });
         };
@@ -72,11 +74,12 @@ const createScheduleController = async (req, res) => {
         };        
         return res.status(201).json({
             statusCode: 201,
-            message: 'Horário criado!'
+            message: 'Horário criado!',
+            data: []
 
         });
     } catch (error){
-        res.status(500).json({
+        return res.status(500).json({
             statusCode: 500,
             message: error.message
 
@@ -105,11 +108,12 @@ const updateScheduleController = async (req, res) => {
         };
         return res.status(201).json({
             statusCode: 201,
-            message: 'Dados salvos!'
+            message: 'Dados salvos!',
+            data: []
 
         });
     }catch(error){
-        res.status(500).json({
+        return res.status(500).json({
             statusCode: 500,
             message: 'Error ao criar o registro!'
 

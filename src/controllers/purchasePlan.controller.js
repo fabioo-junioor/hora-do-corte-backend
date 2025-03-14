@@ -1,8 +1,9 @@
 import { getPlanByPkModel } from '../models/plan.model.js';
 import { createPurchasePlanModel, getLastPurchasePlanByPkModel } from '../models/purchasePlan.model.js';
 import { buyPlan, checkLastPurchaseValidity } from '../helpers/purchaseCalculations.helper.js';
+import { getTimeZone } from '../helpers/global.helper.js';
 
-const dateToday = new Date();
+const dateToday = getTimeZone();
 
 const getLastPurchasePlanController = async (req, res) => {
     try{
@@ -95,7 +96,7 @@ const createPurchasePlanController = async (req, res) => {
             
         });
     } catch (error){
-        res.status(500).json({
+        return res.status(500).json({
             statusCode: 500,
             message: error.message
 
