@@ -5,6 +5,7 @@ import { getAllProfessionalModel } from '../models/professional.model.js';
 import { createToken } from '../core/auth/auth.jwt.js';
 import { encryptPass, comparePass } from '../core/security/bcryptjs.js';
 import { generatorPass } from '../core/security/passwordGenerator.js';
+import { sendEmail } from '../core/communication/config.email.js';
 
 const dateToday = new Date();
 const isActive = 1;
@@ -252,7 +253,7 @@ const recoverPassUser = async (req, res) => {
         };
 
         /* Enviar email com nova senha */
-
+        let responseEmail = await sendEmail(email, 'Recuperação de senha', `Nova senha: ${newPassword}`);
         return res.status(201).json({
             statusCode: 201,
             message: `Nova senha enviada para o email: ${email}!`,

@@ -2,7 +2,9 @@ import {
     getAllReservationModel, getAllReservationByProfessionalModel,
     createReservationModel, deleteReservationModel
 } from '../models/reservation.model.js';
+import { getUserByIdModel } from '../models/user.model.js';
 import { validatorIsReserved } from '../helpers/reservation.helper.js';
+import { sendEmail } from '../core/communication/config.email.js';
 
 const dateToday = new Date();
 const isReservation = 1;
@@ -57,7 +59,8 @@ const getReservationByProfessionalController = async (req, res) => {
         if (dataResult.length === 0) {
             return res.status(200).json({
                 statusCode: 200,
-                message: 'Sem agendamentos!'
+                message: 'Sem agendamentos!',
+                data: []
 
             });
         };
@@ -91,7 +94,8 @@ const createReservationController = async (req, res) => {
         if (validatorReserved) {
             return res.status(200).json({
                 statusCode: 200,
-                message: 'Esse horário já foi agendado!'
+                message: 'Esse horário já foi agendado!',
+                data: []
 
             });
         };
@@ -103,9 +107,13 @@ const createReservationController = async (req, res) => {
 
             });
         };
+
+        let dataUser = await getUserByIdModel(pkUser);
+        let responseEmail = await sendEmail(dataUser[0].email, 'Reserva realizada', `Dia: ${dateReservation}`);
         return res.status(201).json({
             statusCode: 201,
-            message: 'Agendamento criado!'
+            message: 'Agendamento criado!',
+            data: []
 
         });
     } catch (error) {
@@ -130,7 +138,8 @@ const deleteReservationController = async (req, res) => {
         };
         return res.status(200).json({
             statusCode: 200,
-            message: 'Agendamento excluido!'
+            message: 'Agendamento excluido!',
+            data: []
 
         });
     } catch (error) {

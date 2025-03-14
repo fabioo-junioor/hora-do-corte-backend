@@ -20,18 +20,18 @@ const getLastPurchasePlanController = async (req, res) => {
             return res.status(200).json({
                 statusCode: 200,
                 message: 'Nenhum plano comprado!',
-                data: dataResult
+                data: []
 
             });
         };
         return res.status(200).json({
             statusCode: 200,
-            message: 'Ultimo plano comprado!',
+            message: 'Último plano comprado!',
             data: dataResult
 
         });
     } catch (error){
-        res.status(500).json({
+        return res.status(500).json({
             statusCode: 500,
             message: error.message
 
@@ -51,7 +51,8 @@ const createPurchasePlanController = async (req, res) => {
             if(dataPlansLastBuy.length !== 0){
                 return res.status(200).json({
                     statusCode: 200,
-                    message: `O plano ${dataPlans[0].name} já foi utilizado!`
+                    message: `O plano ${dataPlans[0].name} já foi utilizado!`,
+                    data: []
                     
                 });
             };
@@ -63,6 +64,9 @@ const createPurchasePlanController = async (req, res) => {
     
                 });
             };
+
+            /* Enviar email com dados da compra */
+            
             return res.status(201).json({
                 statusCode: 201,
                 message: `Compra realizada, plano [${name}]!`,
@@ -74,6 +78,7 @@ const createPurchasePlanController = async (req, res) => {
         const purchaseValidity = buyPlan(purchaseDate, time);
 
         /* Adicionar integração mercado pago */
+        /* Enviar email com dados da compra */
 
         let dataResult = await createPurchasePlanModel(pkUser, purchaseDate, purchaseTime, purchaseValidity, price, time, dateToday);
         if(dataResult.affectedRows === 0){
@@ -87,7 +92,7 @@ const createPurchasePlanController = async (req, res) => {
             statusCode: 201,
             message: `Compra realizada, plano [${name}]!`,
             data: { "validade": purchaseValidity }
-
+            
         });
     } catch (error){
         res.status(500).json({
