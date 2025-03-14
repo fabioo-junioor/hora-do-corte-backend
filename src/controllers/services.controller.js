@@ -1,6 +1,7 @@
 import { getServiceModel, createServiceModel, updateServiceModel } from '../models/services.model.js';
+import { getTimeZone } from '../helpers/global.helper.js';
 
-const dateToday = new Date();
+const dateToday = getTimeZone();
 
 const getServiceController = async (req, res) => {
     try{
@@ -18,7 +19,7 @@ const getServiceController = async (req, res) => {
             return res.status(200).json({
                 statusCode: 200,
                 message: 'Serviço não definido!',
-                data: dataResult
+                data: []
 
             });
         };
@@ -29,7 +30,7 @@ const getServiceController = async (req, res) => {
 
         });
     } catch (error){
-        res.status(500).json({
+        return res.status(500).json({
             statusCode: 500,
             message: error.message
 
@@ -52,7 +53,7 @@ const createServiceController = async (req, res) => {
             return res.status(200).json({
                 statusCode: 200,
                 message: 'Serviço ja existe!',
-                data: dataService
+                data: []
                 
             });
         };
@@ -73,11 +74,12 @@ const createServiceController = async (req, res) => {
         };
         return res.status(201).json({
             statusCode: 201,
-            message: 'Seviço criado!'
+            message: 'Seviço criado!',
+            data: []
 
         });
     } catch (error){
-        res.status(500).json({
+        return res.status(500).json({
             statusCode: 500,
             message: error.message
 
@@ -106,11 +108,12 @@ const updateServiceController = async (req, res) => {
         };
         return res.status(201).json({
             statusCode: 201,
-            message: 'Dados salvos!'
+            message: 'Dados salvos!',
+            data: []
 
         });
     }catch(error){
-        res.status(500).json({
+        return res.status(500).json({
             statusCode: 500,
             message: 'Error ao criar o registro!'
 

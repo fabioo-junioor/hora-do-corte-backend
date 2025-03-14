@@ -1,6 +1,7 @@
 import { getAllProfessionalModel, createProfessionalModel, updateProfessionalModel, deleteProfessionalModel } from '../models/professional.model.js';
+import { getTimeZone } from '../helpers/global.helper.js';
 
-const dateToday = new Date();
+const dateToday = getTimeZone();
 const isActive = 1;
 
 const getAllProfessionalController = async (req, res) => {
@@ -19,18 +20,18 @@ const getAllProfessionalController = async (req, res) => {
             return res.status(200).json({
                 statusCode: 200,
                 message: 'Sem profissionais!',
-                data: dataResult
+                data: []
 
             });
         };
         return res.status(200).json({
             statusCode: 200,
-            message: 'Todos profissionais!',
+            message: 'Todos os profissionais!',
             data: dataResult
 
         });
     } catch (error){
-        res.status(500).json({
+        return res.status(500).json({
             statusCode: 500,
             message: error.message
 
@@ -58,11 +59,12 @@ const createProfessionalController = async (req, res) => {
         };
         return res.status(201).json({
             statusCode: 201,
-            message: 'Profissional criado!'
+            message: 'Profissional criado!',
+            data: []
 
         });
     } catch (error){
-        res.status(500).json({
+        return res.status(500).json({
             statusCode: 500,
             message: error.message
 
@@ -91,11 +93,12 @@ const updateProfessionalController = async (req, res) => {
         };
         return res.status(201).json({
             statusCode: 201,
-            message: 'Dados atualizados!'
+            message: 'Dados atualizados!',
+            data: []
 
         });
     } catch (error){
-        res.status(500).json({
+        return res.status(500).json({
             statusCode: 500,
             message: error.message
 
@@ -123,11 +126,12 @@ const deleteProfessionalController = async (req, res) => {
         };
         return res.status(200).json({
             statusCode: 200,
-            message: 'Profissional excluido!'
+            message: 'Profissional excluido!',
+            data: []
 
         });
     } catch (error){
-        res.status(500).json({
+        return res.status(500).json({
             statusCode: 500,
             message: error.message
 
