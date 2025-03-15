@@ -112,7 +112,7 @@ const updateUserController = async (req, res) => {
     try {
         const pkUser = req.params.pk;
         const { password, newPassword, confirmPassword } = req.body;
-        
+    
         const dataUser = await getUserByIdModel(pkUser);
         if(!dataUser){
             return res.status(502).json({
