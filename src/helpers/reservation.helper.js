@@ -28,8 +28,19 @@ const sumTime = (time, minutesToAdd) => {
     return `${String(totalHours).padStart(2, '0')}:${String(totalMinutes).padStart(2, '0')}`;
 
 };
+const verifyService = (array) => {
+    let detailsService = '';
+    for(let elem in array){
+        detailsService += `Serviço:${array[elem].name} Valor:${array[elem].price} Tempo:${array[elem].time}
+`;
+    
+    };
+    return detailsService;
+
+};
 
 export {
-    validatorIsReserved
+    validatorIsReserved,
+    verifyService
 
 };

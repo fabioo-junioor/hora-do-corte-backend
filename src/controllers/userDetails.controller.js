@@ -137,7 +137,7 @@ const updateUserDetailsController = async (req, res) => {
     try {
         const pkUser = req.params.pk;
         const { name, slug, phone, instagram, image, cep, state, city, street, number } = req.body;
-        
+
         const dataUserDetails = await getUserDetailsBySlugModel(slug);
         if(!dataUserDetails){
             return res.status(502).json({

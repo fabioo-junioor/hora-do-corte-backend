@@ -40,7 +40,7 @@ const getServiceController = async (req, res) => {
 const createServiceController = async (req, res) => {
     try{
         const { pkProfessional, services } = req.body;
-        
+    
         const dataService = await getServiceModel(pkProfessional);
         if(!dataService){
             return res.status(502).json({

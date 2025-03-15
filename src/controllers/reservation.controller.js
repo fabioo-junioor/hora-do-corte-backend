@@ -1,9 +1,9 @@
-import {
-    getAllReservationModel, getAllReservationByProfessionalModel,
+import { getAllReservationModel, getAllReservationByProfessionalModel,
+    getReservationByPkReservationModel,
     createReservationModel, deleteReservationModel
 } from '../models/reservation.model.js';
 import { getUserByIdModel } from '../models/user.model.js';
-import { validatorIsReserved } from '../helpers/reservation.helper.js';
+import { validatorIsReserved, verifyService } from '../helpers/reservation.helper.js';
 import { getTimeZone } from '../helpers/global.helper.js';
 import { sendEmail } from '../core/communication/config.email.js';
 
@@ -82,7 +82,7 @@ const getReservationByProfessionalController = async (req, res) => {
 const createReservationController = async (req, res) => {
     try {
         const { pkUser, pkProfessional, services, dateReservation, timeReservation, price, duration, name, email, phone, observation } = req.body;
-
+        
         let dataReservations = await getAllReservationByProfessionalModel(pkProfessional, dateReservation, isReservation);
         if (!dataReservations) {
             return res.status(502).json({
@@ -100,6 +100,7 @@ const createReservationController = async (req, res) => {
 
             });
         };
+        
         const dataResult = await createReservationModel(pkUser, pkProfessional, services, dateReservation, timeReservation, price, duration, dateToday, isReservation, name, email, phone, observation);
         if (dataResult.affectedRows === 0 || !dataResult) {
             return res.status(502).json({
@@ -110,13 +111,15 @@ const createReservationController = async (req, res) => {
         };
 
         let dataUser = await getUserByIdModel(pkUser);
-        let responseEmail = await sendEmail(
-            dataUser[0].email,
-            'Reserva realizada',
+        let responseEmailEstablishment = await sendEmail(
+            dataUser[0].email, 'Reserva realizada',
             `Cliente: ${name} / 
             Data: ${dateReservation} - ${timeReservation} /
-            Serviços: ${services} /
-            Contato: ${phone}`);
+            Serviços: ${verifyService(services)} /
+            Telefone: ${phone}`);
+            
+        //let responseEmailClient
+        
         return res.status(201).json({
             statusCode: 201,
             message: 'Agendamento criado!',
@@ -134,7 +137,7 @@ const createReservationController = async (req, res) => {
 const deleteReservationController = async (req, res) => {
     try {
         const pkReservation = req.params.pk;
-
+        
         const dataResult = await deleteReservationModel(pkReservation, !isReservation);
         if (dataResult.affectedRows === 0 || !dataResult) {
             return res.status(502).json({
@@ -143,6 +146,17 @@ const deleteReservationController = async (req, res) => {
 
             });
         };
+        let dataReservation = await getReservationByPkReservationModel(pkReservation);
+        let dataUser = await getUserByIdModel(dataReservation[0].fkUser);
+                
+        let responseEmailClient = await sendEmail(
+            dataReservation[0].emailCustomer, 'Reserva cancelada',
+            `Cliente: ${dataReservation[0].nameCustomer} / 
+            Data: ${dataReservation[0].dateReservation} - ${dataReservation[0].timeReservation} /
+            Contato Estabelecimento: ${dataUser[0].email}`);
+            
+        //let responseEmailEstablishment
+        
         return res.status(200).json({
             statusCode: 200,
             message: 'Agendamento excluido!',
@@ -150,7 +164,7 @@ const deleteReservationController = async (req, res) => {
 
         });
     } catch (error) {
-        res.status(500).json({
+        return res.status(500).json({
             statusCode: 500,
             message: error.message
 
