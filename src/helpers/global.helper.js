@@ -1,6 +1,5 @@
 const getTimeZone = () => {
     const now = new Date();
-    const options = { timeZone: 'America/Sao_Paulo', hour12: false };
     const formatter = new Intl.DateTimeFormat('pt-BR', {
         timeZone: 'America/Sao_Paulo',
         year: 'numeric',
