@@ -37,7 +37,7 @@ const getReservationController = async (req, res) => {
 
         });
     } catch (error) {
-        res.status(500).json({
+        return res.status(500).json({
             statusCode: 500,
             message: error.message
 
@@ -72,7 +72,7 @@ const getReservationByProfessionalController = async (req, res) => {
 
         });
     } catch (error) {
-        res.status(500).json({
+        return res.status(500).json({
             statusCode: 500,
             message: error.message
 

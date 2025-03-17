@@ -51,9 +51,10 @@ const createProfessionalController = async (req, res) => {
             });
         };
         if(dataResult.affectedRows === 0){
-            return res.status(502).json({
-                statusCode: 502,
-                message: 'Algo de errado na criação do profissional!'
+            return res.status(200).json({
+                statusCode: 200,
+                message: 'Algo de errado na criação do profissional!',
+                data: []
 
             });
         };
@@ -85,9 +86,10 @@ const updateProfessionalController = async (req, res) => {
             });
         };
         if(dataResult.affectedRows === 0){
-            return res.status(502).json({
-                statusCode: 502,
-                message: 'Algo de errado na atualização do profissional!'
+            return res.status(200).json({
+                statusCode: 200,
+                message: 'Algo de errado na atualização do profissional!',
+                data: []
 
             });
         };

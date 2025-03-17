@@ -66,9 +66,10 @@ const createServiceController = async (req, res) => {
             });
         };
         if(dataResult.affectedRows === 0){
-            return res.status(502).json({
-                statusCode: 502,
-                message: 'Algo de errado na criação dos serviços!'
+            return res.status(200).json({
+                statusCode: 200,
+                message: 'Algo de errado na criação dos serviços!',
+                data: []
 
             });
         };
@@ -100,9 +101,10 @@ const updateServiceController = async (req, res) => {
             });
         };
         if(dataResult.changedRows === 0){
-            return res.status(502).json({
-                statusCode: 502,
-                message: 'Algo de errado na atualização do serviço!'
+            return res.status(200).json({
+                statusCode: 200,
+                message: 'Algo de errado na atualização do serviço!',
+                data: []
                 
             });
         };

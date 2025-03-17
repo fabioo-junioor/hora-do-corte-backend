@@ -66,9 +66,10 @@ const createScheduleController = async (req, res) => {
             });
         };
         if(dataResult.affectedRows === 0){
-            return res.status(502).json({
-                statusCode: 502,
-                message: 'Algo de errado na criação dos horários!'
+            return res.status(200).json({
+                statusCode: 200,
+                message: 'Algo de errado na criação dos horários!',
+                data: []
 
             });
         };        
@@ -100,9 +101,10 @@ const updateScheduleController = async (req, res) => {
             });
         };
         if(dataResult.affectedRows === 0){
-            return res.status(502).json({
-                statusCode: 502,
-                message: 'Algo de errado na atualização do horário!'
+            return res.status(200).json({
+                statusCode: 200,
+                message: 'Algo de errado na atualização do horário!',
+                data: []
                 
             });
         };
