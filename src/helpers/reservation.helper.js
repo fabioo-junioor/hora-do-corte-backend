@@ -31,16 +31,21 @@ const sumTime = (time, minutesToAdd) => {
 const verifyService = (array) => {
     let detailsService = '';
     for(let elem in array){
-        detailsService += `Serviço:${array[elem].name} Valor:${array[elem].price} Tempo:${array[elem].time}
-`;
+        detailsService += `${array[elem].name} - R$${array[elem].price} - ${array[elem].time}min 
+        `;
     
     };
     return detailsService;
 
 };
+const convertStringToArray = (string) => {
+    return JSON.parse(string);
+
+};
 
 export {
     validatorIsReserved,
-    verifyService
+    verifyService,
+    convertStringToArray
 
 };

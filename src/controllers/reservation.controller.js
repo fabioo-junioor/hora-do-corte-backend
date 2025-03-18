@@ -3,12 +3,16 @@ import { getAllReservationModel, getAllReservationByProfessionalModel,
     createReservationModel, deleteReservationModel
 } from '../models/reservation.model.js';
 import { getUserByIdModel } from '../models/user.model.js';
-import { validatorIsReserved, verifyService } from '../helpers/reservation.helper.js';
+import { getUserDetailsByFkModel } from '../models/userDetails.model.js';
+import { getProfessionalByPkModel } from '../models/professional.model.js';
+import { validatorIsReserved, verifyService, convertStringToArray } from '../helpers/reservation.helper.js';
 import { getTimeZone } from '../helpers/global.helper.js';
 import { sendEmail } from '../core/communication/config.email.js';
+import { templateEmailReservation } from '../core/communication/templates.js';
 
 const dateToday = getTimeZone();
 const isReservation = 1;
+const contactSuport = process.env.CONTACT_SUPORT;
 
 const getReservationController = async (req, res) => {
     try {
@@ -99,8 +103,7 @@ const createReservationController = async (req, res) => {
                 data: []
 
             });
-        };
-        
+        };        
         const dataResult = await createReservationModel(pkUser, pkProfessional, services, dateReservation, timeReservation, price, duration, dateToday, isReservation, name, email, phone, observation);
         if (dataResult.affectedRows === 0 || !dataResult) {
             return res.status(502).json({
@@ -111,14 +114,34 @@ const createReservationController = async (req, res) => {
         };
 
         let dataUser = await getUserByIdModel(pkUser);
-        let responseEmailEstablishment = await sendEmail(
-            dataUser[0].email, 'Reserva realizada',
-            `Cliente: ${name} / 
-            Data: ${dateReservation} - ${timeReservation} /
-            Serviços: ${verifyService(services)} /
-            Telefone: ${phone}`);
-            
-        //let responseEmailClient
+        let dataUserDetails = await getUserDetailsByFkModel(pkUser);
+        let dataProfessional = await getProfessionalByPkModel(pkProfessional);
+
+        let responseEmailClient = await sendEmail(email, 'Reserva realizada',
+            templateEmailReservation('Reserva realizada!',
+                name,
+                dateReservation,
+                timeReservation,
+                verifyService(services),
+                phone,
+                price,
+                observation,
+                dataProfessional[0].name,
+                dataUserDetails[0].phone,
+                contactSuport));
+
+        let responseEmailEstablishment = await sendEmail(dataUser[0].email, 'Reserva realizada',
+            templateEmailReservation('Reserva realizada!',
+                name,
+                dateReservation,
+                timeReservation,
+                verifyService(services),
+                phone,
+                price,
+                observation,
+                dataProfessional[0].name,
+                dataUserDetails[0].phone,
+                contactSuport));
         
         return res.status(201).json({
             statusCode: 201,
@@ -148,14 +171,36 @@ const deleteReservationController = async (req, res) => {
         };
         let dataReservation = await getReservationByPkReservationModel(pkReservation);
         let dataUser = await getUserByIdModel(dataReservation[0].fkUser);
+        let dataUserDetails = await getUserDetailsByFkModel(dataReservation[0].fkUser);
+        let dataProfessional = await getProfessionalByPkModel(dataReservation[0].fkProfessional);
+        
+        let newArrayServices = convertStringToArray(dataReservation[0].services);        
                 
-        let responseEmailClient = await sendEmail(
-            dataReservation[0].emailCustomer, 'Reserva cancelada',
-            `Cliente: ${dataReservation[0].nameCustomer} / 
-            Data: ${dataReservation[0].dateReservation} - ${dataReservation[0].timeReservation} /
-            Contato Estabelecimento: ${dataUser[0].email}`);
-            
-        //let responseEmailEstablishment
+        let responseEmailClient = await sendEmail(dataReservation[0].emailCustomer, 'Reserva cancelada',
+            templateEmailReservation('Reserva cancelada!',
+                dataReservation[0].nameCustomer,
+                dataReservation[0].dateReservation,
+                dataReservation[0].timeReservation,
+                verifyService(newArrayServices),
+                dataReservation[0].phoneCustomer,
+                dataReservation[0].price,
+                dataReservation[0].observationCustomer,
+                dataProfessional[0].name,
+                dataUserDetails[0].phone,
+                contactSuport));
+                
+        let responseEmailEstablishment = await sendEmail(dataUser[0].email, 'Reserva cancelada',
+            templateEmailReservation('Reserva cancelada!',
+                dataReservation[0].nameCustomer,
+                dataReservation[0].dateReservation,
+                dataReservation[0].timeReservation,
+                verifyService(newArrayServices),
+                dataReservation[0].phoneCustomer,
+                dataReservation[0].price,
+                dataReservation[0].observationCustomer,
+                dataProfessional[0].name,
+                dataUserDetails[0].phone,
+                contactSuport));
         
         return res.status(200).json({
             statusCode: 200,

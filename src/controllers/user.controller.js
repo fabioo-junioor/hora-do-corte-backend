@@ -7,9 +7,11 @@ import { createToken } from '../core/auth/auth.jwt.js';
 import { encryptPass, comparePass } from '../core/security/bcryptjs.js';
 import { generatorPass } from '../core/security/passwordGenerator.js';
 import { sendEmail } from '../core/communication/config.email.js';
+import { templateEmailRecoverPass } from '../core/communication/templates.js';
 
 const dateToday = getTimeZone();
 const isActive = 1;
+const contactSuport = process.env.CONTACT_SUPORT;
 
 const loginUserController = async (req, res) => {
     try{
@@ -254,7 +256,7 @@ const recoverPassUser = async (req, res) => {
         };
 
         /* Enviar email com nova senha */
-        let responseEmail = await sendEmail(email, 'Recuperação de senha', `Nova senha: ${newPassword}`);
+        let responseEmail = await sendEmail(email, 'Recuperação de senha', templateEmailRecoverPass('Recuperação de senha', newPassword, contactSuport));
         return res.status(201).json({
             statusCode: 201,
             message: `Nova senha enviada para o email: ${email}!`,

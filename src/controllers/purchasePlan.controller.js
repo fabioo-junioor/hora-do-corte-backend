@@ -3,9 +3,11 @@ import { createPurchasePlanModel, getLastPurchasePlanByPkModel } from '../models
 import { getUserByIdModel } from '../models/user.model.js';
 import { buyPlan, checkLastPurchaseValidity } from '../helpers/purchaseCalculations.helper.js';
 import { sendEmail } from '../core/communication/config.email.js';
+import { templateEmailBuyPlan } from '../core/communication/templates.js';
 import { getTimeZone } from '../helpers/global.helper.js';
 
 const dateToday = getTimeZone();
+const contactSuport = process.env.CONTACT_SUPORT;
 
 const getLastPurchasePlanController = async (req, res) => {
     try{
@@ -71,13 +73,17 @@ const createPurchasePlanController = async (req, res) => {
             };
 
             /* Enviar email com dados da compra */
-            let responseEmail = await sendEmail(
-                dataUser[0].email,
-                'Plano adiquirido',
-                `Nome: ${name} / 
-                Preço: ${price} /
-                Duração: ${time} /
-                Data da compra: ${purchaseDate} - ${purchaseTime}`);
+            let responseEmailPlanFree = await sendEmail(dataUser[0].email, 'Plano adiquirido',
+                templateEmailBuyPlan('Plano adiquirido!',
+                    dataUser[0].email,
+                    name,
+                    price,
+                    time,
+                    purchaseDate,
+                    purchaseTime,
+                    purchaseValidity,
+                    purchaseTime,
+                    contactSuport));
             
             return res.status(201).json({
                 statusCode: 201,
@@ -90,13 +96,17 @@ const createPurchasePlanController = async (req, res) => {
         /* Adicionar integração mercado pago */
         
         /* Enviar email com dados da compra */
-        let responseEmail = await sendEmail(
-            dataUser[0].email,
-            'Plano adiquirido',
-            `Nome: ${name} / 
-            Preço: ${price} /
-            Duração: ${time} /
-            Data da compra: ${purchaseDate} - ${purchaseTime}`);
+        let responseEmailOtherPlans = await sendEmail(dataUser[0].email, 'Plano adiquirido',
+            templateEmailBuyPlan('Plano adiquirido!',
+                dataUser[0].email,
+                name,
+                price,
+                time,
+                purchaseDate,
+                purchaseTime,
+                purchaseValidity,
+                purchaseTime,
+                contactSuport));
 
         let dataResult = await createPurchasePlanModel(pkUser, purchaseDate, purchaseTime, purchaseValidity, price, time, dateToday);
         if(dataResult.affectedRows === 0){

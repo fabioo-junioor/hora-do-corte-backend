@@ -22,7 +22,7 @@ const verifyToken = (req, res, next) => {
     } catch(error){
         return res.status(500).json({
             statusCode: 500,
-            message: 'Token invalido!',
+            message: token == 'notToken' ? 'Token inválido!' : 'Sessão expirou!',
             data: []
 
         });
@@ -46,11 +46,11 @@ const validAuth = (req, res, next) => {
 
         });
     };
-    jwt.verify(token, secret, (error, user) => {
+    jwt.verify(token, secret, (error, info) => {
         if(error){
             return res.status(403).json({
                 statusCode: 403,
-                message: 'Token inválido!',
+                message: token == 'notToken' ? 'Token inválido!' : 'Sessão expirou!',
                 data: []
     
             });
