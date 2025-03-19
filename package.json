@@ -1,6 +1,7 @@
 {
   "name": "hora-do-corte-backend",
   "version": "1.0.0",
+  "private": true,
   "type": "module",
   "main": "./server.js",
   "engines": {
@@ -8,11 +9,10 @@
   },
   "scripts": {
     "dev": "nodemon ./server.js",
-    "start": "node ./server.js --mode production",
-    "build": "node ./server.js"
+    "start": "node ./server.js",
+    "production": "node ./server.js --mode production"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Fábio",
   "dependencies": {
     "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",
