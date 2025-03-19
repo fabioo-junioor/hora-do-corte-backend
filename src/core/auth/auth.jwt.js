@@ -6,7 +6,7 @@ const secret = process.env.SECRET_TOKEN;
 
 const verifyToken = (req, res, next) => {
     const token = req.header('Authorization')?.split(' ')[1];
-
+    
     if(!token){
         return res.status(401).json({
             statusCode: 401,
@@ -39,7 +39,7 @@ const verifyToken = (req, res, next) => {
 };
 const createToken = (email) => {
     const token = jwt.sign({ email: email }, secret, {
-        //expiresIn: '15sec'
+        expiresIn: '15sec'
     });
     return token;
 
