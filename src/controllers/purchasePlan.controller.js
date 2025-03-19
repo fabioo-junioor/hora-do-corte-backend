@@ -15,8 +15,8 @@ const getLastPurchasePlanController = async (req, res) => {
         
         const dataResult = await getLastPurchasePlanByPkModel(pkUser);
         if(!dataResult){
-            return res.status(502).json({
-                statusCode: 502,
+            return res.status(500).json({
+                statusCode: 500,
                 message: 'Algo deu errado na conexão!'
 
             });
@@ -65,8 +65,8 @@ const createPurchasePlanController = async (req, res) => {
             };
             let dataResult = await createPurchasePlanModel(pkUser, purchaseDate, purchaseTime, purchaseValidity, price, time, dateToday);
             if(dataResult.affectedRows === 0){
-                return res.status(502).json({
-                    statusCode: 502,
+                return res.status(500).json({
+                    statusCode: 500,
                     message: `Algo deu errado na compra do plano ${dataPlans[0].name}!`
     
                 });
@@ -110,8 +110,8 @@ const createPurchasePlanController = async (req, res) => {
 
         let dataResult = await createPurchasePlanModel(pkUser, purchaseDate, purchaseTime, purchaseValidity, price, time, dateToday);
         if(dataResult.affectedRows === 0){
-            return res.status(502).json({
-                statusCode: 502,
+            return res.status(500).json({
+                statusCode: 500,
                 message: `Algo deu errado na compra do plano ${dataPlans[0].name}!`
 
             });

@@ -1,11 +1,11 @@
 import { Router } from 'express';
 const routerUser = Router();
-import { verifyToken, validAuth } from '../core/auth/auth.jwt.js';
+import { verifyToken } from '../core/auth/auth.jwt.js';
 
 import userController from '../controllers/user.controller.js';
 
 // Routes user
-routerUser.get('/authUser', validAuth, (req, res) => {
+routerUser.get('/authUser', verifyToken, (req, res) => {
     res.status(200).json({
         statusCode: 200,
         message: 'Autorizado!',

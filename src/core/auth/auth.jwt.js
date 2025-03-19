@@ -16,12 +16,21 @@ const verifyToken = (req, res, next) => {
         });
     };
     try {
-        jwt.verify(token, secret);
-        next();
-
+        jwt.verify(token, secret, (error) => {
+            if(error){
+                return res.status(token == 'notToken' ? 401 : 403).json({
+                    statusCode: token == 'notToken' ? 401 : 403,
+                    message: token == 'notToken' ? 'Token inválido!' : 'Sessão expirou!',
+                    data: []
+        
+                });
+            };
+            next();
+    
+        });
     } catch(error){
-        return res.status(500).json({
-            statusCode: 500,
+        return res.status(token == 'notToken' ? 401 : 403).json({
+            statusCode: token == 'notToken' ? 401 : 403,
             message: token == 'notToken' ? 'Token inválido!' : 'Sessão expirou!',
             data: []
 
@@ -30,7 +39,7 @@ const verifyToken = (req, res, next) => {
 };
 const createToken = (email) => {
     const token = jwt.sign({ email: email }, secret, {
-        expiresIn: '15sec'
+        //expiresIn: '15sec'
     });
     return token;
 
@@ -63,7 +72,6 @@ const validAuth = (req, res, next) => {
 
 export {
     verifyToken,
-    createToken,
-    validAuth
+    createToken
 
 };

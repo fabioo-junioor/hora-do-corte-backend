@@ -5,8 +5,8 @@ const getAllPlansController = async (req, res) => {
     try{
         const dataResult = await getAllPlanModel();
         if(!dataResult){
-            return res.status(502).json({
-                statusCode: 502,
+            return res.status(500).json({
+                statusCode: 500,
                 message: 'Algo deu errado na conexão!'
 
             });

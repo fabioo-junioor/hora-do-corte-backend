@@ -10,8 +10,8 @@ const getAllProfessionalController = async (req, res) => {
         
         const dataResult = await getAllProfessionalModel(pkUser, isActive);
         if(!dataResult){
-            return res.status(502).json({
-                statusCode: 502,
+            return res.status(500).json({
+                statusCode: 500,
                 message: 'Algo deu errado na conexão!'
 
             });
@@ -44,8 +44,8 @@ const createProfessionalController = async (req, res) => {
         
         const dataResult = await createProfessionalModel(name, image, instagram, isUnavailable, isActive, dateToday, pkUser);
         if(!dataResult){
-            return res.status(502).json({
-                statusCode: 502,
+            return res.status(500).json({
+                statusCode: 500,
                 message: 'Algo deu errado na conexão!'
 
             });
@@ -79,8 +79,8 @@ const updateProfessionalController = async (req, res) => {
         
         const dataResult = await updateProfessionalModel(pkProfessional, name, image, instagram, isUnavailable);
         if(!dataResult){
-            return res.status(502).json({
-                statusCode: 502,
+            return res.status(500).json({
+                statusCode: 500,
                 message: 'Algo deu errado na conexão!'
 
             });
@@ -113,15 +113,15 @@ const deleteProfessionalController = async (req, res) => {
         
         const dataResult = await deleteProfessionalModel(pkProfessional, !isActive);
         if(!dataResult){
-            return res.status(502).json({
-                statusCode: 502,
+            return res.status(500).json({
+                statusCode: 500,
                 message: 'Algo deu errado na conexão!'
 
             });
         };
         if(dataResult.affectedRows === 0){
-            return res.status(502).json({
-                statusCode: 502,
+            return res.status(500).json({
+                statusCode: 500,
                 message: 'Algo deu errado ao excluir o profissional!'
 
             });

@@ -19,8 +19,8 @@ const loginUserController = async (req, res) => {
 
         const dataResult = await loginUserModel(email);
         if(!dataResult){
-            return res.status(502).json({
-                statusCode: 502,
+            return res.status(500).json({
+                statusCode: 500,
                 message: 'Algo deu errado na conexão!'
 
             });
@@ -63,8 +63,8 @@ const createUserController = async(req, res) => {
         
         const dataUser = await getUserByEmailModel(email);
         if(!dataUser){
-            return res.status(502).json({
-                statusCode: 502,
+            return res.status(500).json({
+                statusCode: 500,
                 message: 'Algo deu errado na conexão!'
 
             });
@@ -88,8 +88,8 @@ const createUserController = async(req, res) => {
         let hash = await encryptPass(password);
         const dataResult = await createUserModel(email, hash, isActive, dateToday);
         if(!dataResult){
-            return res.status(502).json({
-                statusCode: 502,
+            return res.status(500).json({
+                statusCode: 500,
                 message: 'Algo deu errado na conexão!'
 
             });
@@ -97,7 +97,7 @@ const createUserController = async(req, res) => {
         if(dataResult.affectedRows !== 0){
             return res.status(201).json({
                 statusCode: 201,
-                message: 'Usuário criado. Agora Efetue o login!',
+                message: 'Usuário criado. Efetue o login!',
                 data: []
     
             });
@@ -117,8 +117,8 @@ const updateUserController = async (req, res) => {
     
         const dataUser = await getUserByIdModel(pkUser);
         if(!dataUser){
-            return res.status(502).json({
-                statusCode: 502,
+            return res.status(500).json({
+                statusCode: 500,
                 message: 'Algo deu errado na conexão!'
 
             });
@@ -144,8 +144,8 @@ const updateUserController = async (req, res) => {
         let hash = await encryptPass(newPassword);
         const dataResult = await updateUserModel(pkUser, hash);
         if(!dataResult){
-            return res.status(502).json({
-                statusCode: 502,
+            return res.status(500).json({
+                statusCode: 500,
                 message: 'Algo deu errado na conexão!'
 
             });
@@ -172,8 +172,8 @@ const deleteUserController = async (req, res) => {
         
         const dataProfessional = await getAllProfessionalModel(pkUser);
         if(!dataProfessional){
-            return res.status(502).json({
-                statusCode: 502,
+            return res.status(500).json({
+                statusCode: 500,
                 message: 'Algo deu errado na conexão!'
 
             });
@@ -188,8 +188,8 @@ const deleteUserController = async (req, res) => {
         };        
         const dataResult = await deleteUserModel(pkUser, !isActive);
         if(!dataResult){
-            return res.status(502).json({
-                statusCode: 502,
+            return res.status(500).json({
+                statusCode: 500,
                 message: 'Algo deu errado na conexão!'
 
             });
@@ -222,8 +222,8 @@ const recoverPassUser = async (req, res) => {
 
         const dataUser = await getUserByEmailModel(email);
         if(!dataUser){
-            return res.status(502).json({
-                statusCode: 502,
+            return res.status(500).json({
+                statusCode: 500,
                 message: 'Algo deu errado na conexão!'
 
             });
@@ -240,8 +240,8 @@ const recoverPassUser = async (req, res) => {
         let hash = await encryptPass(newPassword);
         const dataResult = await updateUserModel(dataUser[0].pkUser, hash);
         if(!dataResult){
-            return res.status(502).json({
-                statusCode: 502,
+            return res.status(500).json({
+                statusCode: 500,
                 message: 'Algo deu errado na conexão!'
 
             });
@@ -259,7 +259,7 @@ const recoverPassUser = async (req, res) => {
         let responseEmail = await sendEmail(email, 'Recuperação de senha', templateEmailRecoverPass('Recuperação de senha', newPassword, contactSuport));
         return res.status(201).json({
             statusCode: 201,
-            message: `Nova senha enviada para o email: ${email}!`,
+            message: `Nova senha encaminhada para o email!`,
             data: []
 
         });

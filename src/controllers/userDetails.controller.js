@@ -10,8 +10,8 @@ const getUserDetailsByPkController = async (req, res) => {
        
         const dataUserDetails = await getUserDetailsByFkModel(pkUser);
         if(!dataUserDetails){
-            return res.status(502).json({
-                statusCode: 502,
+            return res.status(500).json({
+                statusCode: 500,
                 message: 'Algo deu errado na conexão!'
 
             });
@@ -44,8 +44,8 @@ const getUserDetailsController = async (req, res) => {
         
         const dataUserDetails = await getUserDetailsBySlugModel(slug);
         if(!dataUserDetails){
-            return res.status(502).json({
-                statusCode: 502,
+            return res.status(500).json({
+                statusCode: 500,
                 message: 'Algo deu errado na conexão!'
 
             });
@@ -78,8 +78,8 @@ const createUserDetailsController = async (req, res) => {
         
         const dataUserDetails = await getUserDetailsByFkModel(pkUser);
         if(!dataUserDetails){
-            return res.status(502).json({
-                statusCode: 502,
+            return res.status(500).json({
+                statusCode: 500,
                 message: 'Algo deu errado na conexão!'
 
             });
@@ -95,8 +95,8 @@ const createUserDetailsController = async (req, res) => {
         
         const dataUserDetailsSlug = await getUserDetailsBySlugModel(slug);
         if(!dataUserDetailsSlug){
-            return res.status(502).json({
-                statusCode: 502,
+            return res.status(500).json({
+                statusCode: 500,
                 message: 'Algo deu errado na conexão!'
 
             });
@@ -111,8 +111,8 @@ const createUserDetailsController = async (req, res) => {
         };        
         const dataResult = await createUserDetailsModel(name, slug, phone, instagram, image, cep, state, city, street, number, dateToday, pkUser);
         if(!dataResult){
-            return res.status(502).json({
-                statusCode: 502,
+            return res.status(500).json({
+                statusCode: 500,
                 message: 'Algo deu errado na conexão!'
 
             });
@@ -140,8 +140,8 @@ const updateUserDetailsController = async (req, res) => {
 
         const dataUserDetails = await getUserDetailsBySlugModel(slug);
         if(!dataUserDetails){
-            return res.status(502).json({
-                statusCode: 502,
+            return res.status(500).json({
+                statusCode: 500,
                 message: 'Algo deu errado na conexão!'
 
             });
@@ -156,8 +156,8 @@ const updateUserDetailsController = async (req, res) => {
         };
         const dataResult = await updateUserDetailsModel(name, slug, phone, instagram, image, cep, state, city, street, number, pkUser);
         if(!dataResult){
-            return res.status(502).json({
-                statusCode: 502,
+            return res.status(500).json({
+                statusCode: 500,
                 message: 'Algo deu errado na conexão!'
 
             });

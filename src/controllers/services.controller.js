@@ -9,8 +9,8 @@ const getServiceController = async (req, res) => {
         
         const dataResult = await getServiceModel(pkProfessional);
         if(!dataResult){
-            return res.status(502).json({
-                statusCode: 502,
+            return res.status(500).json({
+                statusCode: 500,
                 message: 'Algo deu errado na conexão!'
 
             });
@@ -43,8 +43,8 @@ const createServiceController = async (req, res) => {
     
         const dataService = await getServiceModel(pkProfessional);
         if(!dataService){
-            return res.status(502).json({
-                statusCode: 502,
+            return res.status(500).json({
+                statusCode: 500,
                 message: 'Algo deu errado na conexão!'
 
             });
@@ -59,8 +59,8 @@ const createServiceController = async (req, res) => {
         };
         const dataResult = await createServiceModel(services, dateToday, pkProfessional);
         if(!dataResult){
-            return res.status(502).json({
-                statusCode: 502,
+            return res.status(500).json({
+                statusCode: 500,
                 message: 'Algo deu errado na conexão!'
 
             });
@@ -94,8 +94,8 @@ const updateServiceController = async (req, res) => {
         
         const dataResult = await updateServiceModel(services, pkProfessionalServices);
         if(!dataResult){
-            return res.status(502).json({
-                statusCode: 502,
+            return res.status(500).json({
+                statusCode: 500,
                 message: 'Algo deu errado na conexão!'
 
             });
