@@ -10,12 +10,12 @@ const transporter = nodemailer.createTransport({
         
     }
 });
-const sendEmail = async (destination, subject, text) => {
+const sendEmail = async (destination, subject, template) => {
     const info = await transporter.sendMail({
         from: process.env.MAILUSERFROM,
         to: destination,
         subject: `<Hora do corte> ${subject}`,
-        text: text
+        html: template
         
     });
     return info.response;

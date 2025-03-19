@@ -13,6 +13,19 @@ const getAllProfessionalModel = async (pkuser, isActive = 1) => {
         
     };
 };
+const getProfessionalByPkModel = async (pkProfessional, isActive = 1) => {
+    try {
+        const conn = await connect();    
+        const [ result ] = await conn.query('SELECT * FROM `professional` WHERE `pkProfessional` = ? AND `isActive` = ?',
+            [ pkProfessional, isActive ]
+        );
+        return result;
+        
+    }catch(error){
+        return false;
+        
+    };
+};
 const createProfessionalModel = async (name, image, instagram, isUnavailable, isActive, dateTimeRegistration, pkUser) => {
     try {
         const conn = await connect();
@@ -54,6 +67,7 @@ const deleteProfessionalModel = async (pkProfessional, isActive) => {
 };
 export {
     getAllProfessionalModel,
+    getProfessionalByPkModel,
     createProfessionalModel,
     updateProfessionalModel,
     deleteProfessionalModel

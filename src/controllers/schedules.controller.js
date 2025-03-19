@@ -9,8 +9,8 @@ const getScheduleController = async (req, res) => {
         
         const dataResult = await getScheduleModel(pkProfessional);
         if(!dataResult){
-            return res.status(502).json({
-                statusCode: 502,
+            return res.status(500).json({
+                statusCode: 500,
                 message: 'Algo deu errado na conexão!'
 
             });
@@ -43,8 +43,8 @@ const createScheduleController = async (req, res) => {
 
         const dataSchedule = await getScheduleModel(pkProfessional);
         if(!dataSchedule){
-            return res.status(502).json({
-                statusCode: 502,
+            return res.status(500).json({
+                statusCode: 500,
                 message: 'Algo deu errado na conexão!'
 
             });
@@ -59,16 +59,17 @@ const createScheduleController = async (req, res) => {
         };
         const dataResult = await createScheduleModel(schedules, dateToday, pkProfessional);
         if(!dataResult){
-            return res.status(502).json({
-                statusCode: 502,
+            return res.status(500).json({
+                statusCode: 500,
                 message: 'Algo deu errado na conexão!!'
 
             });
         };
         if(dataResult.affectedRows === 0){
-            return res.status(502).json({
-                statusCode: 502,
-                message: 'Algo de errado na criação dos horários!'
+            return res.status(200).json({
+                statusCode: 200,
+                message: 'Algo de errado na criação dos horários!',
+                data: []
 
             });
         };        
@@ -93,16 +94,17 @@ const updateScheduleController = async (req, res) => {
 
         const dataResult = await updateScheduleModel(schedules, pkProfessionalSchedule);
         if(!dataResult){
-            return res.status(502).json({
-                statusCode: 502,
+            return res.status(500).json({
+                statusCode: 500,
                 message: 'Algo deu errado na conexão!'
 
             });
         };
         if(dataResult.affectedRows === 0){
-            return res.status(502).json({
-                statusCode: 502,
-                message: 'Algo de errado na atualização do horário!'
+            return res.status(200).json({
+                statusCode: 200,
+                message: 'Algo de errado na atualização do horário!',
+                data: []
                 
             });
         };
