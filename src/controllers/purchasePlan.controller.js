@@ -73,8 +73,8 @@ const createPurchasePlanController = async (req, res) => {
             };
 
             /* Enviar email com dados da compra */
-            let responseEmailPlanFree = await sendEmail(dataUser[0].email, 'Plano adiquirido',
-                templateEmailBuyPlan('Plano adiquirido!',
+            let responseEmailPlanFree = await sendEmail(dataUser[0].email, 'Plano adquirido',
+                templateEmailBuyPlan('Dados do plano adquirido!',
                     dataUser[0].email,
                     name,
                     price,
@@ -96,8 +96,8 @@ const createPurchasePlanController = async (req, res) => {
         /* Adicionar integração mercado pago */
         
         /* Enviar email com dados da compra */
-        let responseEmailOtherPlans = await sendEmail(dataUser[0].email, 'Plano adiquirido',
-            templateEmailBuyPlan('Plano adiquirido!',
+        let responseEmailOtherPlans = await sendEmail(dataUser[0].email, 'Plano adquirido',
+            templateEmailBuyPlan('Dados do plano adquirido!',
                 dataUser[0].email,
                 name,
                 price,

@@ -31,8 +31,7 @@ const sumTime = (time, minutesToAdd) => {
 const verifyService = (array) => {
     let detailsService = '';
     for(let elem in array){
-        detailsService += `${array[elem].name} - R$${array[elem].price} - ${array[elem].time}min 
-        `;
+        detailsService += `| ${array[elem].name} - R$${array[elem].price} - ${array[elem].time}min |`;
     
     };
     return detailsService;

@@ -118,7 +118,7 @@ const createReservationController = async (req, res) => {
         let dataProfessional = await getProfessionalByPkModel(pkProfessional);
 
         let responseEmailClient = await sendEmail(email, 'Reserva realizada',
-            templateEmailReservation('Reserva realizada!',
+            templateEmailReservation('Dados da reserva!',
                 name,
                 dateReservation,
                 timeReservation,
@@ -131,7 +131,7 @@ const createReservationController = async (req, res) => {
                 contactSuport));
 
         let responseEmailEstablishment = await sendEmail(dataUser[0].email, 'Reserva realizada',
-            templateEmailReservation('Reserva realizada!',
+            templateEmailReservation('Dados da reserva!',
                 name,
                 dateReservation,
                 timeReservation,
@@ -177,7 +177,7 @@ const deleteReservationController = async (req, res) => {
         let newArrayServices = convertStringToArray(dataReservation[0].services);        
                 
         let responseEmailClient = await sendEmail(dataReservation[0].emailCustomer, 'Reserva cancelada',
-            templateEmailReservation('Reserva cancelada!',
+            templateEmailReservation('Dados da reserva!',
                 dataReservation[0].nameCustomer,
                 dataReservation[0].dateReservation,
                 dataReservation[0].timeReservation,
@@ -190,7 +190,7 @@ const deleteReservationController = async (req, res) => {
                 contactSuport));
                 
         let responseEmailEstablishment = await sendEmail(dataUser[0].email, 'Reserva cancelada',
-            templateEmailReservation('Reserva cancelada!',
+            templateEmailReservation('Dados da reserva!',
                 dataReservation[0].nameCustomer,
                 dataReservation[0].dateReservation,
                 dataReservation[0].timeReservation,
