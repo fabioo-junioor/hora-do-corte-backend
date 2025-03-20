@@ -1,10 +1,10 @@
 import connect from '../database/connect.js';
 
-const loginUserModel = async (email) => {
+const loginUserModel = async (email, isActive) => {
     try {
         const conn = await connect();
-        const [ result ] = await conn.query('SELECT * FROM `user` WHERE `email` = ?',
-            [ email ]
+        const [ result ] = await conn.query('SELECT * FROM `user` WHERE `email` = ? AND `isActive` = ?',
+            [ email, isActive ]
         );
         return result;
         
@@ -39,11 +39,11 @@ const getUserByEmailModel = async (email) => {
         
     };
 };
-const createUserModel = async (email, password, isActive, dateTimeRegistration) => {
+const createUserModel = async (email, password, isActive, createdAt) => {
     try {
         const conn = await connect();
-        const [ result ] = await conn.execute('INSERT INTO `user` (`email`, `password`, `isActive`, `dateTimeRegistration`) VALUES (?, ?, ?, ?)',
-            [ email, password, isActive, dateTimeRegistration ]
+        const [ result ] = await conn.execute('INSERT INTO `user` (`email`, `password`, `isActive`, `createdAt`, updatedAt) VALUES (?, ?, ?, ?, ?)',
+            [ email, password, isActive, createdAt, createdAt ]
         );
         return result;
         
@@ -52,11 +52,11 @@ const createUserModel = async (email, password, isActive, dateTimeRegistration) 
         
     };
 };
-const updateUserModel = async (pkUser, newPassword) => {
+const updateUserModel = async (pkUser, newPassword, dateToday, isActive) => {
     try {
         const conn = await connect();
-        const [ result ] = await conn.execute('UPDATE `user` SET `password` = ? WHERE `pkUser` = ?',
-            [ newPassword, pkUser ]
+        const [ result ] = await conn.execute('UPDATE `user` SET `password` = ?, `updatedAt` = ? WHERE `pkUser` = ? AND `isActive` = ?',
+            [ newPassword, dateToday, pkUser, isActive ]
         );
         return result;
 
@@ -65,11 +65,11 @@ const updateUserModel = async (pkUser, newPassword) => {
 
     };
 };
-const deleteUserModel = async (pkUser, isActive) => {
+const deleteUserModel = async (pkUser, updatedAt, isActive) => {
     try {
         const conn = await connect();
-        const [ result ] = await conn.execute('UPDATE `user` SET `isActive` = ? WHERE `pkUser` = ?',
-            [ isActive, pkUser ]
+        const [ result ] = await conn.execute('UPDATE `user` SET `updatedAt` = ?, `isActive` = ? WHERE `pkUser` = ?',
+            [ updatedAt, isActive, pkUser ]
         );
         return result;
 

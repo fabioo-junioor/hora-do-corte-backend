@@ -28,7 +28,7 @@ const getAllProfessionalController = async (req, res) => {
             statusCode: 200,
             message: 'Todos os profissionais!',
             data: dataResult.map((
-                { dateTimeRegistration, ...rest }) => rest
+                { createdAt, updatedAt, ...rest }) => rest
                 
             )
         });
@@ -44,7 +44,7 @@ const createProfessionalController = async (req, res) => {
     try{
         const { name, image, instagram, isUnavailable, pkUser } = req.body;
         
-        const dataResult = await createProfessionalModel(name, image, instagram, isUnavailable, isActive, dateToday, pkUser);
+        const dataResult = await createProfessionalModel(name, image, instagram, isUnavailable, isActive, dateToday, dateToday, pkUser);
         if(!dataResult){
             return res.status(500).json({
                 statusCode: 500,
@@ -79,7 +79,7 @@ const updateProfessionalController = async (req, res) => {
         const pkProfessional = req.params.pk;
         const { name, image, instagram, isUnavailable } = req.body;
         
-        const dataResult = await updateProfessionalModel(pkProfessional, name, image, instagram, isUnavailable);
+        const dataResult = await updateProfessionalModel(pkProfessional, name, image, instagram, isUnavailable, isActive, dateToday);
         if(!dataResult){
             return res.status(500).json({
                 statusCode: 500,
@@ -113,7 +113,7 @@ const deleteProfessionalController = async (req, res) => {
     try{
         const pkProfessional = req.params.pk;
         
-        const dataResult = await deleteProfessionalModel(pkProfessional, !isActive);
+        const dataResult = await deleteProfessionalModel(pkProfessional, !isActive, dateToday);
         if(!dataResult){
             return res.status(500).json({
                 statusCode: 500,

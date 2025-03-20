@@ -39,11 +39,11 @@ const getReservationByPkReservationModel = async (pkReservation) => {
         
     };
 };
-const createReservationModel = async (pkUser, pkProfessional, services, dateReservation, timeReservation, price, duration, dateTimeRegistration, isReservation, name, email, phone, observation) => {
+const createReservationModel = async (pkUser, pkProfessional, services, dateReservation, timeReservation, price, duration, createdAt, updatedAt, isReservation, name, email, phone, observation) => {
     try {
         const conn = await connect();
-        const [ result ] = await conn.execute('INSERT INTO `reservation` (`nameCustomer`, `emailCustomer`, `phoneCustomer`, `observationCustomer`, `dateReservation`, `timeReservation`, `services`, `price`, `duration`, `isReservation`, `dateTimeRegistration`, `fkUser`, `fkProfessional`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-            [ name, email, phone, observation, dateReservation, timeReservation, services, price, duration, isReservation, dateTimeRegistration, pkUser, pkProfessional ]
+        const [ result ] = await conn.execute('INSERT INTO `reservation` (`nameCustomer`, `emailCustomer`, `phoneCustomer`, `observationCustomer`, `dateReservation`, `timeReservation`, `services`, `price`, `duration`, `isReservation`, `createdAt`, `updatedAt`, `fkUser`, `fkProfessional`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+            [ name, email, phone, observation, dateReservation, timeReservation, services, price, duration, isReservation, createdAt, updatedAt, pkUser, pkProfessional ]
         );
         return result;
         
@@ -52,11 +52,11 @@ const createReservationModel = async (pkUser, pkProfessional, services, dateRese
         
     };
 };
-const deleteReservationModel = async (pkReservation, isReservation) => {
+const deleteReservationModel = async (pkReservation, isReservation, updatedAt) => {
     try {
         const conn = await connect();
-        const [ result ] = await conn.execute('UPDATE `reservation` SET `isReservation` = ? WHERE `pkReservation` = ?',
-            [ isReservation, pkReservation ]
+        const [ result ] = await conn.execute('UPDATE `reservation` SET `isReservation` = ?, `updatedAt` = ? WHERE `pkReservation` = ?',
+            [ isReservation, updatedAt, pkReservation ]
         );
         return result;
         

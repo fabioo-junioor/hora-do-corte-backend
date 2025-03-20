@@ -4,42 +4,6 @@ import { getTimeZone } from '../helpers/global.helper.js';
 
 const dateToday = getTimeZone();
 
-const getUserDetailsByPkController = async (req, res) => {
-    try {
-        const pkUser = req.params.pk;
-       
-        const dataUserDetails = await getUserDetailsByFkModel(pkUser);
-        if(!dataUserDetails){
-            return res.status(500).json({
-                statusCode: 500,
-                message: 'Algo deu errado na conexão!'
-
-            });
-        };
-        if(dataUserDetails.length === 0){
-            return res.status(200).json({
-                statusCode: 200,
-                message: 'Complete o cadastro!',
-                data: []
-                
-            });
-        };        
-        return res.status(200).json({
-            statusCode: 200,
-            message: 'Dados do usuário!',
-            data: dataUserDetails.map((
-                { dateTimeRegistration, ...rest }) => rest
-                
-            )
-        });
-    }catch(error){
-        return res.status(500).json({
-            statusCode: 500,
-            message: 'Error ao criar o registro!'
-
-        });
-    };
-};
 const getUserDetailsController = async (req, res) => {
     try {
         const slug = req.params.slug;
@@ -64,14 +28,50 @@ const getUserDetailsController = async (req, res) => {
             statusCode: 200,
             message: 'Dados do usuário!',
             data: dataUserDetails.map((
-                { dateTimeRegistration, ...rest }) => rest
+                { createdAt, updatedAt, ...rest }) => rest
                 
             )
         });
     }catch(error){
         return res.status(500).json({
             statusCode: 500,
-            message: 'Error ao criar o registro!'
+            message: error.message
+
+        });
+    };
+};
+const getUserDetailsByPkController = async (req, res) => {
+    try {
+        const pkUser = req.params.pk;
+       
+        const dataUserDetails = await getUserDetailsByFkModel(pkUser);
+        if(!dataUserDetails){
+            return res.status(500).json({
+                statusCode: 500,
+                message: 'Algo deu errado na conexão!'
+
+            });
+        };
+        if(dataUserDetails.length === 0){
+            return res.status(200).json({
+                statusCode: 200,
+                message: 'Complete o cadastro!',
+                data: []
+                
+            });
+        };        
+        return res.status(200).json({
+            statusCode: 200,
+            message: 'Dados do usuário!',
+            data: dataUserDetails.map((
+                { createdAt, updatedAt, ...rest }) => rest
+                
+            )
+        });
+    }catch(error){
+        return res.status(500).json({
+            statusCode: 500,
+            message: error.message
 
         });
     };
@@ -113,7 +113,7 @@ const createUserDetailsController = async (req, res) => {
                 
             });
         };        
-        const dataResult = await createUserDetailsModel(name, slug, phone, instagram, image, cep, state, city, street, number, dateToday, pkUser);
+        const dataResult = await createUserDetailsModel(name, slug, phone, instagram, image, cep, state, city, street, number, dateToday, dateToday, pkUser);
         if(!dataResult){
             return res.status(500).json({
                 statusCode: 500,
@@ -132,7 +132,7 @@ const createUserDetailsController = async (req, res) => {
     }catch(error){
         return res.status(500).json({
             statusCode: 500,
-            message: 'Error ao criar o registro!'
+            message: error.message
 
         });
     };
@@ -158,7 +158,7 @@ const updateUserDetailsController = async (req, res) => {
                 
             });
         };
-        const dataResult = await updateUserDetailsModel(name, slug, phone, instagram, image, cep, state, city, street, number, pkUser);
+        const dataResult = await updateUserDetailsModel(name, slug, phone, instagram, image, cep, state, city, street, number, dateToday, pkUser);
         if(!dataResult){
             return res.status(500).json({
                 statusCode: 500,
@@ -177,7 +177,7 @@ const updateUserDetailsController = async (req, res) => {
     }catch(error){
         return res.status(500).json({
             statusCode: 500,
-            message: 'Error ao criar o registro!'
+            message: error.message
 
         });
     };

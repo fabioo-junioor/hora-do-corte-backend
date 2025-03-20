@@ -17,7 +17,7 @@ const loginUserController = async (req, res) => {
     try{
         const { email, password } = req.body;
 
-        const dataResult = await loginUserModel(email);
+        const dataResult = await loginUserModel(email, isActive);
         if(!dataResult){
             return res.status(500).json({
                 statusCode: 500,
@@ -28,7 +28,7 @@ const loginUserController = async (req, res) => {
         if(dataResult.length === 0){
             return res.status(200).json({
                 statusCode: 200,
-                message: 'Email incorreto!',
+                message: 'Email e/ou senha incorretos!',
                 data: []
 
             });
@@ -37,7 +37,7 @@ const loginUserController = async (req, res) => {
         if(!validHash){
             return res.status(200).json({
                 statusCode: 200,
-                message: 'Senha incorreta!',
+                message: 'Email e/ou senha incorretos!',
                 data: []
 
             });
@@ -144,7 +144,7 @@ const updateUserController = async (req, res) => {
             });
         };
         let hash = await encryptPass(newPassword);
-        const dataResult = await updateUserModel(pkUser, hash);
+        const dataResult = await updateUserModel(pkUser, hash, dateToday, isActive);
         if(!dataResult){
             return res.status(500).json({
                 statusCode: 500,
@@ -188,7 +188,7 @@ const deleteUserController = async (req, res) => {
 
             });
         };        
-        const dataResult = await deleteUserModel(pkUser, !isActive);
+        const dataResult = await deleteUserModel(pkUser, dateToday, !isActive);
         if(!dataResult){
             return res.status(500).json({
                 statusCode: 500,
@@ -240,7 +240,7 @@ const recoverPassUser = async (req, res) => {
         };
         let newPassword = generatorPass();
         let hash = await encryptPass(newPassword);
-        const dataResult = await updateUserModel(dataUser[0].pkUser, hash);
+        const dataResult = await updateUserModel(dataUser[0].pkUser, hash, dateToday, isActive);
         if(!dataResult){
             return res.status(500).json({
                 statusCode: 500,

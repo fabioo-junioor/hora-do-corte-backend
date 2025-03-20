@@ -56,7 +56,7 @@ const createPurchasePlanController = async (req, res) => {
         
         const dataPlan = await getPlanByPkModel(pkPlan);
         const dataUser = await getUserByIdModel(pkUser);
-        const { name, price, time } = dataPlan[0];
+        const { name, price, time, description, benefits } = dataPlan[0];
         const purchaseValidity = buyPlan(purchaseDate, time);
         const dataPlansLastBuy = await getLastPurchasePlanByPkModel(pkUser);
         
@@ -69,11 +69,11 @@ const createPurchasePlanController = async (req, res) => {
                     
                 });
             };
-            let dataResult = await createPurchasePlanModel(pkUser, purchaseDate, purchaseTime, purchaseValidity, price, time, dateToday);
+            let dataResult = await createPurchasePlanModel(pkUser, purchaseDate, purchaseTime, purchaseValidity, name, price, time, description, benefits, dateToday);
             if(dataResult.affectedRows === 0){
                 return res.status(500).json({
                     statusCode: 500,
-                    message: `Algo deu errado na compra do plano ${dataPlans[0].name}!`
+                    message: `Algo deu errado na compra do plano ${dataPlan[0].name}!`
     
                 });
             };
@@ -100,7 +100,16 @@ const createPurchasePlanController = async (req, res) => {
         };
 
         /* Adicionar integração mercado pago */
-        
+
+        let dataResult = await createPurchasePlanModel(pkUser, purchaseDate, purchaseTime, purchaseValidity, name, price, time, description, benefits, dateToday);
+        if(dataResult.affectedRows === 0){
+            return res.status(500).json({
+                statusCode: 500,
+                message: `Algo deu errado na compra do plano ${dataPlan[0].name}!`
+
+            });
+        };
+
         /* Enviar email com dados da compra */
         let responseEmailOtherPlans = await sendEmail(dataUser[0].email, 'Plano adquirido',
             templateEmailBuyPlan('Dados do plano adquirido!',
@@ -113,15 +122,7 @@ const createPurchasePlanController = async (req, res) => {
                 purchaseValidity,
                 purchaseTime,
                 contactSuport));
-
-        let dataResult = await createPurchasePlanModel(pkUser, purchaseDate, purchaseTime, purchaseValidity, price, time, dateToday);
-        if(dataResult.affectedRows === 0){
-            return res.status(500).json({
-                statusCode: 500,
-                message: `Algo deu errado na compra do plano ${dataPlans[0].name}!`
-
-            });
-        };
+                
         return res.status(201).json({
             statusCode: 201,
             message: `Compra realizada, plano [${name}]!`,

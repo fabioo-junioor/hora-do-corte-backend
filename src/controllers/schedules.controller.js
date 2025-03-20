@@ -27,7 +27,7 @@ const getScheduleController = async (req, res) => {
             statusCode: 200,
             message: 'Todos os horários!',
             data: dataResult.map((
-                { dateTimeRegistration, ...rest }) => rest
+                { createdAt, updatedAt, ...rest }) => rest
             
             )
         });
@@ -59,11 +59,11 @@ const createScheduleController = async (req, res) => {
                 
             });
         };
-        const dataResult = await createScheduleModel(schedules, dateToday, pkProfessional);
+        const dataResult = await createScheduleModel(schedules, dateToday, dateToday, pkProfessional);
         if(!dataResult){
             return res.status(500).json({
                 statusCode: 500,
-                message: 'Algo deu errado na conexão!!'
+                message: 'Algo deu errado na conexão!'
 
             });
         };
@@ -94,7 +94,7 @@ const updateScheduleController = async (req, res) => {
         const pkProfessionalSchedule = req.params.pk;
         const { schedules } = req.body;
 
-        const dataResult = await updateScheduleModel(schedules, pkProfessionalSchedule);
+        const dataResult = await updateScheduleModel(schedules, dateToday, pkProfessionalSchedule);
         if(!dataResult){
             return res.status(500).json({
                 statusCode: 500,

@@ -27,7 +27,7 @@ const getServiceController = async (req, res) => {
             statusCode: 200,
             message: 'Todos seviços!',
             data: dataResult.map((
-                { dateTimeRegistration, ...rest }) => rest
+                { createdAt, updatedAt, ...rest }) => rest
             
             )
         });
@@ -59,7 +59,7 @@ const createServiceController = async (req, res) => {
                 
             });
         };
-        const dataResult = await createServiceModel(services, dateToday, pkProfessional);
+        const dataResult = await createServiceModel(services, dateToday, dateToday, pkProfessional);
         if(!dataResult){
             return res.status(500).json({
                 statusCode: 500,
@@ -94,7 +94,7 @@ const updateServiceController = async (req, res) => {
         const pkProfessionalServices = req.params.pk;
         const { services } = req.body;
         
-        const dataResult = await updateServiceModel(services, pkProfessionalServices);
+        const dataResult = await updateServiceModel(services, dateToday, pkProfessionalServices);
         if(!dataResult){
             return res.status(500).json({
                 statusCode: 500,
@@ -119,7 +119,7 @@ const updateServiceController = async (req, res) => {
     }catch(error){
         return res.status(500).json({
             statusCode: 500,
-            message: 'Error ao criar o registro!'
+            message: error.message
 
         });
     };

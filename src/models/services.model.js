@@ -13,11 +13,11 @@ const getServiceModel = async (pkProfessional) => {
         
     };
 };
-const createServiceModel = async (services, dateTimeRegistration, pkProfessional) => {
+const createServiceModel = async (services, createdAt, updatedAt, pkProfessional) => {
     try {
         const conn = await connect();
-        const [ result ] = await conn.execute('INSERT INTO `professionalservices` (`services`, `dateTimeRegistration`, `fkProfessional`) VALUES (?, ?, ?)',
-            [ services, dateTimeRegistration, pkProfessional ]
+        const [ result ] = await conn.execute('INSERT INTO `professionalservices` (`services`, `createdAt`, `updatedAt`, `fkProfessional`) VALUES (?, ?, ?, ?)',
+            [ services, createdAt, updatedAt, pkProfessional ]
         );
         return result;
         
@@ -26,11 +26,11 @@ const createServiceModel = async (services, dateTimeRegistration, pkProfessional
         
     };
 };
-const updateServiceModel = async (services, pkProfessionalServices) => {
+const updateServiceModel = async (services, updatedAt, pkProfessionalServices) => {
     try {
         const conn = await connect();
-        const [ result ] = await conn.execute('UPDATE `professionalservices` SET `services` = ? WHERE `pkProfessionalServices` = ?',
-            [ services, pkProfessionalServices ]
+        const [ result ] = await conn.execute('UPDATE `professionalservices` SET `services` = ?, `updatedAt` = ? WHERE `pkProfessionalServices` = ?',
+            [ services, updatedAt, pkProfessionalServices ]
         );
         return result;
         

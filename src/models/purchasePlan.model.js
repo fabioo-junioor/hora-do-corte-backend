@@ -13,11 +13,11 @@ const getLastPurchasePlanByPkModel = async (pkUser) => {
 
     };
 };
-const createPurchasePlanModel = async (pkUser, purchaseDate, purchaseTime, purchaseValidity, price, time, dateTimeRegistration) => {
+const createPurchasePlanModel = async (pkUser, purchaseDate, purchaseTime, purchaseValidity, name, price, time, description, benefits, createdAt) => {
     try {
         const conn = await connect();
-        const [ result ] = await conn.execute('INSERT INTO `purchaseplanuser` (`purchaseDate`, `purchaseTime`, `purchaseValidity`, `price`, `time`, `dateTimeRegistration`, `fkUser`) VALUES (?, ?, ?, ?, ?, ?, ?)',
-            [ purchaseDate, purchaseTime, purchaseValidity, price, time, dateTimeRegistration, pkUser ]
+        const [ result ] = await conn.execute('INSERT INTO `purchaseplanuser` (`purchaseDate`, `purchaseTime`, `purchaseValidity`, `namePlan`, `pricePlan`, `timePlan`, `descriptionPlan`, `benefitsPlan`, `createdAt`, `fkUser`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+            [ purchaseDate, purchaseTime, purchaseValidity, name, price, time, description, benefits, createdAt, pkUser ]
         );
         return result;
 

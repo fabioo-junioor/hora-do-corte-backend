@@ -37,8 +37,10 @@ const getReservationController = async (req, res) => {
         return res.status(200).json({
             statusCode: 200,
             message: 'Todos os agendamento!',
-            data: dataResult
+            data: dataResult.map((
+                { createdAt, updatedAt, ...rest }) => rest
 
+            )
         });
     } catch (error) {
         return res.status(500).json({
@@ -111,7 +113,7 @@ const createReservationController = async (req, res) => {
 
             });
         };        
-        const dataResult = await createReservationModel(pkUser, pkProfessional, services, dateReservation, timeReservation, price, duration, dateToday, isReservation, name, email, phone, observation);
+        const dataResult = await createReservationModel(pkUser, pkProfessional, services, dateReservation, timeReservation, price, duration, dateToday, dateToday, isReservation, name, email, phone, observation);
         if (dataResult.affectedRows === 0 || !dataResult) {
             return res.status(500).json({
                 statusCode: 500,
@@ -168,7 +170,7 @@ const deleteReservationController = async (req, res) => {
     try {
         const pkReservation = req.params.pk;
         
-        const dataResult = await deleteReservationModel(pkReservation, !isReservation);
+        const dataResult = await deleteReservationModel(pkReservation, !isReservation, dateToday);
         if (dataResult.affectedRows === 0 || !dataResult) {
             return res.status(500).json({
                 statusCode: 500,
