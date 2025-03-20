@@ -39,7 +39,7 @@ const verifyToken = (req, res, next) => {
 };
 const createToken = (email) => {
     const token = jwt.sign({ email: email }, secret, {
-        expiresIn: '15sec'
+        //expiresIn: '15sec'
     });
     return token;
 
