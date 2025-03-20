@@ -46,8 +46,10 @@ const loginUserController = async (req, res) => {
         return res.status(200).json({
             statusCode: 200,
             message: 'Login autorizado!',
-            data: { pkUser: dataResult[0].pkUser, email: dataResult[0].email, token: token }
-
+            data: { 
+                pkUser: dataResult[0].pkUser,
+                token: token
+            }
         });
     } catch (error){
         return res.status(500).json({

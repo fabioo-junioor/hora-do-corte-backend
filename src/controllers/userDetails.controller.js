@@ -27,8 +27,10 @@ const getUserDetailsByPkController = async (req, res) => {
         return res.status(200).json({
             statusCode: 200,
             message: 'Dados do usuário!',
-            data: dataUserDetails
-
+            data: dataUserDetails.map((
+                { dateTimeRegistration, ...rest }) => rest
+                
+            )
         });
     }catch(error){
         return res.status(500).json({
@@ -61,8 +63,10 @@ const getUserDetailsController = async (req, res) => {
         return res.status(200).json({
             statusCode: 200,
             message: 'Dados do usuário!',
-            data: dataUserDetails
-
+            data: dataUserDetails.map((
+                { dateTimeRegistration, ...rest }) => rest
+                
+            )
         });
     }catch(error){
         return res.status(500).json({

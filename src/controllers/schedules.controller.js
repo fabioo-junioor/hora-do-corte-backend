@@ -26,8 +26,10 @@ const getScheduleController = async (req, res) => {
         return res.status(200).json({
             statusCode: 200,
             message: 'Todos os horários!',
-            data: dataResult
-
+            data: dataResult.map((
+                { dateTimeRegistration, ...rest }) => rest
+            
+            )
         });
     } catch (error){
         return res.status(500).json({

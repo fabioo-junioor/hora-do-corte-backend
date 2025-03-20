@@ -72,8 +72,15 @@ const getReservationByProfessionalController = async (req, res) => {
         return res.status(200).json({
             statusCode: 200,
             message: 'Todos os agendamento!',
-            data: dataResult
-
+            data: dataResult.map((elem) => {
+                return {
+                    pkReservation: elem.pkReservation,
+                    timeReservation: elem.timeReservation,
+                    duration: elem.duration,
+                    fkUser: elem.fkUser,
+                    fkProfessional: elem.fkProfessional
+                }
+            })
         });
     } catch (error) {
         return res.status(500).json({
@@ -142,7 +149,7 @@ const createReservationController = async (req, res) => {
                 dataProfessional[0].name,
                 dataUserDetails[0].phone,
                 contactSuport));
-        
+
         return res.status(201).json({
             statusCode: 201,
             message: 'Agendamento criado!',

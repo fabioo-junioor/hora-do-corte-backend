@@ -32,8 +32,14 @@ const getLastPurchasePlanController = async (req, res) => {
         return res.status(200).json({
             statusCode: 200,
             message: 'Último plano comprado!',
-            data: dataResult
-
+            data: dataResult.map((elem) => {
+                return {
+                    pkPurchasePlanUser: elem.pkPurchasePlanUser,
+                    purchaseValidity: elem.purchaseValidity,
+                    purchaseTime: elem.purchaseTime,
+                    fkUser: elem.fkUser
+                }
+            })
         });
     } catch (error){
         return res.status(500).json({

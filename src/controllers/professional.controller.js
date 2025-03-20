@@ -27,8 +27,10 @@ const getAllProfessionalController = async (req, res) => {
         return res.status(200).json({
             statusCode: 200,
             message: 'Todos os profissionais!',
-            data: dataResult
-
+            data: dataResult.map((
+                { dateTimeRegistration, ...rest }) => rest
+                
+            )
         });
     } catch (error){
         return res.status(500).json({
