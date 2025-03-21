@@ -42,7 +42,7 @@ const getReservationByPkReservationModel = async (pkReservation) => {
 const createReservationModel = async (pkUser, pkProfessional, services, dateReservation, timeReservation, price, duration, createdAt, updatedAt, isReservation, name, email, phone, observation) => {
     try {
         const conn = await connect();
-        const [ result ] = await conn.execute('INSERT INTO `reservation` (`nameCustomer`, `emailCustomer`, `phoneCustomer`, `observationCustomer`, `dateReservation`, `timeReservation`, `services`, `price`, `duration`, `isReservation`, `createdAt`, `updatedAt`, `fkUser`, `fkProfessional`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+        const [ result ] = await conn.execute('INSERT INTO `reservation` (`nameCustomer`, `emailCustomer`, `phoneCustomer`, `observationCustomer`, `dateReservation`, `timeReservation`, `services`, `price`, `duration`, `isReservation`, `createdAt`, `updatedAt`, `fkUser`, `fkProfessional`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
             [ name, email, phone, observation, dateReservation, timeReservation, services, price, duration, isReservation, createdAt, updatedAt, pkUser, pkProfessional ]
         );
         return result;
