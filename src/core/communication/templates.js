@@ -61,7 +61,7 @@ const templateEmailBuyPlan = (titleTable, emailClient, namePlan, price, time, da
                         <td style="padding: 6px;">Email do cliente: <strong>${emailClient}</strong></td>
                     </tr>
                     <tr>
-                        <td style="padding: 6px;">Nome plano: <strong>${namePlan}</strong> / <strong>${timeReservation}</strong></td>
+                        <td style="padding: 6px;">Nome plano: <strong>${namePlan}</strong></td>
                     </tr>
                     <tr>
                         <td style="padding: 6px;">Valor da compra: R$<strong>${price}</strong></td>

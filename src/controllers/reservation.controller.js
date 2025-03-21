@@ -2,6 +2,7 @@ import { getAllReservationModel, getAllReservationByProfessionalModel,
     getReservationByPkReservationModel,
     createReservationModel, deleteReservationModel
 } from '../models/reservation.model.js';
+import { validAuth } from '../core/auth/auth.jwt.js';
 import { getUserByIdModel } from '../models/user.model.js';
 import { getUserDetailsByFkModel } from '../models/userDetails.model.js';
 import { getProfessionalByPkModel } from '../models/professional.model.js';
@@ -17,6 +18,14 @@ const contactSuport = process.env.CONTACT_SUPORT;
 const getReservationController = async (req, res) => {
     try {
         const pkUser = req.params.pk;
+
+        if(!await validAuth(req, pkUser)){
+            return res.status(400).json({
+                statusCode: 400,
+                message: 'Operação inválida!'
+
+            });
+        };
         
         const dataResult = await getAllReservationModel(pkUser, isReservation);
         if (!dataResult) {
@@ -37,8 +46,10 @@ const getReservationController = async (req, res) => {
         return res.status(200).json({
             statusCode: 200,
             message: 'Todos os agendamento!',
-            data: dataResult
+            data: dataResult.map((
+                { createdAt, updatedAt, isReservation, ...rest }) => rest
 
+            )
         });
     } catch (error) {
         return res.status(500).json({
@@ -72,8 +83,15 @@ const getReservationByProfessionalController = async (req, res) => {
         return res.status(200).json({
             statusCode: 200,
             message: 'Todos os agendamento!',
-            data: dataResult
-
+            data: dataResult.map((elem) => {
+                return {
+                    pkReservation: elem.pkReservation,
+                    timeReservation: elem.timeReservation,
+                    duration: elem.duration,
+                    fkUser: elem.fkUser,
+                    fkProfessional: elem.fkProfessional
+                }
+            })
         });
     } catch (error) {
         return res.status(500).json({
@@ -104,11 +122,11 @@ const createReservationController = async (req, res) => {
 
             });
         };        
-        const dataResult = await createReservationModel(pkUser, pkProfessional, services, dateReservation, timeReservation, price, duration, dateToday, isReservation, name, email, phone, observation);
+        const dataResult = await createReservationModel(pkUser, pkProfessional, services, dateReservation, timeReservation, price, duration, dateToday, dateToday, isReservation, name, email, phone, observation);
         if (dataResult.affectedRows === 0 || !dataResult) {
             return res.status(500).json({
                 statusCode: 500,
-                message: 'Algo de errado no agendamento!'
+                message: 'Algo de errado no agendamento!!'
 
             });
         };
@@ -117,6 +135,7 @@ const createReservationController = async (req, res) => {
         let dataUserDetails = await getUserDetailsByFkModel(pkUser);
         let dataProfessional = await getProfessionalByPkModel(pkProfessional);
 
+        /*
         let responseEmailClient = await sendEmail(email, 'Reserva realizada',
             templateEmailReservation('Dados da reserva!',
                 name,
@@ -142,7 +161,8 @@ const createReservationController = async (req, res) => {
                 dataProfessional[0].name,
                 dataUserDetails[0].phone,
                 contactSuport));
-        
+        */
+       
         return res.status(201).json({
             statusCode: 201,
             message: 'Agendamento criado!',
@@ -160,8 +180,17 @@ const createReservationController = async (req, res) => {
 const deleteReservationController = async (req, res) => {
     try {
         const pkReservation = req.params.pk;
+        const { pkUser } = req.body;
+
+        if(!await validAuth(req, pkUser)){
+            return res.status(400).json({
+                statusCode: 400,
+                message: 'Operação inválida!'
+
+            });
+        };
         
-        const dataResult = await deleteReservationModel(pkReservation, !isReservation);
+        const dataResult = await deleteReservationModel(pkReservation, !isReservation, dateToday, pkUser);
         if (dataResult.affectedRows === 0 || !dataResult) {
             return res.status(500).json({
                 statusCode: 500,
@@ -175,7 +204,8 @@ const deleteReservationController = async (req, res) => {
         let dataProfessional = await getProfessionalByPkModel(dataReservation[0].fkProfessional);
         
         let newArrayServices = convertStringToArray(dataReservation[0].services);        
-                
+         
+        /*
         let responseEmailClient = await sendEmail(dataReservation[0].emailCustomer, 'Reserva cancelada',
             templateEmailReservation('Dados da reserva!',
                 dataReservation[0].nameCustomer,
@@ -201,7 +231,7 @@ const deleteReservationController = async (req, res) => {
                 dataProfessional[0].name,
                 dataUserDetails[0].phone,
                 contactSuport));
-        
+        */
         return res.status(200).json({
             statusCode: 200,
             message: 'Agendamento excluido!',

@@ -1,4 +1,5 @@
 import { getScheduleModel, createScheduleModel, updateScheduleModel } from '../models/schedules.model.js';
+import { validAuth } from '../core/auth/auth.jwt.js';
 import { getTimeZone } from '../helpers/global.helper.js';
 
 const dateToday = getTimeZone();
@@ -26,8 +27,10 @@ const getScheduleController = async (req, res) => {
         return res.status(200).json({
             statusCode: 200,
             message: 'Todos os horários!',
-            data: dataResult
-
+            data: dataResult.map((
+                { createdAt, updatedAt, ...rest }) => rest
+            
+            )
         });
     } catch (error){
         return res.status(500).json({
@@ -39,7 +42,15 @@ const getScheduleController = async (req, res) => {
 };
 const createScheduleController = async (req, res) => {
     try{
-        const { schedules, pkProfessional } = req.body;
+        const { pkProfessional, schedules, pkUser } = req.body;
+
+        if(!await validAuth(req, pkUser)){
+            return res.status(400).json({
+                statusCode: 400,
+                message: 'Operação inválida!'
+
+            });
+        };
 
         const dataSchedule = await getScheduleModel(pkProfessional);
         if(!dataSchedule){
@@ -57,11 +68,11 @@ const createScheduleController = async (req, res) => {
                 
             });
         };
-        const dataResult = await createScheduleModel(schedules, dateToday, pkProfessional);
+        const dataResult = await createScheduleModel(schedules, dateToday, dateToday, pkProfessional);
         if(!dataResult){
             return res.status(500).json({
                 statusCode: 500,
-                message: 'Algo deu errado na conexão!!'
+                message: 'Algo deu errado na conexão!'
 
             });
         };
@@ -90,9 +101,17 @@ const createScheduleController = async (req, res) => {
 const updateScheduleController = async (req, res) => {
     try {
         const pkProfessionalSchedule = req.params.pk;
-        const { schedules } = req.body;
+        const { schedules, pkUser } = req.body;
 
-        const dataResult = await updateScheduleModel(schedules, pkProfessionalSchedule);
+        if(!await validAuth(req, pkUser)){
+            return res.status(400).json({
+                statusCode: 400,
+                message: 'Operação inválida!'
+
+            });
+        };
+
+        const dataResult = await updateScheduleModel(schedules, dateToday, pkProfessionalSchedule);
         if(!dataResult){
             return res.status(500).json({
                 statusCode: 500,

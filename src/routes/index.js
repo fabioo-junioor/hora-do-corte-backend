@@ -10,13 +10,13 @@ import routerPlan from './routes.plan.js';
 import routerReservation from './routes.reservation.js';
 import purchasePlan from './routes.purchasePlan.js';
 
-router.use('/user', routerUser);
-router.use('/userDetails', routerUserDetails);
-router.use('/professional', routerProfessional);
-router.use('/services', routerServices);
-router.use('/schedules', routerSchedules);
-router.use('/plan', routerPlan);
-router.use('/reservation', routerReservation);
-router.use('/purchasePlan', purchasePlan);
+router.use('/api/user', routerUser);
+router.use('/api/userDetails', routerUserDetails);
+router.use('/api/professional', routerProfessional);
+router.use('/api/services', routerServices);
+router.use('/api/schedules', routerSchedules);
+router.use('/api/plan', routerPlan);
+router.use('/api/reservation', routerReservation);
+router.use('/api/purchasePlan', purchasePlan);
 
 export default router;

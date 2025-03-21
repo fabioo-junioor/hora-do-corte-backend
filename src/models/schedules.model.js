@@ -13,11 +13,11 @@ const getScheduleModel = async (pkProfessional) => {
         
     };
 };
-const createScheduleModel = async (schedules, dateTimeRegistration, pkProfessional) => {
+const createScheduleModel = async (schedules, createdAt, updatedAt, pkProfessional) => {
     try {
         const conn = await connect();
-        const [ result ] = await conn.execute('INSERT INTO `professionalschedules` (`schedules`, `dateTimeRegistration`, `fkProfessional`) VALUES (?, ?, ?)',
-            [ schedules, dateTimeRegistration, pkProfessional ]
+        const [ result ] = await conn.execute('INSERT INTO `professionalschedules` (`schedules`, `createdAt`, `updatedAt`, `fkProfessional`) VALUES (?, ?, ?, ?)',
+            [ schedules, createdAt, updatedAt, pkProfessional ]
         );
         return result;
         
@@ -26,11 +26,11 @@ const createScheduleModel = async (schedules, dateTimeRegistration, pkProfession
         
     };
 };
-const updateScheduleModel = async (schedules, pkProfessionalSchedule) => {
+const updateScheduleModel = async (schedules, updatedAt, pkProfessionalSchedule) => {
     try {
         const conn = await connect();
-        const [ result ] = await conn.execute('UPDATE `professionalschedules` SET `schedules` = ? WHERE `pkProfessionalSchedules` = ?',
-            [ schedules, pkProfessionalSchedule ]
+        const [ result ] = await conn.execute('UPDATE `professionalschedules` SET `schedules` = ?, `updatedAt` = ? WHERE `pkProfessionalSchedules` = ?',
+            [ schedules, updatedAt, pkProfessionalSchedule ]
         );
         return result;
         

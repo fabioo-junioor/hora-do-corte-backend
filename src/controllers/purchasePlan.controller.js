@@ -1,7 +1,8 @@
 import { getPlanByPkModel } from '../models/plan.model.js';
 import { createPurchasePlanModel, getLastPurchasePlanByPkModel } from '../models/purchasePlan.model.js';
 import { getUserByIdModel } from '../models/user.model.js';
-import { buyPlan, checkLastPurchaseValidity } from '../helpers/purchaseCalculations.helper.js';
+import { validAuth } from '../core/auth/auth.jwt.js';
+import { buyPlan } from '../helpers/purchase.helper.js';
 import { sendEmail } from '../core/communication/config.email.js';
 import { templateEmailBuyPlan } from '../core/communication/templates.js';
 import { getTimeZone } from '../helpers/global.helper.js';
@@ -32,8 +33,14 @@ const getLastPurchasePlanController = async (req, res) => {
         return res.status(200).json({
             statusCode: 200,
             message: 'Último plano comprado!',
-            data: dataResult
-
+            data: dataResult.map((elem) => {
+                return {
+                    pkPurchasePlanUser: elem.pkPurchasePlanUser,
+                    purchaseValidity: elem.purchaseValidity,
+                    purchaseTime: elem.purchaseTime,
+                    fkUser: elem.fkUser
+                }
+            })
         });
     } catch (error){
         return res.status(500).json({
@@ -48,9 +55,17 @@ const createPurchasePlanController = async (req, res) => {
         const pkUser = req.params.pk;
         const { pkPlan, purchaseDate, purchaseTime } = req.body;
         
+        if(!await validAuth(req, pkUser)){
+            return res.status(400).json({
+                statusCode: 400,
+                message: 'Operação inválida!'
+
+            });
+        };
+
         const dataPlan = await getPlanByPkModel(pkPlan);
         const dataUser = await getUserByIdModel(pkUser);
-        const { name, price, time } = dataPlan[0];
+        const { name, price, time, description, benefits } = dataPlan[0];
         const purchaseValidity = buyPlan(purchaseDate, time);
         const dataPlansLastBuy = await getLastPurchasePlanByPkModel(pkUser);
         
@@ -63,16 +78,17 @@ const createPurchasePlanController = async (req, res) => {
                     
                 });
             };
-            let dataResult = await createPurchasePlanModel(pkUser, purchaseDate, purchaseTime, purchaseValidity, price, time, dateToday);
+            let dataResult = await createPurchasePlanModel(pkUser, purchaseDate, purchaseTime, purchaseValidity, name, price, time, description, benefits, dateToday);
             if(dataResult.affectedRows === 0){
                 return res.status(500).json({
                     statusCode: 500,
-                    message: `Algo deu errado na compra do plano ${dataPlans[0].name}!`
+                    message: `Algo deu errado na compra do plano ${dataPlan[0].name}!`
     
                 });
             };
 
             /* Enviar email com dados da compra */
+            /*
             let responseEmailPlanFree = await sendEmail(dataUser[0].email, 'Plano adquirido',
                 templateEmailBuyPlan('Dados do plano adquirido!',
                     dataUser[0].email,
@@ -85,6 +101,7 @@ const createPurchasePlanController = async (req, res) => {
                     purchaseTime,
                     contactSuport));
             
+            */
             return res.status(201).json({
                 statusCode: 201,
                 message: `Compra realizada, plano [${name}]!`,
@@ -94,8 +111,18 @@ const createPurchasePlanController = async (req, res) => {
         };
 
         /* Adicionar integração mercado pago */
-        
+
+        let dataResult = await createPurchasePlanModel(pkUser, purchaseDate, purchaseTime, purchaseValidity, name, price, time, description, benefits, dateToday);
+        if(dataResult.affectedRows === 0){
+            return res.status(500).json({
+                statusCode: 500,
+                message: `Algo deu errado na compra do plano ${dataPlan[0].name}!`
+
+            });
+        };
+
         /* Enviar email com dados da compra */
+        /*
         let responseEmailOtherPlans = await sendEmail(dataUser[0].email, 'Plano adquirido',
             templateEmailBuyPlan('Dados do plano adquirido!',
                 dataUser[0].email,
@@ -107,15 +134,8 @@ const createPurchasePlanController = async (req, res) => {
                 purchaseValidity,
                 purchaseTime,
                 contactSuport));
-
-        let dataResult = await createPurchasePlanModel(pkUser, purchaseDate, purchaseTime, purchaseValidity, price, time, dateToday);
-        if(dataResult.affectedRows === 0){
-            return res.status(500).json({
-                statusCode: 500,
-                message: `Algo deu errado na compra do plano ${dataPlans[0].name}!`
-
-            });
-        };
+               
+        */
         return res.status(201).json({
             statusCode: 201,
             message: `Compra realizada, plano [${name}]!`,

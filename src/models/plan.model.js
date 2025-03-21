@@ -14,7 +14,7 @@ const getAllPlanModel = async () => {
 const getPlanByPkModel = async (pkPlan) => {
     try {
         const conn = await connect();    
-        const [ result ] = await conn.query('SELECT * FROM `plans` WHERE `pkPlans` = ?',
+        const [ result ] = await conn.query('SELECT * FROM `plans` WHERE `pkPlan` = ?',
             [ pkPlan ]
         );
         return result;
