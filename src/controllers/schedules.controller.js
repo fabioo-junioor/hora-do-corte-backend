@@ -1,4 +1,5 @@
 import { getScheduleModel, createScheduleModel, updateScheduleModel } from '../models/schedules.model.js';
+import { validAuth } from '../core/auth/auth.jwt.js';
 import { getTimeZone } from '../helpers/global.helper.js';
 
 const dateToday = getTimeZone();
@@ -41,7 +42,15 @@ const getScheduleController = async (req, res) => {
 };
 const createScheduleController = async (req, res) => {
     try{
-        const { schedules, pkProfessional } = req.body;
+        const { pkProfessional, schedules, pkUser } = req.body;
+
+        if(!await validAuth(req, pkUser)){
+            return res.status(400).json({
+                statusCode: 400,
+                message: 'Operação inválida!'
+
+            });
+        };
 
         const dataSchedule = await getScheduleModel(pkProfessional);
         if(!dataSchedule){
@@ -92,7 +101,15 @@ const createScheduleController = async (req, res) => {
 const updateScheduleController = async (req, res) => {
     try {
         const pkProfessionalSchedule = req.params.pk;
-        const { schedules } = req.body;
+        const { schedules, pkUser } = req.body;
+
+        if(!await validAuth(req, pkUser)){
+            return res.status(400).json({
+                statusCode: 400,
+                message: 'Operação inválida!'
+
+            });
+        };
 
         const dataResult = await updateScheduleModel(schedules, dateToday, pkProfessionalSchedule);
         if(!dataResult){

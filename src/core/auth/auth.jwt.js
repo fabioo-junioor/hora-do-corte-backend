@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
 import * as dotenv from 'dotenv';
+import { getUserByEmailModel } from '../../models/user.model.js';
 
 dotenv.config();
 const secret = process.env.SECRET_TOKEN;
@@ -37,41 +38,34 @@ const verifyToken = (req, res, next) => {
         });
     };
 };
-const createToken = (email) => {
-    const token = jwt.sign({ email: email }, secret, {
+const createToken = (email, pkUser) => {
+    const token = jwt.sign({ email: email, pkUser: String(pkUser) }, secret, {
         //expiresIn: '15sec'
     });
     return token;
 
 };
-const validAuth = (req, res, next) => {
+const validAuth = async (req, pkUser) => {
     const token = req.header('Authorization')?.split(' ')[1];
 
     if(!token){
-        return res.status(401).json({
-            statusCode: 401,
-            message: 'Não autorizado!',
-            data: []
-
-        });
+        return false;
+        
     };
-    jwt.verify(token, secret, (error, info) => {
-        if(error){
-            return res.status(403).json({
-                statusCode: 403,
-                message: token == 'notToken' ? 'Token inválido!' : 'Sessão expirou!',
-                data: []
     
-            });
-        };
-        req.user = token;
-        next();
+    let payload = jwt.verify(token, secret);
+    let dataResult = await getUserByEmailModel(payload.email);
+    if(Number(dataResult[0]?.pkUser) !== Number(pkUser)){
+        return false;
 
-    });
+    };
+    return true;
+
 };
 
 export {
     verifyToken,
-    createToken
+    createToken,
+    validAuth
 
 };

@@ -2,6 +2,7 @@ import { getAllReservationModel, getAllReservationByProfessionalModel,
     getReservationByPkReservationModel,
     createReservationModel, deleteReservationModel
 } from '../models/reservation.model.js';
+import { validAuth } from '../core/auth/auth.jwt.js';
 import { getUserByIdModel } from '../models/user.model.js';
 import { getUserDetailsByFkModel } from '../models/userDetails.model.js';
 import { getProfessionalByPkModel } from '../models/professional.model.js';
@@ -17,6 +18,14 @@ const contactSuport = process.env.CONTACT_SUPORT;
 const getReservationController = async (req, res) => {
     try {
         const pkUser = req.params.pk;
+
+        if(!await validAuth(req, pkUser)){
+            return res.status(400).json({
+                statusCode: 400,
+                message: 'Operação inválida!'
+
+            });
+        };
         
         const dataResult = await getAllReservationModel(pkUser, isReservation);
         if (!dataResult) {
@@ -38,7 +47,7 @@ const getReservationController = async (req, res) => {
             statusCode: 200,
             message: 'Todos os agendamento!',
             data: dataResult.map((
-                { createdAt, updatedAt, ...rest }) => rest
+                { createdAt, updatedAt, isReservation, ...rest }) => rest
 
             )
         });
@@ -169,8 +178,17 @@ const createReservationController = async (req, res) => {
 const deleteReservationController = async (req, res) => {
     try {
         const pkReservation = req.params.pk;
+        const { pkUser } = req.body;
+
+        if(!await validAuth(req, pkUser)){
+            return res.status(400).json({
+                statusCode: 400,
+                message: 'Operação inválida!'
+
+            });
+        };
         
-        const dataResult = await deleteReservationModel(pkReservation, !isReservation, dateToday);
+        const dataResult = await deleteReservationModel(pkReservation, !isReservation, dateToday, pkUser);
         if (dataResult.affectedRows === 0 || !dataResult) {
             return res.status(500).json({
                 statusCode: 500,

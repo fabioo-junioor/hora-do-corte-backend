@@ -1,4 +1,5 @@
 import { getAllProfessionalModel, createProfessionalModel, updateProfessionalModel, deleteProfessionalModel } from '../models/professional.model.js';
+import { validAuth } from '../core/auth/auth.jwt.js';
 import { getTimeZone } from '../helpers/global.helper.js';
 
 const dateToday = getTimeZone();
@@ -44,6 +45,14 @@ const createProfessionalController = async (req, res) => {
     try{
         const { name, image, instagram, isUnavailable, pkUser } = req.body;
         
+        if(!await validAuth(req, pkUser)){
+            return res.status(400).json({
+                statusCode: 400,
+                message: 'Operação inválida!'
+
+            });
+        };
+
         const dataResult = await createProfessionalModel(name, image, instagram, isUnavailable, isActive, dateToday, dateToday, pkUser);
         if(!dataResult){
             return res.status(500).json({
@@ -77,9 +86,17 @@ const createProfessionalController = async (req, res) => {
 const updateProfessionalController = async (req, res) => {
     try{
         const pkProfessional = req.params.pk;
-        const { name, image, instagram, isUnavailable } = req.body;
+        const { name, image, instagram, isUnavailable, pkUser } = req.body;
         
-        const dataResult = await updateProfessionalModel(pkProfessional, name, image, instagram, isUnavailable, isActive, dateToday);
+        if(!await validAuth(req, pkUser)){
+            return res.status(400).json({
+                statusCode: 400,
+                message: 'Operação inválida!'
+
+            });
+        };
+        
+        const dataResult = await updateProfessionalModel(pkProfessional, name, image, instagram, isUnavailable, isActive, dateToday, pkUser);
         if(!dataResult){
             return res.status(500).json({
                 statusCode: 500,
@@ -112,8 +129,17 @@ const updateProfessionalController = async (req, res) => {
 const deleteProfessionalController = async (req, res) => {
     try{
         const pkProfessional = req.params.pk;
+        const { pkUser } = req.body;
+
+        if(!await validAuth(req, pkUser)){
+            return res.status(400).json({
+                statusCode: 400,
+                message: 'Operação inválida!'
+
+            });
+        };
         
-        const dataResult = await deleteProfessionalModel(pkProfessional, !isActive, dateToday);
+        const dataResult = await deleteProfessionalModel(pkProfessional, !isActive, dateToday, pkUser);
         if(!dataResult){
             return res.status(500).json({
                 statusCode: 500,

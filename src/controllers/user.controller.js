@@ -3,7 +3,7 @@ import { loginUserModel, getUserByIdModel,
         updateUserModel, deleteUserModel } from '../models/user.model.js';
 import { getAllProfessionalModel } from '../models/professional.model.js';
 import { getTimeZone } from '../helpers/global.helper.js';
-import { createToken } from '../core/auth/auth.jwt.js';
+import { createToken, validAuth } from '../core/auth/auth.jwt.js';
 import { encryptPass, comparePass } from '../core/security/bcryptjs.js';
 import { generatorPass } from '../core/security/passwordGenerator.js';
 import { sendEmail } from '../core/communication/config.email.js';
@@ -42,13 +42,14 @@ const loginUserController = async (req, res) => {
 
             });
         };
-        const token = createToken(email);
+        const token = createToken(email, dataResult[0].pkUser);
         return res.status(200).json({
             statusCode: 200,
             message: 'Login autorizado!',
             data: { 
                 pkUser: dataResult[0].pkUser,
                 token: token
+                
             }
         });
     } catch (error){
@@ -59,10 +60,10 @@ const loginUserController = async (req, res) => {
         });
     };
 };
-const createUserController = async(req, res) => {
+const createUserController = async (req, res) => {
     try {
         const { email, password, confirmPassword } = req.body;
-        
+
         const dataUser = await getUserByEmailModel(email);
         if(!dataUser){
             return res.status(500).json({
@@ -117,6 +118,14 @@ const updateUserController = async (req, res) => {
         const pkUser = req.params.pk;
         const { password, newPassword, confirmPassword } = req.body;
     
+        if(!await validAuth(req, pkUser)){
+            return res.status(400).json({
+                statusCode: 400,
+                message: 'Operação inválida!'
+
+            });
+        };
+
         const dataUser = await getUserByIdModel(pkUser);
         if(!dataUser){
             return res.status(500).json({
@@ -163,7 +172,7 @@ const updateUserController = async (req, res) => {
     }catch(error){
         return res.status(500).json({
             statusCode: 500,
-            message: 'Error ao criar o registro!'
+            message: error.message
 
         });
     };
@@ -171,6 +180,14 @@ const updateUserController = async (req, res) => {
 const deleteUserController = async (req, res) => {
     try{
         const pkUser = req.params.pk;
+
+        if(!await validAuth(req, pkUser)){
+            return res.status(400).json({
+                statusCode: 400,
+                message: 'Operação inválida!'
+
+            });
+        };
         
         const dataProfessional = await getAllProfessionalModel(pkUser);
         if(!dataProfessional){

@@ -1,7 +1,8 @@
 import { getPlanByPkModel } from '../models/plan.model.js';
 import { createPurchasePlanModel, getLastPurchasePlanByPkModel } from '../models/purchasePlan.model.js';
 import { getUserByIdModel } from '../models/user.model.js';
-import { buyPlan, checkLastPurchaseValidity } from '../helpers/purchaseCalculations.helper.js';
+import { validAuth } from '../core/auth/auth.jwt.js';
+import { buyPlan } from '../helpers/purchase.helper.js';
 import { sendEmail } from '../core/communication/config.email.js';
 import { templateEmailBuyPlan } from '../core/communication/templates.js';
 import { getTimeZone } from '../helpers/global.helper.js';
@@ -54,6 +55,14 @@ const createPurchasePlanController = async (req, res) => {
         const pkUser = req.params.pk;
         const { pkPlan, purchaseDate, purchaseTime } = req.body;
         
+        if(!await validAuth(req, pkUser)){
+            return res.status(400).json({
+                statusCode: 400,
+                message: 'Operação inválida!'
+
+            });
+        };
+
         const dataPlan = await getPlanByPkModel(pkPlan);
         const dataUser = await getUserByIdModel(pkUser);
         const { name, price, time, description, benefits } = dataPlan[0];

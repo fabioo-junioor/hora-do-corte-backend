@@ -52,11 +52,11 @@ const createReservationModel = async (pkUser, pkProfessional, services, dateRese
         
     };
 };
-const deleteReservationModel = async (pkReservation, isReservation, updatedAt) => {
+const deleteReservationModel = async (pkReservation, isReservation, updatedAt, pkUser) => {
     try {
         const conn = await connect();
-        const [ result ] = await conn.execute('UPDATE `reservation` SET `isReservation` = ?, `updatedAt` = ? WHERE `pkReservation` = ?',
-            [ isReservation, updatedAt, pkReservation ]
+        const [ result ] = await conn.execute('UPDATE `reservation` SET `isReservation` = ?, `updatedAt` = ? WHERE `pkReservation` = ? AND `fkUser` = ?',
+            [ isReservation, updatedAt, pkReservation, pkUser ]
         );
         return result;
         

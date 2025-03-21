@@ -39,11 +39,11 @@ const createProfessionalModel = async (name, image, instagram, isUnavailable, is
 
     };
 };
-const updateProfessionalModel = async (pkProfessional, name, image, instagram, isUnavailable, isActive, updatedAt) => {
+const updateProfessionalModel = async (pkProfessional, name, image, instagram, isUnavailable, isActive, updatedAt, pkUser) => {
     try {
         const conn = await connect();
-        const [ result ] = await conn.execute('UPDATE `professional` SET `name` = ?, `image` = ?, `instagram` = ?, `isUnavailable` = ?, `updatedAt` = ? WHERE `pkProfessional` = ? AND `isActive` = ?',
-            [ name, image, instagram, isUnavailable, updatedAt, pkProfessional, isActive ]
+        const [ result ] = await conn.execute('UPDATE `professional` SET `name` = ?, `image` = ?, `instagram` = ?, `isUnavailable` = ?, `updatedAt` = ? WHERE `pkProfessional` = ? AND `isActive` = ? AND `fkUser` = ?',
+            [ name, image, instagram, isUnavailable, updatedAt, pkProfessional, isActive, pkUser ]
         );
         return result;
 
@@ -52,11 +52,11 @@ const updateProfessionalModel = async (pkProfessional, name, image, instagram, i
 
     };
 };
-const deleteProfessionalModel = async (pkProfessional, isActive, updatedAt) => {
+const deleteProfessionalModel = async (pkProfessional, isActive, updatedAt, pkUser) => {
     try {
         const conn = await connect();
-        const [ result ] = await conn.execute('UPDATE `professional` SET `isActive` = ?, `updatedAt` = ? WHERE `pkProfessional` = ?',
-            [ isActive, updatedAt, pkProfessional ]
+        const [ result ] = await conn.execute('UPDATE `professional` SET `isActive` = ?, `updatedAt` = ? WHERE `pkProfessional` = ? AND `fkUser` = ?',
+            [ isActive, updatedAt, pkProfessional, pkUser ]
         );
         return result;
 

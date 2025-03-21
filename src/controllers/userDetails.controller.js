@@ -1,5 +1,6 @@
 import { getUserDetailsBySlugModel, getUserDetailsByFkModel,
     createUserDetailsModel, updateUserDetailsModel } from '../models/userDetails.model.js';
+import { validAuth } from '../core/auth/auth.jwt.js';
 import { getTimeZone } from '../helpers/global.helper.js';
 
 const dateToday = getTimeZone();
@@ -43,6 +44,14 @@ const getUserDetailsController = async (req, res) => {
 const getUserDetailsByPkController = async (req, res) => {
     try {
         const pkUser = req.params.pk;
+
+        if(!await validAuth(req, pkUser)){
+            return res.status(400).json({
+                statusCode: 400,
+                message: 'Operação inválida!'
+
+            });
+        };
        
         const dataUserDetails = await getUserDetailsByFkModel(pkUser);
         if(!dataUserDetails){
@@ -80,6 +89,14 @@ const createUserDetailsController = async (req, res) => {
     try {
         const { name, slug, phone, instagram, image, cep, state, city, street, number, pkUser } = req.body;
         
+        if(!await validAuth(req, pkUser)){
+            return res.status(400).json({
+                statusCode: 400,
+                message: 'Operação inválida!'
+
+            });
+        };
+
         const dataUserDetails = await getUserDetailsByFkModel(pkUser);
         if(!dataUserDetails){
             return res.status(500).json({
@@ -142,6 +159,14 @@ const updateUserDetailsController = async (req, res) => {
         const pkUser = req.params.pk;
         const { name, slug, phone, instagram, image, cep, state, city, street, number } = req.body;
 
+        if(!await validAuth(req, pkUser)){
+            return res.status(400).json({
+                statusCode: 400,
+                message: 'Operação inválida!'
+
+            });
+        };
+        
         const dataUserDetails = await getUserDetailsBySlugModel(slug);
         if(!dataUserDetails){
             return res.status(500).json({
