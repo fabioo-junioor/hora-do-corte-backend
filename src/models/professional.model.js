@@ -65,11 +65,25 @@ const deleteProfessionalModel = async (pkProfessional, isActive, updatedAt, pkUs
 
     };
 };
+const deleteProfessionalAtUserModel = async (isActive, updatedAt, pkUser) => {
+    try {
+        const conn = await connect();
+        const [ result ] = await conn.execute('UPDATE `professional` SET `isActive` = ?, `updatedAt` = ? WHERE `fkUser` = ? AND `isActive` = ?',
+            [ isActive, updatedAt, pkUser, !isActive ]
+        );
+        return result;
+
+    }catch(error){
+        return false;
+
+    };
+};
 export {
     getAllProfessionalModel,
     getProfessionalByPkModel,
     createProfessionalModel,
     updateProfessionalModel,
-    deleteProfessionalModel
+    deleteProfessionalModel,
+    deleteProfessionalAtUserModel
     
 };

@@ -1,7 +1,7 @@
-import { loginUserModel, getUserByIdModel,
+import { loginUserModel, getUserByPkModel,
         getUserByEmailModel, createUserModel, 
         updateUserModel, deleteUserModel } from '../models/user.model.js';
-import { getAllProfessionalModel } from '../models/professional.model.js';
+import { getAllProfessionalModel, deleteProfessionalAtUserModel } from '../models/professional.model.js';
 import { getTimeZone } from '../helpers/global.helper.js';
 import { createToken, validAuth } from '../core/auth/auth.jwt.js';
 import { encryptPass, comparePass } from '../core/security/bcryptjs.js';
@@ -11,13 +11,14 @@ import { templateEmailRecoverPass } from '../core/communication/templates.js';
 
 const dateToday = getTimeZone();
 const isActive = 1;
+const isBlocked = 1;
 const contactSuport = process.env.CONTACT_SUPORT;
 
 const loginUserController = async (req, res) => {
     try{
         const { email, password } = req.body;
 
-        const dataResult = await loginUserModel(email, isActive);
+        let dataResult = await loginUserModel(email, isActive);
         if(!dataResult){
             return res.status(500).json({
                 statusCode: 500,
@@ -33,6 +34,7 @@ const loginUserController = async (req, res) => {
 
             });
         };
+
         let validHash = await comparePass(password, dataResult[0].password);
         if(!validHash){
             return res.status(200).json({
@@ -42,12 +44,14 @@ const loginUserController = async (req, res) => {
 
             });
         };
-        const token = createToken(email, dataResult[0].pkUser);
+        
+        let token = createToken(email, dataResult[0].pkUser);
         return res.status(200).json({
             statusCode: 200,
             message: 'Login autorizado!',
             data: { 
                 pkUser: dataResult[0].pkUser,
+                isBlocked: dataResult[0].isBlocked,
                 token: token
                 
             }
@@ -64,7 +68,7 @@ const createUserController = async (req, res) => {
     try {
         const { email, password, confirmPassword } = req.body;
 
-        const dataUser = await getUserByEmailModel(email);
+        let dataUser = await getUserByEmailModel(email);
         if(!dataUser){
             return res.status(500).json({
                 statusCode: 500,
@@ -88,8 +92,9 @@ const createUserController = async (req, res) => {
 
             });
         };
+
         let hash = await encryptPass(password);
-        const dataResult = await createUserModel(email, hash, isActive, dateToday);
+        let dataResult = await createUserModel(email, hash, isActive, !isBlocked, dateToday);
         if(!dataResult){
             return res.status(500).json({
                 statusCode: 500,
@@ -126,7 +131,7 @@ const updateUserController = async (req, res) => {
             });
         };
 
-        const dataUser = await getUserByIdModel(pkUser);
+        let dataUser = await getUserByPkModel(pkUser);
         if(!dataUser){
             return res.status(500).json({
                 statusCode: 500,
@@ -152,8 +157,9 @@ const updateUserController = async (req, res) => {
 
             });
         };
+
         let hash = await encryptPass(newPassword);
-        const dataResult = await updateUserModel(pkUser, hash, dateToday, isActive);
+        let dataResult = await updateUserModel(pkUser, hash, dateToday, isActive);
         if(!dataResult){
             return res.status(500).json({
                 statusCode: 500,
@@ -189,23 +195,8 @@ const deleteUserController = async (req, res) => {
             });
         };
         
-        const dataProfessional = await getAllProfessionalModel(pkUser);
-        if(!dataProfessional){
-            return res.status(500).json({
-                statusCode: 500,
-                message: 'Algo deu errado na conexão!'
-
-            });
-        };
-        if(dataProfessional.length !== 0){
-            return res.status(200).json({
-                statusCode: 200,
-                message: 'Primeiramente excluir os profissionais cadastrados!',
-                data: []
-
-            });
-        };        
-        const dataResult = await deleteUserModel(pkUser, dateToday, !isActive);
+        await deleteProfessionalAtUserModel(!isActive, dateToday, pkUser);
+        let dataResult = await deleteUserModel(pkUser, dateToday, !isActive);
         if(!dataResult){
             return res.status(500).json({
                 statusCode: 500,
@@ -239,7 +230,7 @@ const recoverPassUser = async (req, res) => {
     try{
         const { email } = req.body;
 
-        const dataUser = await getUserByEmailModel(email);
+        let dataUser = await getUserByEmailModel(email);
         if(!dataUser){
             return res.status(500).json({
                 statusCode: 500,
@@ -255,9 +246,18 @@ const recoverPassUser = async (req, res) => {
 
             });
         };
+        if(dataUser[0].isBlocked == 1){
+            return res.status(200).json({
+                statusCode: 200,
+                message: 'Operação inválida no momento!',
+                data: []
+                
+            });
+        };
+        
         let newPassword = generatorPass();
         let hash = await encryptPass(newPassword);
-        const dataResult = await updateUserModel(dataUser[0].pkUser, hash, dateToday, isActive);
+        let dataResult = await updateUserModel(dataUser[0].pkUser, hash, dateToday, isActive);
         if(!dataResult){
             return res.status(500).json({
                 statusCode: 500,
@@ -268,7 +268,7 @@ const recoverPassUser = async (req, res) => {
         if(dataResult.affectedRows === 0){
             return res.status(200).json({
                 statusCode: 200,
-                message: 'Algo deu errado ao gerar nova senha!',
+                message: 'Operação negada para esse email!',
                 data: []
     
             });

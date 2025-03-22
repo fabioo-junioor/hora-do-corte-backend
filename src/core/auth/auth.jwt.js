@@ -17,7 +17,7 @@ const verifyToken = (req, res, next) => {
         });
     };
     try {
-        jwt.verify(token, secret, (error) => {
+        jwt.verify(token, secret, (req, res, error) => {
             if(error){
                 return res.status(token == 'notToken' ? 401 : 403).json({
                     statusCode: token == 'notToken' ? 401 : 403,

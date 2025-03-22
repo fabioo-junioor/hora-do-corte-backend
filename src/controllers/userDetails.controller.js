@@ -1,15 +1,17 @@
 import { getUserDetailsBySlugModel, getUserDetailsByFkModel,
     createUserDetailsModel, updateUserDetailsModel } from '../models/userDetails.model.js';
+import { getUserByPkModel } from '../models/user.model.js';
 import { validAuth } from '../core/auth/auth.jwt.js';
 import { getTimeZone } from '../helpers/global.helper.js';
 
+const isActive = 1;
 const dateToday = getTimeZone();
 
 const getUserDetailsController = async (req, res) => {
     try {
         const slug = req.params.slug;
-        
-        const dataUserDetails = await getUserDetailsBySlugModel(slug);
+
+        let dataUserDetails = await getUserDetailsBySlugModel(slug);
         if(!dataUserDetails){
             return res.status(500).json({
                 statusCode: 500,
@@ -24,7 +26,25 @@ const getUserDetailsController = async (req, res) => {
                 data: []
                 
             });
-        };        
+        };
+
+        let dataUser = await getUserByPkModel(dataUserDetails[0].fkUser);
+        if(dataUser[0].isActive == 0){
+            return res.status(200).json({
+                statusCode: 200,
+                message: 'O usuário não existe!',
+                data: []
+                
+            });
+        };
+        if(dataUser[0].isBlocked == 1){
+            return res.status(200).json({
+                statusCode: 200,
+                message: 'Usuário indisponivel!',
+                data: []
+                
+            });
+        };
         return res.status(200).json({
             statusCode: 200,
             message: 'Dados do usuário!',
@@ -53,7 +73,7 @@ const getUserDetailsByPkController = async (req, res) => {
             });
         };
        
-        const dataUserDetails = await getUserDetailsByFkModel(pkUser);
+        let dataUserDetails = await getUserDetailsByFkModel(pkUser);
         if(!dataUserDetails){
             return res.status(500).json({
                 statusCode: 500,
@@ -97,7 +117,7 @@ const createUserDetailsController = async (req, res) => {
             });
         };
 
-        const dataUserDetails = await getUserDetailsByFkModel(pkUser);
+        let dataUserDetails = await getUserDetailsByFkModel(pkUser);
         if(!dataUserDetails){
             return res.status(500).json({
                 statusCode: 500,
@@ -114,7 +134,7 @@ const createUserDetailsController = async (req, res) => {
             });
         };
         
-        const dataUserDetailsSlug = await getUserDetailsBySlugModel(slug);
+        let dataUserDetailsSlug = await getUserDetailsBySlugModel(slug);
         if(!dataUserDetailsSlug){
             return res.status(500).json({
                 statusCode: 500,
@@ -129,8 +149,9 @@ const createUserDetailsController = async (req, res) => {
                 data: []
                 
             });
-        };        
-        const dataResult = await createUserDetailsModel(name, slug, phone, instagram, image, cep, state, city, street, number, dateToday, dateToday, pkUser);
+        };   
+             
+        let dataResult = await createUserDetailsModel(name, slug, phone, instagram, image, cep, state, city, street, number, dateToday, dateToday, pkUser);
         if(!dataResult){
             return res.status(500).json({
                 statusCode: 500,
@@ -167,7 +188,7 @@ const updateUserDetailsController = async (req, res) => {
             });
         };
         
-        const dataUserDetails = await getUserDetailsBySlugModel(slug);
+        let dataUserDetails = await getUserDetailsBySlugModel(slug);
         if(!dataUserDetails){
             return res.status(500).json({
                 statusCode: 500,
@@ -183,7 +204,8 @@ const updateUserDetailsController = async (req, res) => {
                 
             });
         };
-        const dataResult = await updateUserDetailsModel(name, slug, phone, instagram, image, cep, state, city, street, number, dateToday, pkUser);
+
+        let dataResult = await updateUserDetailsModel(name, slug, phone, instagram, image, cep, state, city, street, number, dateToday, pkUser);
         if(!dataResult){
             return res.status(500).json({
                 statusCode: 500,

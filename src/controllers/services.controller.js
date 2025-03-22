@@ -8,7 +8,7 @@ const getServiceController = async (req, res) => {
     try{
         const pkProfessional = req.params.pk;
         
-        const dataResult = await getServiceModel(pkProfessional);
+        let dataResult = await getServiceModel(pkProfessional);
         if(!dataResult){
             return res.status(500).json({
                 statusCode: 500,
@@ -52,7 +52,7 @@ const createServiceController = async (req, res) => {
             });
         };
     
-        const dataService = await getServiceModel(pkProfessional);
+        let dataService = await getServiceModel(pkProfessional);
         if(!dataService){
             return res.status(500).json({
                 statusCode: 500,
@@ -68,7 +68,8 @@ const createServiceController = async (req, res) => {
                 
             });
         };
-        const dataResult = await createServiceModel(services, dateToday, dateToday, pkProfessional);
+
+        let dataResult = await createServiceModel(services, dateToday, dateToday, pkProfessional);
         if(!dataResult){
             return res.status(500).json({
                 statusCode: 500,
@@ -111,7 +112,7 @@ const updateServiceController = async (req, res) => {
             });
         };
         
-        const dataResult = await updateServiceModel(services, dateToday, pkProfessionalServices);
+        let dataResult = await updateServiceModel(services, dateToday, pkProfessionalServices);
         if(!dataResult){
             return res.status(500).json({
                 statusCode: 500,

@@ -8,7 +8,7 @@ const getScheduleController = async (req, res) => {
     try{
         const pkProfessional = req.params.pk;
         
-        const dataResult = await getScheduleModel(pkProfessional);
+        let dataResult = await getScheduleModel(pkProfessional);
         if(!dataResult){
             return res.status(500).json({
                 statusCode: 500,
@@ -52,7 +52,7 @@ const createScheduleController = async (req, res) => {
             });
         };
 
-        const dataSchedule = await getScheduleModel(pkProfessional);
+        let dataSchedule = await getScheduleModel(pkProfessional);
         if(!dataSchedule){
             return res.status(500).json({
                 statusCode: 500,
@@ -68,7 +68,8 @@ const createScheduleController = async (req, res) => {
                 
             });
         };
-        const dataResult = await createScheduleModel(schedules, dateToday, dateToday, pkProfessional);
+
+        let dataResult = await createScheduleModel(schedules, dateToday, dateToday, pkProfessional);
         if(!dataResult){
             return res.status(500).json({
                 statusCode: 500,
@@ -111,7 +112,7 @@ const updateScheduleController = async (req, res) => {
             });
         };
 
-        const dataResult = await updateScheduleModel(schedules, dateToday, pkProfessionalSchedule);
+        let dataResult = await updateScheduleModel(schedules, dateToday, pkProfessionalSchedule);
         if(!dataResult){
             return res.status(500).json({
                 statusCode: 500,

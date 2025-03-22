@@ -1,4 +1,5 @@
 import { getAllProfessionalModel, createProfessionalModel, updateProfessionalModel, deleteProfessionalModel } from '../models/professional.model.js';
+import { getUserByPkModel } from '../models/user.model.js';
 import { validAuth } from '../core/auth/auth.jwt.js';
 import { getTimeZone } from '../helpers/global.helper.js';
 
@@ -9,7 +10,7 @@ const getAllProfessionalController = async (req, res) => {
     try{
         const pkUser = req.params.pk;
         
-        const dataResult = await getAllProfessionalModel(pkUser, isActive);
+        let dataResult = await getAllProfessionalModel(pkUser, isActive);
         if(!dataResult){
             return res.status(500).json({
                 statusCode: 500,
@@ -53,7 +54,17 @@ const createProfessionalController = async (req, res) => {
             });
         };
 
-        const dataResult = await createProfessionalModel(name, image, instagram, isUnavailable, isActive, dateToday, dateToday, pkUser);
+        let dataUser = await getUserByPkModel(pkUser);
+        if(dataUser[0].isBlocked == 1){
+            return res.status(200).json({
+                statusCode: 200,
+                message: 'Operação inválida no momento!',
+                data: []
+                
+            });
+        };
+
+        let dataResult = await createProfessionalModel(name, image, instagram, isUnavailable, isActive, dateToday, dateToday, pkUser);
         if(!dataResult){
             return res.status(500).json({
                 statusCode: 500,
@@ -96,7 +107,7 @@ const updateProfessionalController = async (req, res) => {
             });
         };
         
-        const dataResult = await updateProfessionalModel(pkProfessional, name, image, instagram, isUnavailable, isActive, dateToday, pkUser);
+        let dataResult = await updateProfessionalModel(pkProfessional, name, image, instagram, isUnavailable, isActive, dateToday, pkUser);
         if(!dataResult){
             return res.status(500).json({
                 statusCode: 500,
@@ -139,7 +150,7 @@ const deleteProfessionalController = async (req, res) => {
             });
         };
         
-        const dataResult = await deleteProfessionalModel(pkProfessional, !isActive, dateToday, pkUser);
+        let dataResult = await deleteProfessionalModel(pkProfessional, !isActive, dateToday, pkUser);
         if(!dataResult){
             return res.status(500).json({
                 statusCode: 500,

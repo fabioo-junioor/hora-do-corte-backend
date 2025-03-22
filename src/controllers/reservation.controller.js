@@ -3,7 +3,7 @@ import { getAllReservationModel, getAllReservationByProfessionalModel,
     createReservationModel, deleteReservationModel
 } from '../models/reservation.model.js';
 import { validAuth } from '../core/auth/auth.jwt.js';
-import { getUserByIdModel } from '../models/user.model.js';
+import { getUserByPkModel } from '../models/user.model.js';
 import { getUserDetailsByFkModel } from '../models/userDetails.model.js';
 import { getProfessionalByPkModel } from '../models/professional.model.js';
 import { validatorIsReserved, verifyService, convertStringToArray } from '../helpers/reservation.helper.js';
@@ -27,7 +27,7 @@ const getReservationController = async (req, res) => {
             });
         };
         
-        const dataResult = await getAllReservationModel(pkUser, isReservation);
+        let dataResult = await getAllReservationModel(pkUser, isReservation);
         if (!dataResult) {
             return res.status(500).json({
                 statusCode: 500,
@@ -35,7 +35,7 @@ const getReservationController = async (req, res) => {
 
             });
         };
-        if (dataResult.length === 0) {
+        if(dataResult.length === 0) {
             return res.status(200).json({
                 statusCode: 200,
                 message: 'Sem agendamentos!',
@@ -64,15 +64,15 @@ const getReservationByProfessionalController = async (req, res) => {
         const pkProfessional = req.params.pk;
         const { dateReservation } = req.body;
 
-        const dataResult = await getAllReservationByProfessionalModel(pkProfessional, dateReservation, isReservation)
-        if (!dataResult) {
+        let dataResult = await getAllReservationByProfessionalModel(pkProfessional, dateReservation, isReservation)
+        if(!dataResult) {
             return res.status(500).json({
                 statusCode: 500,
                 message: 'Algo deu errado na conexão!'
 
             });
         };
-        if (dataResult.length === 0) {
+        if(dataResult.length === 0) {
             return res.status(200).json({
                 statusCode: 200,
                 message: 'Sem agendamentos!',
@@ -106,24 +106,26 @@ const createReservationController = async (req, res) => {
         const { pkUser, pkProfessional, services, dateReservation, timeReservation, price, duration, name, email, phone, observation } = req.body;
         
         let dataReservations = await getAllReservationByProfessionalModel(pkProfessional, dateReservation, isReservation);
-        if (!dataReservations) {
+        if(!dataReservations) {
             return res.status(500).json({
                 statusCode: 500,
                 message: 'Algo de errado no agendamento!'
 
             });
         };
+
         let validatorReserved = validatorIsReserved(dataReservations, timeReservation, duration);
-        if (validatorReserved) {
+        if(validatorReserved) {
             return res.status(200).json({
                 statusCode: 200,
                 message: 'Esse horário já foi agendado!',
                 data: []
 
             });
-        };        
-        const dataResult = await createReservationModel(pkUser, pkProfessional, services, dateReservation, timeReservation, price, duration, dateToday, dateToday, isReservation, name, email, phone, observation);
-        if (dataResult.affectedRows === 0 || !dataResult) {
+        }; 
+
+        let dataResult = await createReservationModel(pkUser, pkProfessional, services, dateReservation, timeReservation, price, duration, dateToday, dateToday, isReservation, name, email, phone, observation);
+        if(dataResult.affectedRows === 0 || !dataResult) {
             return res.status(500).json({
                 statusCode: 500,
                 message: 'Algo de errado no agendamento!!'
@@ -131,24 +133,10 @@ const createReservationController = async (req, res) => {
             });
         };
 
-        let dataUser = await getUserByIdModel(pkUser);
+        let dataUser = await getUserByPkModel(pkUser);
         let dataUserDetails = await getUserDetailsByFkModel(pkUser);
         let dataProfessional = await getProfessionalByPkModel(pkProfessional);
-
         /*
-        let responseEmailClient = await sendEmail(email, 'Reserva realizada',
-            templateEmailReservation('Dados da reserva!',
-                name,
-                dateReservation,
-                timeReservation,
-                verifyService(services),
-                phone,
-                price,
-                observation,
-                dataProfessional[0].name,
-                dataUserDetails[0].phone,
-                contactSuport));
-
         let responseEmailEstablishment = await sendEmail(dataUser[0].email, 'Reserva realizada',
             templateEmailReservation('Dados da reserva!',
                 name,
@@ -161,8 +149,23 @@ const createReservationController = async (req, res) => {
                 dataProfessional[0].name,
                 dataUserDetails[0].phone,
                 contactSuport));
-        */
-       
+        
+        if(email !== ''){
+            let responseEmailClient = await sendEmail(email, 'Reserva realizada',
+                templateEmailReservation('Dados da reserva!',
+                    name,
+                    dateReservation,
+                    timeReservation,
+                    verifyService(services),
+                    phone,
+                    price,
+                    observation,
+                    dataProfessional[0].name,
+                    dataUserDetails[0].phone,
+                    contactSuport));
+        
+        };
+        */     
         return res.status(201).json({
             statusCode: 201,
             message: 'Agendamento criado!',
@@ -190,7 +193,7 @@ const deleteReservationController = async (req, res) => {
             });
         };
         
-        const dataResult = await deleteReservationModel(pkReservation, !isReservation, dateToday, pkUser);
+        let dataResult = await deleteReservationModel(pkReservation, !isReservation, dateToday, pkUser);
         if (dataResult.affectedRows === 0 || !dataResult) {
             return res.status(500).json({
                 statusCode: 500,
@@ -198,27 +201,14 @@ const deleteReservationController = async (req, res) => {
 
             });
         };
+
         let dataReservation = await getReservationByPkReservationModel(pkReservation);
-        let dataUser = await getUserByIdModel(dataReservation[0].fkUser);
+        let dataUser = await getUserByPkModel(dataReservation[0].fkUser);
         let dataUserDetails = await getUserDetailsByFkModel(dataReservation[0].fkUser);
         let dataProfessional = await getProfessionalByPkModel(dataReservation[0].fkProfessional);
-        
         let newArrayServices = convertStringToArray(dataReservation[0].services);        
-         
+
         /*
-        let responseEmailClient = await sendEmail(dataReservation[0].emailCustomer, 'Reserva cancelada',
-            templateEmailReservation('Dados da reserva!',
-                dataReservation[0].nameCustomer,
-                dataReservation[0].dateReservation,
-                dataReservation[0].timeReservation,
-                verifyService(newArrayServices),
-                dataReservation[0].phoneCustomer,
-                dataReservation[0].price,
-                dataReservation[0].observationCustomer,
-                dataProfessional[0].name,
-                dataUserDetails[0].phone,
-                contactSuport));
-                
         let responseEmailEstablishment = await sendEmail(dataUser[0].email, 'Reserva cancelada',
             templateEmailReservation('Dados da reserva!',
                 dataReservation[0].nameCustomer,
@@ -231,6 +221,23 @@ const deleteReservationController = async (req, res) => {
                 dataProfessional[0].name,
                 dataUserDetails[0].phone,
                 contactSuport));
+
+        if(dataReservation[0].emailCustomer !== ''){
+            let responseEmailClient = await sendEmail(dataReservation[0].emailCustomer, 'Reserva cancelada',
+                templateEmailReservation('Dados da reserva!',
+                    dataReservation[0].nameCustomer,
+                    dataReservation[0].dateReservation,
+                    dataReservation[0].timeReservation,
+                    verifyService(newArrayServices),
+                    dataReservation[0].phoneCustomer,
+                    dataReservation[0].price,
+                    dataReservation[0].observationCustomer,
+                    dataProfessional[0].name,
+                    dataUserDetails[0].phone,
+                    contactSuport));
+                    
+        
+        };
         */
         return res.status(200).json({
             statusCode: 200,
