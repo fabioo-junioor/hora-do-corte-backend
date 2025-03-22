@@ -1,7 +1,7 @@
 import { getPlanByPkModel } from '../models/plan.model.js';
 import { createPurchasePlanModel, getLastPurchasePlanByPkModel } from '../models/purchasePlan.model.js';
-import { getUserByIdModel } from '../models/user.model.js';
-import { validAuth } from '../core/auth/auth.jwt.js';
+import { getUserByPkModel } from '../models/user.model.js';
+import { validAuthPk } from '../core/auth/auth.jwt.js';
 import { buyPlan } from '../helpers/purchase.helper.js';
 import { sendEmail } from '../core/communication/config.email.js';
 import { templateEmailBuyPlan } from '../core/communication/templates.js';
@@ -14,7 +14,7 @@ const getLastPurchasePlanController = async (req, res) => {
     try{
         const pkUser = req.params.pk;
         
-        const dataResult = await getLastPurchasePlanByPkModel(pkUser);
+        let dataResult = await getLastPurchasePlanByPkModel(pkUser);
         if(!dataResult){
             return res.status(500).json({
                 statusCode: 500,
@@ -55,7 +55,7 @@ const createPurchasePlanController = async (req, res) => {
         const pkUser = req.params.pk;
         const { pkPlan, purchaseDate, purchaseTime } = req.body;
         
-        if(!await validAuth(req, pkUser)){
+        if(!await validAuthPk(req, pkUser)){
             return res.status(400).json({
                 statusCode: 400,
                 message: 'Operação inválida!'
@@ -63,12 +63,20 @@ const createPurchasePlanController = async (req, res) => {
             });
         };
 
-        const dataPlan = await getPlanByPkModel(pkPlan);
-        const dataUser = await getUserByIdModel(pkUser);
-        const { name, price, time, description, benefits } = dataPlan[0];
-        const purchaseValidity = buyPlan(purchaseDate, time);
-        const dataPlansLastBuy = await getLastPurchasePlanByPkModel(pkUser);
+        let dataUser = await getUserByPkModel(pkUser);
+        if(dataUser[0].isBlocked == 1){
+            return res.status(200).json({
+                statusCode: 200,
+                message: 'Operação inválida no momento!',
+                data: []
+                
+            });
+        };
         
+        let dataPlan = await getPlanByPkModel(pkPlan);
+        const { name, price, time, description, benefits } = dataPlan[0];
+        let purchaseValidity = buyPlan(purchaseDate, time);
+        let dataPlansLastBuy = await getLastPurchasePlanByPkModel(pkUser);
         if(name === 'Free'){
             if(dataPlansLastBuy.length !== 0){
                 return res.status(200).json({
@@ -78,6 +86,7 @@ const createPurchasePlanController = async (req, res) => {
                     
                 });
             };
+
             let dataResult = await createPurchasePlanModel(pkUser, purchaseDate, purchaseTime, purchaseValidity, name, price, time, description, benefits, dateToday);
             if(dataResult.affectedRows === 0){
                 return res.status(500).json({

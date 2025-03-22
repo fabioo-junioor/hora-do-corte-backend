@@ -17,7 +17,7 @@ const verifyToken = (req, res, next) => {
         });
     };
     try {
-        jwt.verify(token, secret, (error) => {
+        jwt.verify(token, secret, (req, res, error) => {
             if(error){
                 return res.status(token == 'notToken' ? 401 : 403).json({
                     statusCode: token == 'notToken' ? 401 : 403,
@@ -45,7 +45,7 @@ const createToken = (email, pkUser) => {
     return token;
 
 };
-const validAuth = async (req, pkUser) => {
+const validAuthPk = async (req, pkUser) => {
     const token = req.header('Authorization')?.split(' ')[1];
 
     if(!token){
@@ -54,7 +54,7 @@ const validAuth = async (req, pkUser) => {
     };
     
     let payload = jwt.verify(token, secret);
-    let dataResult = await getUserByEmailModel(payload.email);
+    let dataResult = await getUserByEmailModel(payload?.email);
     if(Number(dataResult[0]?.pkUser) !== Number(pkUser)){
         return false;
 
@@ -62,10 +62,51 @@ const validAuth = async (req, pkUser) => {
     return true;
 
 };
+const checkUserStatus = async (req, res) => {
+    const token = req.header('Authorization')?.split(' ')[1];
+    
+    if(!token){
+        return res.status(401).json({
+            statusCode: 401,
+            message: 'Não autorizado!',
+            data: []
+
+        });
+    };
+    try {
+        let payload = jwt.verify(token, secret);
+        if(!payload?.email){
+            return res.status(token == 'notToken' ? 401 : 403).json({
+                statusCode: token == 'notToken' ? 401 : 403,
+                message: token == 'notToken' ? 'Token inválido!' : 'Sessão expirou!',
+                data: []
+    
+            });
+        };
+    
+        let dataResult = await getUserByEmailModel(payload?.email);
+        return res.status(200).json({
+            statusCode: 200,
+            message: 'Autorizado!',
+            data: dataResult.map((elem) => {
+                return { pkUser: elem.pkUser, isBlocked: elem.isBlocked }
+
+            })
+        });
+    } catch (error){
+        return res.status(token == 'notToken' ? 401 : 403).json({
+            statusCode: token == 'notToken' ? 401 : 403,
+            message: token == 'notToken' ? 'Token inválido!' : 'Sessão expirou!',
+            data: []
+
+        });
+    }
+};
 
 export {
     verifyToken,
     createToken,
-    validAuth
+    validAuthPk,
+    checkUserStatus
 
 };

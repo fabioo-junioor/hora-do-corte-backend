@@ -3,7 +3,7 @@ import { getAllPlanModel } from '../models/plan.model.js';
 
 const getAllPlansController = async (req, res) => {
     try{
-        const dataResult = await getAllPlanModel();
+        let dataResult = await getAllPlanModel();
         if(!dataResult){
             return res.status(500).json({
                 statusCode: 500,

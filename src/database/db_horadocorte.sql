@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Tempo de geração: 11/03/2025 às 00:34
+-- Tempo de geração: 22/03/2025 às 05:33
 -- Versão do servidor: 9.1.0
 -- Versão do PHP: 8.3.14
 
@@ -29,21 +29,23 @@ SET time_zone = "+00:00";
 
 DROP TABLE IF EXISTS `plans`;
 CREATE TABLE IF NOT EXISTS `plans` (
-  `pkPlans` int NOT NULL AUTO_INCREMENT,
-  `name` varchar(10) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
-  `price` varchar(5) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
-  `time` varchar(5) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
-  PRIMARY KEY (`pkPlans`)
+  `pkPlan` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(10) NOT NULL,
+  `price` varchar(5) NOT NULL,
+  `time` varchar(5) NOT NULL,
+  `description` varchar(255) NOT NULL,
+  `benefits` mediumtext NOT NULL,
+  PRIMARY KEY (`pkPlan`)
 ) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb3;
 
 --
 -- Despejando dados para a tabela `plans`
 --
 
-INSERT INTO `plans` (`pkPlans`, `name`, `price`, `time`) VALUES
-(1, 'Free', '0', '30'),
-(2, 'Basic', '25', '30'),
-(3, 'Pro', '135', '180');
+INSERT INTO `plans` (`pkPlan`, `name`, `price`, `time`, `description`, `benefits`) VALUES
+(1, 'Free', '0', '30', 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.', '[\'30 dias de uso grátis\', \'Suporte diário\']'),
+(2, 'Basic', '25', '30', 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.', '[\'30 dias de uso\', \'Suporte diário\']'),
+(3, 'Pro', '135', '180', 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.', '[\'180 dias de uso\', \'Suporte diário\']');
 
 -- --------------------------------------------------------
 
@@ -55,11 +57,12 @@ DROP TABLE IF EXISTS `professional`;
 CREATE TABLE IF NOT EXISTS `professional` (
   `pkProfessional` int NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
-  `image` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
-  `instagram` varchar(100) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
-  `isUnavailable` tinyint(1) NOT NULL,
-  `isActive` tinyint(1) NOT NULL,
-  `dateTimeRegistration` datetime NOT NULL,
+  `image` varchar(50) DEFAULT NULL,
+  `instagram` varchar(100) DEFAULT NULL,
+  `isUnavailable` tinyint NOT NULL,
+  `isActive` tinyint NOT NULL,
+  `createdAt` datetime NOT NULL,
+  `updatedAt` datetime NOT NULL,
   `fkUser` int NOT NULL,
   PRIMARY KEY (`pkProfessional`),
   KEY `fkUser` (`fkUser`)
@@ -74,8 +77,9 @@ CREATE TABLE IF NOT EXISTS `professional` (
 DROP TABLE IF EXISTS `professionalschedules`;
 CREATE TABLE IF NOT EXISTS `professionalschedules` (
   `pkProfessionalSchedules` int NOT NULL AUTO_INCREMENT,
-  `schedules` text NOT NULL,
-  `dateTimeRegistration` datetime NOT NULL,
+  `schedules` mediumtext NOT NULL,
+  `createdAt` datetime NOT NULL,
+  `updatedAt` datetime NOT NULL,
   `fkProfessional` int NOT NULL,
   PRIMARY KEY (`pkProfessionalSchedules`),
   KEY `fkProfessional` (`fkProfessional`)
@@ -90,12 +94,13 @@ CREATE TABLE IF NOT EXISTS `professionalschedules` (
 DROP TABLE IF EXISTS `professionalservices`;
 CREATE TABLE IF NOT EXISTS `professionalservices` (
   `pkProfessionalServices` int NOT NULL AUTO_INCREMENT,
-  `services` text NOT NULL,
-  `dateTimeRegistration` datetime NOT NULL,
+  `services` mediumtext NOT NULL,
+  `createdAt` datetime NOT NULL,
+  `updatedAt` datetime NOT NULL,
   `fkProfessional` int NOT NULL,
   PRIMARY KEY (`pkProfessionalServices`),
   KEY `fkProfessional` (`fkProfessional`)
-) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb3;
+) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb3;
 
 -- --------------------------------------------------------
 
@@ -109,14 +114,15 @@ CREATE TABLE IF NOT EXISTS `purchaseplanuser` (
   `purchaseDate` varchar(15) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
   `purchaseTime` varchar(10) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
   `purchaseValidity` varchar(15) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
-  `price` varchar(5) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
-  `time` varchar(5) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
-  `dateTimeRegistration` datetime NOT NULL,
-  `fkPlans` int NOT NULL,
+  `namePlan` varchar(10) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
+  `pricePlan` varchar(5) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
+  `timePlan` varchar(5) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
+  `descriptionPlan` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
+  `benefitsPlan` mediumtext NOT NULL,
+  `createdAt` datetime NOT NULL,
   `fkUser` int NOT NULL,
   PRIMARY KEY (`pkPurchasePlanUser`),
-  KEY `fkUser` (`fkUser`),
-  KEY `fkPlans` (`fkPlans`)
+  KEY `fkUser` (`fkUser`)
 ) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb3;
 
 -- --------------------------------------------------------
@@ -128,22 +134,23 @@ CREATE TABLE IF NOT EXISTS `purchaseplanuser` (
 DROP TABLE IF EXISTS `reservation`;
 CREATE TABLE IF NOT EXISTS `reservation` (
   `pkReservation` int NOT NULL AUTO_INCREMENT,
-  `nameCustomer` varchar(100) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
-  `emailCustomer` varchar(100) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
-  `phoneCustomer` varchar(15) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
-  `observationCustomer` text,
-  `dateReservation` varchar(15) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
-  `timeReservation` varchar(10) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
-  `services` text NOT NULL,
-  `price` varchar(5) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
-  `duration` varchar(5) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
-  `isReservation` tinyint(1) NOT NULL,
-  `dateTimeRegistration` datetime NOT NULL,
+  `nameCustomer` varchar(100) NOT NULL,
+  `emailCustomer` varchar(100) DEFAULT NULL,
+  `phoneCustomer` varchar(15) NOT NULL,
+  `observationCustomer` varchar(255) DEFAULT NULL,
+  `dateReservation` varchar(15) NOT NULL,
+  `timeReservation` varchar(10) NOT NULL,
+  `services` mediumtext NOT NULL,
+  `price` varchar(5) NOT NULL,
+  `duration` varchar(5) NOT NULL,
+  `isReservation` tinyint NOT NULL,
+  `createdAt` datetime NOT NULL,
+  `updatedAt` datetime NOT NULL,
   `fkUser` int NOT NULL,
   `fkProfessional` int NOT NULL,
   PRIMARY KEY (`pkReservation`),
-  KEY `fkUser` (`fkUser`),
-  KEY `fkProfessional` (`fkProfessional`)
+  KEY `fkProfessional` (`fkProfessional`),
+  KEY `fkUser` (`fkUser`)
 ) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb3;
 
 -- --------------------------------------------------------
@@ -155,12 +162,14 @@ CREATE TABLE IF NOT EXISTS `reservation` (
 DROP TABLE IF EXISTS `user`;
 CREATE TABLE IF NOT EXISTS `user` (
   `pkUser` int NOT NULL AUTO_INCREMENT,
-  `email` varchar(100) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
+  `email` varchar(100) NOT NULL,
   `password` varchar(255) NOT NULL,
-  `isActive` tinyint(1) NOT NULL,
-  `dateTimeRegistration` datetime NOT NULL,
+  `isActive` tinyint NOT NULL,
+  `isBlocked` tinyint NOT NULL,
+  `createdAt` datetime NOT NULL,
+  `updatedAt` datetime NOT NULL,
   PRIMARY KEY (`pkUser`)
-) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb3;
+) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb3;
 
 -- --------------------------------------------------------
 
@@ -171,17 +180,18 @@ CREATE TABLE IF NOT EXISTS `user` (
 DROP TABLE IF EXISTS `userdetails`;
 CREATE TABLE IF NOT EXISTS `userdetails` (
   `pkUserDetails` int NOT NULL AUTO_INCREMENT,
-  `name` varchar(100) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
-  `slug` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
-  `phone` varchar(15) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
-  `instagram` varchar(100) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
-  `image` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
-  `cep` varchar(15) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
-  `state` varchar(100) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
-  `city` varchar(100) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
-  `street` varchar(100) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
-  `number` varchar(20) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
-  `dateTimeRegistration` datetime NOT NULL,
+  `name` varchar(100) NOT NULL,
+  `slug` varchar(50) NOT NULL,
+  `phone` varchar(15) NOT NULL,
+  `instagram` varchar(100) DEFAULT NULL,
+  `image` varchar(50) DEFAULT NULL,
+  `cep` varchar(15) NOT NULL,
+  `state` varchar(100) NOT NULL,
+  `city` varchar(100) NOT NULL,
+  `street` varchar(100) NOT NULL,
+  `number` varchar(20) DEFAULT NULL,
+  `createdAt` datetime NOT NULL,
+  `updatedAt` datetime NOT NULL,
   `fkUser` int NOT NULL,
   PRIMARY KEY (`pkUserDetails`),
   KEY `fkUser` (`fkUser`)
