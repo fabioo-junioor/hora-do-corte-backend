@@ -1,18 +1,5 @@
 import connect from '../database/connect.js';
 
-const loginUserModel = async (email, isActive) => {
-    try {
-        const conn = await connect();
-        const [ result ] = await conn.query('SELECT * FROM `user` WHERE `email` = ? AND `isActive` = ?',
-            [ email, isActive ]
-        );
-        return result;
-        
-    }catch(error){
-        return false;
-        
-    };
-};
 const getUserByPkModel = async (pkUser) => {
     try {
         const conn = await connect();
@@ -80,7 +67,6 @@ const deleteUserModel = async (pkUser, updatedAt, isActive) => {
 };
 
 export {
-    loginUserModel,
     getUserByPkModel,
     getUserByEmailModel,
     createUserModel,

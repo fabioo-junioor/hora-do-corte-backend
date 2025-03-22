@@ -1,6 +1,6 @@
 import { getAllProfessionalModel, createProfessionalModel, updateProfessionalModel, deleteProfessionalModel } from '../models/professional.model.js';
 import { getUserByPkModel } from '../models/user.model.js';
-import { validAuth } from '../core/auth/auth.jwt.js';
+import { validAuthPk } from '../core/auth/auth.jwt.js';
 import { getTimeZone } from '../helpers/global.helper.js';
 
 const dateToday = getTimeZone();
@@ -46,7 +46,7 @@ const createProfessionalController = async (req, res) => {
     try{
         const { name, image, instagram, isUnavailable, pkUser } = req.body;
         
-        if(!await validAuth(req, pkUser)){
+        if(!await validAuthPk(req, pkUser)){
             return res.status(400).json({
                 statusCode: 400,
                 message: 'Operação inválida!'
@@ -99,7 +99,7 @@ const updateProfessionalController = async (req, res) => {
         const pkProfessional = req.params.pk;
         const { name, image, instagram, isUnavailable, pkUser } = req.body;
         
-        if(!await validAuth(req, pkUser)){
+        if(!await validAuthPk(req, pkUser)){
             return res.status(400).json({
                 statusCode: 400,
                 message: 'Operação inválida!'
@@ -142,7 +142,7 @@ const deleteProfessionalController = async (req, res) => {
         const pkProfessional = req.params.pk;
         const { pkUser } = req.body;
 
-        if(!await validAuth(req, pkUser)){
+        if(!await validAuthPk(req, pkUser)){
             return res.status(400).json({
                 statusCode: 400,
                 message: 'Operação inválida!'

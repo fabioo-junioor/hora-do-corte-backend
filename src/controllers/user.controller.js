@@ -1,9 +1,9 @@
-import { loginUserModel, getUserByPkModel,
+import { getUserByPkModel,
         getUserByEmailModel, createUserModel, 
         updateUserModel, deleteUserModel } from '../models/user.model.js';
-import { getAllProfessionalModel, deleteProfessionalAtUserModel } from '../models/professional.model.js';
+import { deleteProfessionalAtUserModel } from '../models/professional.model.js';
 import { getTimeZone } from '../helpers/global.helper.js';
-import { createToken, validAuth } from '../core/auth/auth.jwt.js';
+import { validAuthPk } from '../core/auth/auth.jwt.js';
 import { encryptPass, comparePass } from '../core/security/bcryptjs.js';
 import { generatorPass } from '../core/security/passwordGenerator.js';
 import { sendEmail } from '../core/communication/config.email.js';
@@ -14,56 +14,6 @@ const isActive = 1;
 const isBlocked = 1;
 const contactSuport = process.env.CONTACT_SUPORT;
 
-const loginUserController = async (req, res) => {
-    try{
-        const { email, password } = req.body;
-
-        let dataResult = await loginUserModel(email, isActive);
-        if(!dataResult){
-            return res.status(500).json({
-                statusCode: 500,
-                message: 'Algo deu errado na conexão!'
-
-            });
-        };
-        if(dataResult.length === 0){
-            return res.status(200).json({
-                statusCode: 200,
-                message: 'Email e/ou senha incorretos!',
-                data: []
-
-            });
-        };
-
-        let validHash = await comparePass(password, dataResult[0].password);
-        if(!validHash){
-            return res.status(200).json({
-                statusCode: 200,
-                message: 'Email e/ou senha incorretos!',
-                data: []
-
-            });
-        };
-        
-        let token = createToken(email, dataResult[0].pkUser);
-        return res.status(200).json({
-            statusCode: 200,
-            message: 'Login autorizado!',
-            data: { 
-                pkUser: dataResult[0].pkUser,
-                isBlocked: dataResult[0].isBlocked,
-                token: token
-                
-            }
-        });
-    } catch (error){
-        return res.status(500).json({
-            statusCode: 500,
-            message: error.message
-
-        });
-    };
-};
 const createUserController = async (req, res) => {
     try {
         const { email, password, confirmPassword } = req.body;
@@ -123,7 +73,7 @@ const updateUserController = async (req, res) => {
         const pkUser = req.params.pk;
         const { password, newPassword, confirmPassword } = req.body;
     
-        if(!await validAuth(req, pkUser)){
+        if(!await validAuthPk(req, pkUser)){
             return res.status(400).json({
                 statusCode: 400,
                 message: 'Operação inválida!'
@@ -187,7 +137,7 @@ const deleteUserController = async (req, res) => {
     try{
         const pkUser = req.params.pk;
 
-        if(!await validAuth(req, pkUser)){
+        if(!await validAuthPk(req, pkUser)){
             return res.status(400).json({
                 statusCode: 400,
                 message: 'Operação inválida!'
@@ -292,7 +242,6 @@ const recoverPassUser = async (req, res) => {
 };
 
 export default {
-    loginUserController,
     createUserController,
     updateUserController,
     deleteUserController,

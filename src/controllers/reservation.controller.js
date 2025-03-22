@@ -2,7 +2,7 @@ import { getAllReservationModel, getAllReservationByProfessionalModel,
     getReservationByPkReservationModel,
     createReservationModel, deleteReservationModel
 } from '../models/reservation.model.js';
-import { validAuth } from '../core/auth/auth.jwt.js';
+import { validAuthPk } from '../core/auth/auth.jwt.js';
 import { getUserByPkModel } from '../models/user.model.js';
 import { getUserDetailsByFkModel } from '../models/userDetails.model.js';
 import { getProfessionalByPkModel } from '../models/professional.model.js';
@@ -19,7 +19,7 @@ const getReservationController = async (req, res) => {
     try {
         const pkUser = req.params.pk;
 
-        if(!await validAuth(req, pkUser)){
+        if(!await validAuthPk(req, pkUser)){
             return res.status(400).json({
                 statusCode: 400,
                 message: 'Operação inválida!'
@@ -185,7 +185,7 @@ const deleteReservationController = async (req, res) => {
         const pkReservation = req.params.pk;
         const { pkUser } = req.body;
 
-        if(!await validAuth(req, pkUser)){
+        if(!await validAuthPk(req, pkUser)){
             return res.status(400).json({
                 statusCode: 400,
                 message: 'Operação inválida!'

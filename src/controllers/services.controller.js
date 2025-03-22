@@ -1,5 +1,5 @@
 import { getServiceModel, createServiceModel, updateServiceModel } from '../models/services.model.js';
-import { validAuth } from '../core/auth/auth.jwt.js';
+import { validAuthPk } from '../core/auth/auth.jwt.js';
 import { getTimeZone } from '../helpers/global.helper.js';
 
 const dateToday = getTimeZone();
@@ -44,7 +44,7 @@ const createServiceController = async (req, res) => {
     try{
         const { pkProfessional, services, pkUser } = req.body;
 
-        if(!await validAuth(req, pkUser)){
+        if(!await validAuthPk(req, pkUser)){
             return res.status(400).json({
                 statusCode: 400,
                 message: 'Operação inválida!'
@@ -104,7 +104,7 @@ const updateServiceController = async (req, res) => {
         const pkProfessionalServices = req.params.pk;
         const { services, pkUser } = req.body;
 
-        if(!await validAuth(req, pkUser)){
+        if(!await validAuthPk(req, pkUser)){
             return res.status(400).json({
                 statusCode: 400,
                 message: 'Operação inválida!'
