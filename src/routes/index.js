@@ -9,7 +9,8 @@ import routerServices from './routes.services.js';
 import routerSchedules from './routes.schedules.js';
 import routerPlan from './routes.plan.js';
 import routerReservation from './routes.reservation.js';
-import purchasePlan from './routes.purchasePlan.js';
+import routerPurchasePlan from './routes.purchasePlan.js';
+import routerDashboard from './dashboard.routes.js';
 
 router.use('/api/auth', routerAuth);
 router.use('/api/user', routerUser);
@@ -19,6 +20,7 @@ router.use('/api/services', routerServices);
 router.use('/api/schedules', routerSchedules);
 router.use('/api/plan', routerPlan);
 router.use('/api/reservation', routerReservation);
-router.use('/api/purchasePlan', purchasePlan);
+router.use('/api/purchasePlan', routerPurchasePlan);
+router.use('/api/dashboard', routerDashboard);
 
 export default router;
