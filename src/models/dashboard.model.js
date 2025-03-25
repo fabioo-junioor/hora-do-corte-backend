@@ -43,7 +43,7 @@ const bestProfessionalsModel = async (pkUser, isReservation) => {
         return result;
 
     }catch(error){
-        return error;
+        return false;
 
     };
 };
