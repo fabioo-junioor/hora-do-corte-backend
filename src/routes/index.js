@@ -1,7 +1,7 @@
 import { Router } from 'express';
 const router = Router();
 
-import routerAuth from './auth.routes.js';
+import routerAuth from './routes.auth.js';
 import routerUser from './routes.user.js';
 import routerUserDetails from './routes.userDetails.js';
 import routerProfessional from './routes.professional.js';
@@ -10,7 +10,7 @@ import routerSchedules from './routes.schedules.js';
 import routerPlan from './routes.plan.js';
 import routerReservation from './routes.reservation.js';
 import routerPurchasePlan from './routes.purchasePlan.js';
-import routerDashboard from './dashboard.routes.js';
+import routerDashboard from './routes.dashboard.js';
 
 router.use('/api/auth', routerAuth);
 router.use('/api/user', routerUser);
