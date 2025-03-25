@@ -9,7 +9,6 @@ import { generatorPass } from '../core/security/passwordGenerator.js';
 import { sendEmail } from '../core/communication/config.email.js';
 import { templateEmailRecoverPass } from '../core/communication/templates.js';
 
-const dateToday = getTimeZone();
 const isActive = 1;
 const isBlocked = 1;
 const contactSuport = process.env.CONTACT_SUPORT;
@@ -44,7 +43,7 @@ const createUserController = async (req, res) => {
         };
 
         let hash = await encryptPass(password);
-        let dataResult = await createUserModel(email, hash, isActive, !isBlocked, dateToday);
+        let dataResult = await createUserModel(email, hash, isActive, !isBlocked, getTimeZone());
         if(!dataResult){
             return res.status(500).json({
                 statusCode: 500,
@@ -109,7 +108,7 @@ const updateUserController = async (req, res) => {
         };
 
         let hash = await encryptPass(newPassword);
-        let dataResult = await updateUserModel(pkUser, hash, dateToday, isActive);
+        let dataResult = await updateUserModel(pkUser, hash, getTimeZone(), isActive);
         if(!dataResult){
             return res.status(500).json({
                 statusCode: 500,
@@ -145,8 +144,8 @@ const deleteUserController = async (req, res) => {
             });
         };
         
-        await deleteProfessionalAtUserModel(!isActive, dateToday, pkUser);
-        let dataResult = await deleteUserModel(pkUser, dateToday, !isActive);
+        await deleteProfessionalAtUserModel(!isActive, getTimeZone(), pkUser);
+        let dataResult = await deleteUserModel(pkUser, getTimeZone(), !isActive);
         if(!dataResult){
             return res.status(500).json({
                 statusCode: 500,
@@ -207,7 +206,7 @@ const recoverPassUser = async (req, res) => {
         
         let newPassword = generatorPass();
         let hash = await encryptPass(newPassword);
-        let dataResult = await updateUserModel(dataUser[0].pkUser, hash, dateToday, isActive);
+        let dataResult = await updateUserModel(dataUser[0].pkUser, hash, getTimeZone(), isActive);
         if(!dataResult){
             return res.status(500).json({
                 statusCode: 500,

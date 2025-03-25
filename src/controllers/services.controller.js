@@ -2,8 +2,6 @@ import { getServiceModel, createServiceModel, updateServiceModel } from '../mode
 import { validAuthPk } from '../core/auth/auth.jwt.js';
 import { getTimeZone } from '../helpers/global.helper.js';
 
-const dateToday = getTimeZone();
-
 const getServiceController = async (req, res) => {
     try{
         const pkProfessional = req.params.pk;
@@ -69,7 +67,7 @@ const createServiceController = async (req, res) => {
             });
         };
 
-        let dataResult = await createServiceModel(services, dateToday, dateToday, pkProfessional);
+        let dataResult = await createServiceModel(services, getTimeZone(), getTimeZone(), pkProfessional);
         if(!dataResult){
             return res.status(500).json({
                 statusCode: 500,
@@ -112,7 +110,7 @@ const updateServiceController = async (req, res) => {
             });
         };
         
-        let dataResult = await updateServiceModel(services, dateToday, pkProfessionalServices);
+        let dataResult = await updateServiceModel(services, getTimeZone(), pkProfessionalServices);
         if(!dataResult){
             return res.status(500).json({
                 statusCode: 500,
