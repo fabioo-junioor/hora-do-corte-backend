@@ -2,8 +2,6 @@ import { getScheduleModel, createScheduleModel, updateScheduleModel } from '../m
 import { validAuthPk } from '../core/auth/auth.jwt.js';
 import { getTimeZone } from '../helpers/global.helper.js';
 
-const dateToday = getTimeZone();
-
 const getScheduleController = async (req, res) => {
     try{
         const pkProfessional = req.params.pk;
@@ -69,7 +67,7 @@ const createScheduleController = async (req, res) => {
             });
         };
 
-        let dataResult = await createScheduleModel(schedules, dateToday, dateToday, pkProfessional);
+        let dataResult = await createScheduleModel(schedules, getTimeZone(), getTimeZone(), pkProfessional);
         if(!dataResult){
             return res.status(500).json({
                 statusCode: 500,
@@ -112,7 +110,7 @@ const updateScheduleController = async (req, res) => {
             });
         };
 
-        let dataResult = await updateScheduleModel(schedules, dateToday, pkProfessionalSchedule);
+        let dataResult = await updateScheduleModel(schedules, getTimeZone(), pkProfessionalSchedule);
         if(!dataResult){
             return res.status(500).json({
                 statusCode: 500,

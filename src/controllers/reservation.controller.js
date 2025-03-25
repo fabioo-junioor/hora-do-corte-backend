@@ -11,7 +11,6 @@ import { getTimeZone } from '../helpers/global.helper.js';
 import { sendEmail } from '../core/communication/config.email.js';
 import { templateEmailReservation } from '../core/communication/templates.js';
 
-const dateToday = getTimeZone();
 const isReservation = 1;
 const contactSuport = process.env.CONTACT_SUPORT;
 
@@ -124,7 +123,7 @@ const createReservationController = async (req, res) => {
             });
         }; 
 
-        let dataResult = await createReservationModel(pkUser, pkProfessional, services, dateReservation, timeReservation, price, duration, dateToday, dateToday, isReservation, name, email, phone, observation);
+        let dataResult = await createReservationModel(pkUser, pkProfessional, services, dateReservation, timeReservation, price, duration, getTimeZone(), getTimeZone(), isReservation, name, email, phone, observation);
         if(dataResult.affectedRows === 0 || !dataResult) {
             return res.status(500).json({
                 statusCode: 500,
@@ -133,10 +132,11 @@ const createReservationController = async (req, res) => {
             });
         };
 
+        /*
         let dataUser = await getUserByPkModel(pkUser);
         let dataUserDetails = await getUserDetailsByFkModel(pkUser);
         let dataProfessional = await getProfessionalByPkModel(pkProfessional);
-        /*
+        
         let responseEmailEstablishment = await sendEmail(dataUser[0].email, 'Reserva realizada',
             templateEmailReservation('Dados da reserva!',
                 name,
@@ -193,7 +193,7 @@ const deleteReservationController = async (req, res) => {
             });
         };
         
-        let dataResult = await deleteReservationModel(pkReservation, !isReservation, dateToday, pkUser);
+        let dataResult = await deleteReservationModel(pkReservation, !isReservation, getTimeZone(), pkUser);
         if (dataResult.affectedRows === 0 || !dataResult) {
             return res.status(500).json({
                 statusCode: 500,
@@ -202,13 +202,13 @@ const deleteReservationController = async (req, res) => {
             });
         };
 
+        /*
         let dataReservation = await getReservationByPkReservationModel(pkReservation);
         let dataUser = await getUserByPkModel(dataReservation[0].fkUser);
         let dataUserDetails = await getUserDetailsByFkModel(dataReservation[0].fkUser);
         let dataProfessional = await getProfessionalByPkModel(dataReservation[0].fkProfessional);
         let newArrayServices = convertStringToArray(dataReservation[0].services);        
 
-        /*
         let responseEmailEstablishment = await sendEmail(dataUser[0].email, 'Reserva cancelada',
             templateEmailReservation('Dados da reserva!',
                 dataReservation[0].nameCustomer,

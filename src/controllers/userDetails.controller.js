@@ -4,8 +4,7 @@ import { getUserByPkModel } from '../models/user.model.js';
 import { validAuthPk } from '../core/auth/auth.jwt.js';
 import { getTimeZone } from '../helpers/global.helper.js';
 
-const isActive = 1;
-const dateToday = getTimeZone();
+const isActive = 1;;
 
 const getUserDetailsController = async (req, res) => {
     try {
@@ -151,7 +150,7 @@ const createUserDetailsController = async (req, res) => {
             });
         };   
              
-        let dataResult = await createUserDetailsModel(name, slug, phone, instagram, image, cep, state, city, street, number, dateToday, dateToday, pkUser);
+        let dataResult = await createUserDetailsModel(name, slug, phone, instagram, image, cep, state, city, street, number, getTimeZone(), getTimeZone(), pkUser);
         if(!dataResult){
             return res.status(500).json({
                 statusCode: 500,
@@ -205,7 +204,7 @@ const updateUserDetailsController = async (req, res) => {
             });
         };
 
-        let dataResult = await updateUserDetailsModel(name, slug, phone, instagram, image, cep, state, city, street, number, dateToday, pkUser);
+        let dataResult = await updateUserDetailsModel(name, slug, phone, instagram, image, cep, state, city, street, number, getTimeZone(), pkUser);
         if(!dataResult){
             return res.status(500).json({
                 statusCode: 500,

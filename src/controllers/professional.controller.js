@@ -3,7 +3,6 @@ import { getUserByPkModel } from '../models/user.model.js';
 import { validAuthPk } from '../core/auth/auth.jwt.js';
 import { getTimeZone } from '../helpers/global.helper.js';
 
-const dateToday = getTimeZone();
 const isActive = 1;
 
 const getAllProfessionalController = async (req, res) => {
@@ -64,7 +63,7 @@ const createProfessionalController = async (req, res) => {
             });
         };
 
-        let dataResult = await createProfessionalModel(name, image, instagram, isUnavailable, isActive, dateToday, dateToday, pkUser);
+        let dataResult = await createProfessionalModel(name, image, instagram, isUnavailable, isActive, getTimeZone(), getTimeZone(), pkUser);
         if(!dataResult){
             return res.status(500).json({
                 statusCode: 500,
@@ -107,7 +106,7 @@ const updateProfessionalController = async (req, res) => {
             });
         };
         
-        let dataResult = await updateProfessionalModel(pkProfessional, name, image, instagram, isUnavailable, isActive, dateToday, pkUser);
+        let dataResult = await updateProfessionalModel(pkProfessional, name, image, instagram, isUnavailable, isActive, getTimeZone(), pkUser);
         if(!dataResult){
             return res.status(500).json({
                 statusCode: 500,
@@ -150,7 +149,7 @@ const deleteProfessionalController = async (req, res) => {
             });
         };
         
-        let dataResult = await deleteProfessionalModel(pkProfessional, !isActive, dateToday, pkUser);
+        let dataResult = await deleteProfessionalModel(pkProfessional, !isActive, getTimeZone(), pkUser);
         if(!dataResult){
             return res.status(500).json({
                 statusCode: 500,

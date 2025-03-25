@@ -7,14 +7,14 @@ const statsReservationsController = async (req, res) => {
     try{
         const pkUser = req.params.pk;
 
-        /*
         if(!await validAuthPk(req, pkUser)){
             return res.status(400).json({
                 statusCode: 400,
                 message: 'Operação inválida!'
 
             });
-        };*/
+        }
+
         let dataResult = await getStatsReservationsModel(pkUser);
         if(!dataResult){
             return res.status(500).json({
@@ -49,14 +49,14 @@ const lastPurchasePlanController = async (req, res) => {
     try{
         const pkUser = req.params.pk;
 
-        /*
         if(!await validAuthPk(req, pkUser)){
             return res.status(400).json({
                 statusCode: 400,
                 message: 'Operação inválida!'
 
             });
-        };*/
+        };
+
         let dataResult = await getLastPurchasePlanByPkModel(pkUser);
         if(!dataResult){
             return res.status(500).json({
@@ -92,14 +92,14 @@ const bestProfessionalsController = async (req, res) => {
     try{
         const pkUser = req.params.pk;
 
-        /*
         if(!await validAuthPk(req, pkUser)){
             return res.status(400).json({
                 statusCode: 400,
                 message: 'Operação inválida!'
 
             });
-        };*/
+        };
+
         let dataResult = await bestProfessionalsModel(pkUser, isReservation);
         if(!dataResult){
             return res.status(500).json({
@@ -130,7 +130,7 @@ const bestProfessionalsController = async (req, res) => {
 
         });
     };
-}
+};
 
 export default {
     statsReservationsController,

@@ -87,7 +87,7 @@ const createPurchasePlanController = async (req, res) => {
                 });
             };
 
-            let dataResult = await createPurchasePlanModel(pkUser, purchaseDate, purchaseTime, purchaseValidity, name, price, time, description, benefits, dateToday);
+            let dataResult = await createPurchasePlanModel(pkUser, purchaseDate, purchaseTime, purchaseValidity, name, price, time, description, benefits, getTimeZone());
             if(dataResult.affectedRows === 0){
                 return res.status(500).json({
                     statusCode: 500,
@@ -121,7 +121,7 @@ const createPurchasePlanController = async (req, res) => {
 
         /* Adicionar integração mercado pago */
 
-        let dataResult = await createPurchasePlanModel(pkUser, purchaseDate, purchaseTime, purchaseValidity, name, price, time, description, benefits, dateToday);
+        let dataResult = await createPurchasePlanModel(pkUser, purchaseDate, purchaseTime, purchaseValidity, name, price, time, description, benefits, getTimeZone());
         if(dataResult.affectedRows === 0){
             return res.status(500).json({
                 statusCode: 500,
