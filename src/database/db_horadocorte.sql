@@ -131,3 +131,8 @@ ON UPDATE NO ACTION ON DELETE NO ACTION;
 ALTER TABLE `professionalservices`
 ADD FOREIGN KEY(`fkProfessional`) REFERENCES `professional`(`pkProfessional`)
 ON UPDATE NO ACTION ON DELETE NO ACTION;
+
+INSERT INTO `plans` (`pkPlan`, `name`, `price`, `time`, `description`, `benefits`) VALUES
+(1, 'Free', '0', '30', 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.', '["30 dias de uso grátis", "Suporte diário"]'),
+(2, 'Basic', '25', '30', 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.', '["30 dias de uso", "Suporte diário"]'),
+(3, 'Pro', '135', '180', 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.', '["180 dias de uso", "Suporte diário"]');

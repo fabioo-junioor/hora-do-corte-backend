@@ -17,6 +17,7 @@ const contactSuport = process.env.CONTACT_SUPORT;
 const getReservationController = async (req, res) => {
     try {
         const pkUser = req.params.pk;
+        const { today } = req.body;
 
         if(!await validAuthPk(req, pkUser)){
             return res.status(400).json({
@@ -26,7 +27,7 @@ const getReservationController = async (req, res) => {
             });
         };
         
-        let dataResult = await getAllReservationModel(pkUser, isReservation);
+        let dataResult = await getAllReservationModel(pkUser, isReservation, today);
         if (!dataResult) {
             return res.status(500).json({
                 statusCode: 500,
