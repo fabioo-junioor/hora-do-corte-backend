@@ -1,10 +1,10 @@
 import connect from '../database/connect.js';
 
-const getAllReservationModel = async (pkUser, isReservation = 1) => {
+const getAllReservationModel = async (pkUser, isReservation = 1, today) => {
     try {
         const conn = await connect();
-        const [ result ] = await conn.query('SELECT *, (SELECT name FROM `professional` AS pro WHERE `pro`.pkProfessional = `res`.fkProfessional) AS nameProfessional FROM `reservation` AS res WHERE `fkUser` = ? AND `isReservation` = ?',
-            [ pkUser, isReservation ]
+        const [ result ] = await conn.query('SELECT *, (SELECT name FROM `professional` AS pro WHERE `pro`.pkProfessional = `res`.fkProfessional) AS nameProfessional FROM `reservation` AS res WHERE `fkUser` = ? AND `isReservation` = ? AND `dateReservation` >= ?',
+            [ pkUser, isReservation, today ]
         );
         return result;
         
