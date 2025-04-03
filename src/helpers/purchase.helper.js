@@ -1,4 +1,4 @@
-const buyPlan = (dateBuy, time) => {
+const calculatesExpirationDate = (dateBuy, time) => {
     const partsDate = dateBuy.split('-');
     const day = parseInt(partsDate[0], 10);
     const month = parseInt(partsDate[1], 10) - 1;
@@ -35,7 +35,7 @@ const checkLastPurchaseValidity = (dateBuy, dateLastBuy, timeBuy, timeLastBuy) =
 };
 
 export {
-    buyPlan,
+    calculatesExpirationDate,
     checkLastPurchaseValidity
 
 };

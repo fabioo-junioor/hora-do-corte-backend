@@ -2,12 +2,11 @@ import { getPlanByPkModel } from '../models/plan.model.js';
 import { createPurchasePlanModel, getLastPurchasePlanByPkModel } from '../models/purchasePlan.model.js';
 import { getUserByPkModel } from '../models/user.model.js';
 import { validAuthPk } from '../core/auth/auth.jwt.js';
-import { buyPlan } from '../helpers/purchase.helper.js';
+import { calculatesExpirationDate } from '../helpers/purchase.helper.js';
 import { sendEmail } from '../core/communication/config.email.js';
 import { templateEmailBuyPlan } from '../core/communication/templates.js';
 import { getTimeZone } from '../helpers/global.helper.js';
 
-const dateToday = getTimeZone();
 const contactSuport = process.env.CONTACT_SUPORT;
 
 const getLastPurchasePlanController = async (req, res) => {
@@ -75,7 +74,7 @@ const createPurchasePlanController = async (req, res) => {
         
         let dataPlan = await getPlanByPkModel(pkPlan);
         const { name, price, time, description, benefits } = dataPlan[0];
-        let purchaseValidity = buyPlan(purchaseDate, time);
+        let purchaseValidity = calculatesExpirationDate(purchaseDate, time);
         let dataPlansLastBuy = await getLastPurchasePlanByPkModel(pkUser);
         if(name === 'Free'){
             if(dataPlansLastBuy.length !== 0){
