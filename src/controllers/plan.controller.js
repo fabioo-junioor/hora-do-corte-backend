@@ -1,6 +1,5 @@
 import { getAllPlanModel } from '../models/plan.model.js';
 
-
 const getAllPlansController = async (req, res) => {
     try{
         let dataResult = await getAllPlanModel();
