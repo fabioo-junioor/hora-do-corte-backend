@@ -1,5 +1,4 @@
 import { getAllPlanModel } from '../models/plan.model.js';
-import logger from '../core/security/logger.js';
 
 const getAllPlansController = async (req, res) => {
     try{
@@ -19,7 +18,6 @@ const getAllPlansController = async (req, res) => {
 
             });
         };
-        logger.info('Todos os planos!', {context: {pk: 1, name: 'fabio'}});
         return res.status(200).json({
             statusCode: 200,
             message: 'Todos os planos!',

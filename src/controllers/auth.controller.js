@@ -1,6 +1,7 @@
 import { loginAuthModel } from '../models/auth.model.js';
 import { createToken } from '../core/auth/auth.jwt.js';
 import { comparePass } from '../core/security/bcryptjs.js';
+import getLogger from '../core/security/logger.js';
 
 const isActive = 1;
 const isBlocked = 1;
@@ -8,6 +9,7 @@ const isBlocked = 1;
 const loginAuthController = async (req, res) => {
     try{
         const { email, password } = req.body;
+        let userLogger = getLogger('user');
         
         let dataResult = await loginAuthModel(email, isActive);
         if(!dataResult){
@@ -17,7 +19,9 @@ const loginAuthController = async (req, res) => {
 
             });
         };
+
         if(dataResult.length === 0){
+            userLogger.warn('Email incorreto', {context: { email: email, type: 'Login de usuário' }});
             return res.status(200).json({
                 statusCode: 200,
                 message: 'Email e/ou senha incorretos!',
@@ -28,6 +32,7 @@ const loginAuthController = async (req, res) => {
 
         let validHash = await comparePass(password, dataResult[0].password);
         if(!validHash){
+            userLogger.warn('Senha incorreta', {context: { email: email, type: 'Login de usuário' }});
             return res.status(200).json({
                 statusCode: 200,
                 message: 'Email e/ou senha incorretos!',
@@ -37,6 +42,7 @@ const loginAuthController = async (req, res) => {
         };
         
         let token = createToken(email, dataResult[0].pkUser);
+        userLogger.info('Login autorizado', {context: { email: email, type: 'Login de usuário' }});
         return res.status(200).json({
             statusCode: 200,
             message: 'Login autorizado!',

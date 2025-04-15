@@ -96,7 +96,6 @@ const createPurchasePlanController = async (req, res) => {
             };
 
             /* Enviar email com dados da compra */
-            /*
             let responseEmailPlanFree = await sendEmail(dataUser[0].email, 'Plano adquirido',
                 templateEmailBuyPlan('Dados do plano adquirido!',
                     dataUser[0].email,
@@ -109,7 +108,6 @@ const createPurchasePlanController = async (req, res) => {
                     purchaseTime,
                     contactSuport));
             
-            */
             return res.status(201).json({
                 statusCode: 201,
                 message: `Compra realizada, plano [${name}]!`,
@@ -130,7 +128,6 @@ const createPurchasePlanController = async (req, res) => {
         };
 
         /* Enviar email com dados da compra */
-        /*
         let responseEmailOtherPlans = await sendEmail(dataUser[0].email, 'Plano adquirido',
             templateEmailBuyPlan('Dados do plano adquirido!',
                 dataUser[0].email,
@@ -143,7 +140,6 @@ const createPurchasePlanController = async (req, res) => {
                 purchaseTime,
                 contactSuport));
                
-        */
         return res.status(201).json({
             statusCode: 201,
             message: `Compra realizada, plano [${name}]!`,

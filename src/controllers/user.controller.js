@@ -8,6 +8,7 @@ import { encryptPass, comparePass } from '../core/security/bcryptjs.js';
 import { generatorPass } from '../core/security/passwordGenerator.js';
 import { sendEmail } from '../core/communication/config.email.js';
 import { templateEmailRecoverPass } from '../core/communication/templates.js';
+import getLogger from '../core/security/logger.js';
 
 const isActive = 1;
 const isBlocked = 1;
@@ -16,6 +17,7 @@ const contactSuport = process.env.CONTACT_SUPORT;
 const createUserController = async (req, res) => {
     try {
         const { email, password, confirmPassword } = req.body;
+        let userLogger = getLogger('user');
 
         let dataUser = await getUserByEmailModel(email);
         if(!dataUser){
@@ -26,14 +28,16 @@ const createUserController = async (req, res) => {
             });
         };
         if(dataUser.length !== 0){
+            userLogger.warn('Usuário já existe', {context: { email: email, type: 'Criação de usuário' }});
             return res.status(200).json({
                 statusCode: 200,
                 message: 'Usuário já existe!',
                 data: []
-
+                
             });
         };
         if(password !== confirmPassword){
+            userLogger.warn('Senha são diferentes', {context: { email: email, type: 'Criação de usuário' }});
             return res.status(200).json({
                 statusCode: 200,
                 message: 'Senha são diferentes!',
@@ -48,10 +52,11 @@ const createUserController = async (req, res) => {
             return res.status(500).json({
                 statusCode: 500,
                 message: 'Algo deu errado na conexão!'
-
+                
             });
         };
         if(dataResult.affectedRows !== 0){
+            userLogger.info('Usuário criado', {context: { email: email, type: 'Criação de usuário' }});
             return res.status(201).json({
                 statusCode: 201,
                 message: 'Usuário criado. Efetue o login!',
@@ -178,6 +183,7 @@ const deleteUserController = async (req, res) => {
 const recoverPassUser = async (req, res) => {
     try{
         const { email } = req.body;
+        let userLogger = getLogger('user');
 
         let dataUser = await getUserByEmailModel(email);
         if(!dataUser){
@@ -188,6 +194,7 @@ const recoverPassUser = async (req, res) => {
             });
         };
         if(dataUser.length === 0){
+            userLogger.warn('Email incorreto', {context: { email: email, type: 'Redefinição de senha' }});
             return res.status(200).json({
                 statusCode: 200,
                 message: 'Email incorreto!',
@@ -196,6 +203,7 @@ const recoverPassUser = async (req, res) => {
             });
         };
         if(dataUser[0].isBlocked == 1){
+            userLogger.warn('Operação inválida no momento', {context: { email: email, type: 'Redefinição de senha' }});
             return res.status(200).json({
                 statusCode: 200,
                 message: 'Operação inválida no momento!',
@@ -211,10 +219,11 @@ const recoverPassUser = async (req, res) => {
             return res.status(500).json({
                 statusCode: 500,
                 message: 'Algo deu errado na conexão!'
-
+                
             });
         };
         if(dataResult.affectedRows === 0){
+            userLogger.warn('Operação negada para esse email', {context: { email: email, type: 'Redefinição de senha' }});
             return res.status(200).json({
                 statusCode: 200,
                 message: 'Operação negada para esse email!',
@@ -222,9 +231,10 @@ const recoverPassUser = async (req, res) => {
     
             });
         };
-
+        
         /* Enviar email com nova senha */
         let responseEmail = await sendEmail(email, 'Recuperação de senha', templateEmailRecoverPass('Recuperação de senha', newPassword, contactSuport));
+        userLogger.info('Nova senha gerada', {context: { email: email, type: 'Redefinição de senha' }});
         return res.status(201).json({
             statusCode: 201,
             message: `Nova senha encaminhada para o email!`,

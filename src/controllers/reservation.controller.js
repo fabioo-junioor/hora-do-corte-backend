@@ -10,6 +10,7 @@ import { validatorIsReserved, verifyService, convertStringToArray } from '../hel
 import { getTimeZone } from '../helpers/global.helper.js';
 import { sendEmail } from '../core/communication/config.email.js';
 import { templateEmailReservation } from '../core/communication/templates.js';
+import getLogger from '../core/security/logger.js';
 
 const isReservation = 1;
 const contactSuport = process.env.CONTACT_SUPORT;
@@ -104,7 +105,8 @@ const getReservationByProfessionalController = async (req, res) => {
 const createReservationController = async (req, res) => {
     try {
         const { pkUser, pkProfessional, services, dateReservation, timeReservation, price, duration, name, email, phone, observation } = req.body;
-        
+        let reservationLogger = getLogger('reservation');
+
         let dataReservations = await getAllReservationByProfessionalModel(pkProfessional, dateReservation, isReservation);
         if(!dataReservations) {
             return res.status(500).json({
@@ -116,6 +118,7 @@ const createReservationController = async (req, res) => {
 
         let validatorReserved = validatorIsReserved(dataReservations, timeReservation, duration);
         if(validatorReserved) {
+            reservationLogger.warn('Esse horário já foi agendado', {context: {pkUser: pkUser, phone: phone, name: name, dateReservation: dateReservation, timeReservation: timeReservation, type: 'Reserva' }});
             return res.status(200).json({
                 statusCode: 200,
                 message: 'Esse horário já foi agendado!',
@@ -133,7 +136,6 @@ const createReservationController = async (req, res) => {
             });
         };
 
-        /*
         let dataUser = await getUserByPkModel(pkUser);
         let dataUserDetails = await getUserDetailsByFkModel(pkUser);
         let dataProfessional = await getProfessionalByPkModel(pkProfessional);
@@ -166,7 +168,8 @@ const createReservationController = async (req, res) => {
                     contactSuport));
         
         };
-        */     
+
+        reservationLogger.info('Agendamento criado', {context: {pkUser: pkUser, phone: phone, name: name, dateReservation: dateReservation, timeReservation: timeReservation, type: 'Reserva' }});
         return res.status(201).json({
             statusCode: 201,
             message: 'Agendamento criado!',
@@ -185,6 +188,7 @@ const deleteReservationController = async (req, res) => {
     try {
         const pkReservation = req.params.pk;
         const { pkUser } = req.body;
+        let reservationLogger = getLogger('reservation');
 
         if(!await validAuthPk(req, pkUser)){
             return res.status(400).json({
@@ -203,7 +207,6 @@ const deleteReservationController = async (req, res) => {
             });
         };
 
-        /*
         let dataReservation = await getReservationByPkReservationModel(pkReservation);
         let dataUser = await getUserByPkModel(dataReservation[0].fkUser);
         let dataUserDetails = await getUserDetailsByFkModel(dataReservation[0].fkUser);
@@ -239,7 +242,8 @@ const deleteReservationController = async (req, res) => {
                     
         
         };
-        */
+        
+        reservationLogger.warn('Agendamento excluido', {context: {pkReservation: pkReservation, type: 'Reserva'}});
         return res.status(200).json({
             statusCode: 200,
             message: 'Agendamento excluido!',
