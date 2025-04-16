@@ -3,6 +3,7 @@ import { getUserDetailsBySlugModel, getUserDetailsByFkModel,
 import { getUserByPkModel } from '../models/user.model.js';
 import { validAuthPk } from '../core/auth/auth.jwt.js';
 import { getTimeZone } from '../helpers/global.helper.js';
+import logger from '../core/security/logger.js';
 
 const isActive = 1;;
 
@@ -87,7 +88,7 @@ const getUserDetailsByPkController = async (req, res) => {
                 data: []
                 
             });
-        };        
+        };
         return res.status(200).json({
             statusCode: 200,
             message: 'Dados do usuário!',
@@ -142,6 +143,7 @@ const createUserDetailsController = async (req, res) => {
             });
         };
         if(dataUserDetailsSlug.length !== 0){
+            logger.warn('Nome de usuario já existe', {context: { pkUser: pkUser, slug: slug, type: 'Details' }});
             return res.status(200).json({
                 statusCode: 200,
                 message: 'O nome de usuário já existe!',
@@ -159,6 +161,7 @@ const createUserDetailsController = async (req, res) => {
             });
         };
         if(dataResult.affectedRows !== 0){
+            logger.info('Detalhes criados', {context: { pkUser: pkUser, type: 'Details' }});
             return res.status(201).json({
                 statusCode: 201,
                 message: 'Dados salvos!',
@@ -196,6 +199,7 @@ const updateUserDetailsController = async (req, res) => {
             });
         };
         if((dataUserDetails.length !== 0) && (dataUserDetails[0]?.fkUser != pkUser)){
+            logger.warn('Nome de usuário já existe', {context: { pkUser: pkUser, slug: slug, type: 'Details' }});
             return res.status(200).json({
                 statusCode: 200,
                 message: 'O nome de usuário já existe!',
@@ -213,6 +217,7 @@ const updateUserDetailsController = async (req, res) => {
             });
         };
         if(dataResult.affectedRows !== 0){
+            logger.info('Detalhes atualizados', {context: { pkUser: pkUser, type: 'Details' }});
             return res.status(201).json({
                 statusCode: 201,
                 message: 'Dados salvos!',

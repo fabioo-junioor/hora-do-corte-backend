@@ -2,6 +2,7 @@ import { getAllProfessionalModel, createProfessionalModel, updateProfessionalMod
 import { getUserByPkModel } from '../models/user.model.js';
 import { validAuthPk } from '../core/auth/auth.jwt.js';
 import { getTimeZone } from '../helpers/global.helper.js';
+import logger from '../core/security/logger.js';
 
 const isActive = 1;
 
@@ -79,6 +80,8 @@ const createProfessionalController = async (req, res) => {
 
             });
         };
+
+        logger.info('Profissional criado', {context: { pkUser: pkUser, type: 'Professional' }});
         return res.status(201).json({
             statusCode: 201,
             message: 'Profissional criado!',
@@ -122,6 +125,8 @@ const updateProfessionalController = async (req, res) => {
 
             });
         };
+
+        logger.info('Profissional atualizado', {context: { pkProfessional: pkProfessional, type: 'Professional' }});
         return res.status(201).json({
             statusCode: 201,
             message: 'Dados atualizados!',
@@ -164,6 +169,8 @@ const deleteProfessionalController = async (req, res) => {
 
             });
         };
+
+        logger.info('Profissional excluido', {context: { pkProfessional: pkProfessional, type: 'Professional' }});
         return res.status(200).json({
             statusCode: 200,
             message: 'Profissional excluido!',

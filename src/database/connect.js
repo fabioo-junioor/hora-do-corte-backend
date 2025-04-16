@@ -1,5 +1,5 @@
 import mysql from 'mysql2/promise';
-import getLogger from '../core/security/logger.js';
+import logger from '../core/security/logger.js';
 
 const connect = async () => {
     if(global.connection && global.connection.state !== 'disconect'){
@@ -15,9 +15,8 @@ const connect = async () => {
 
     });
     global.connection = conn;
-    let dbLogger = getLogger('database');
-    dbLogger.info('Conectou ao banco de dados');
-    
+    logger.info('Conectou ao banco de dados');
+
     return conn;
 
 };

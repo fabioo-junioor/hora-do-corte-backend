@@ -1,6 +1,7 @@
 import { getServiceModel, createServiceModel, updateServiceModel } from '../models/services.model.js';
 import { validAuthPk } from '../core/auth/auth.jwt.js';
 import { getTimeZone } from '../helpers/global.helper.js';
+import logger from '../core/security/logger.js';
 
 const getServiceController = async (req, res) => {
     try{
@@ -83,6 +84,8 @@ const createServiceController = async (req, res) => {
 
             });
         };
+
+        logger.info('Serviço criado', {context: {pkUser: pkUser, pkProfessional: pkProfessional, type: 'Services' }});
         return res.status(201).json({
             statusCode: 201,
             message: 'Seviço criado!',
@@ -126,6 +129,8 @@ const updateServiceController = async (req, res) => {
                 
             });
         };
+
+        logger.info('Serviço atualizado', {context: {pkUser: pkUser, pkProfessionalServices: pkProfessionalServices, type: 'Services' }});
         return res.status(201).json({
             statusCode: 201,
             message: 'Dados salvos!',

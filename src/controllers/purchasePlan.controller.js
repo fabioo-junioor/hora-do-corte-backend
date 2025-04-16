@@ -4,8 +4,10 @@ import { getUserByPkModel } from '../models/user.model.js';
 import { validAuthPk } from '../core/auth/auth.jwt.js';
 import { calculatesExpirationDate } from '../helpers/purchase.helper.js';
 import { sendEmail } from '../core/communication/config.email.js';
-import { templateEmailBuyPlan } from '../core/communication/templates.js';
+import { sendAlertPurchase } from '../core/communication/discord.js';
+import { templateEmailBuyPlan, templateAlertDiscordPurchase } from '../core/communication/templates.js';
 import { getTimeZone } from '../helpers/global.helper.js';
+import logger from '../core/security/logger.js';
 
 const contactSuport = process.env.CONTACT_SUPORT;
 
@@ -108,6 +110,8 @@ const createPurchasePlanController = async (req, res) => {
                     purchaseTime,
                     contactSuport));
             
+            sendAlertPurchase(templateAlertDiscordPurchase('Compra realizada', getTimeZone(), dataUser[0].email, price));
+            logger.info('Compra realizada', {context: { pkUser: pkUser, time: time, price: price, type: 'Purchase' }});
             return res.status(201).json({
                 statusCode: 201,
                 message: `Compra realizada, plano [${name}]!`,
@@ -139,7 +143,9 @@ const createPurchasePlanController = async (req, res) => {
                 purchaseValidity,
                 purchaseTime,
                 contactSuport));
-               
+        
+        sendAlertPurchase(templateAlertDiscordPurchase('Compra realizada', getTimeZone(), dataUser[0].email, price));
+        logger.info('Compra realizada', {context: { pkUser: pkUser, time: time, price: price, type: 'Purchase' }});
         return res.status(201).json({
             statusCode: 201,
             message: `Compra realizada, plano [${name}]!`,
