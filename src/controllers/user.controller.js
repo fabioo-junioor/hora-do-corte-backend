@@ -2,13 +2,14 @@ import { getUserByPkModel,
         getUserByEmailModel, createUserModel, 
         updateUserModel, deleteUserModel } from '../models/user.model.js';
 import { deleteProfessionalAtUserModel } from '../models/professional.model.js';
-import { getTimeZone } from '../helpers/global.helper.js';
 import { validAuthPk } from '../core/auth/auth.jwt.js';
 import { encryptPass, comparePass } from '../core/security/bcryptjs.js';
 import { generatorPass } from '../core/security/passwordGenerator.js';
+import { templateEmailRecoverPass, templateAlertDiscordUser } from '../core/communication/templates.js';
 import { sendEmail } from '../core/communication/config.email.js';
-import { templateEmailRecoverPass } from '../core/communication/templates.js';
-import getLogger from '../core/security/logger.js';
+import { sendAlertUser } from '../core/communication/discord.js';
+import { getTimeZone } from '../helpers/global.helper.js';
+import logger from '../core/security/logger.js';
 
 const isActive = 1;
 const isBlocked = 1;
@@ -17,7 +18,6 @@ const contactSuport = process.env.CONTACT_SUPORT;
 const createUserController = async (req, res) => {
     try {
         const { email, password, confirmPassword } = req.body;
-        let userLogger = getLogger('user');
 
         let dataUser = await getUserByEmailModel(email);
         if(!dataUser){
@@ -28,7 +28,7 @@ const createUserController = async (req, res) => {
             });
         };
         if(dataUser.length !== 0){
-            userLogger.warn('Usuário já existe', {context: { email: email, type: 'Criação de usuário' }});
+            logger.warn('Usuário já existe', {context: { email: email, type: 'User create' }});
             return res.status(200).json({
                 statusCode: 200,
                 message: 'Usuário já existe!',
@@ -37,7 +37,7 @@ const createUserController = async (req, res) => {
             });
         };
         if(password !== confirmPassword){
-            userLogger.warn('Senha são diferentes', {context: { email: email, type: 'Criação de usuário' }});
+            logger.warn('Senha são diferentes', {context: { email: email, type: 'User create' }});
             return res.status(200).json({
                 statusCode: 200,
                 message: 'Senha são diferentes!',
@@ -56,7 +56,8 @@ const createUserController = async (req, res) => {
             });
         };
         if(dataResult.affectedRows !== 0){
-            userLogger.info('Usuário criado', {context: { email: email, type: 'Criação de usuário' }});
+            sendAlertUser(templateAlertDiscordUser('Novo usuário', getTimeZone(), email));
+            logger.info('Usuário criado', {context: { email: email, type: 'User create' }});
             return res.status(201).json({
                 statusCode: 201,
                 message: 'Usuário criado. Efetue o login!',
@@ -96,6 +97,7 @@ const updateUserController = async (req, res) => {
 
         let validHash = await comparePass(password, dataUser[0].password);
         if(!validHash){
+            logger.warn('Senha atual não corresponde', {context: { email: dataUser[0].email, type: 'User update' }});
             return res.status(200).json({
                 statusCode: 200,
                 message: 'Senha atual não corresponde!',
@@ -104,6 +106,7 @@ const updateUserController = async (req, res) => {
             });
         };   
         if(newPassword !== confirmPassword){
+            logger.warn('Senha são diferentes', {context: { email: dataUser[0].email, type: 'User update' }});
             return res.status(200).json({
                 statusCode: 200,
                 message: 'As senhas são diferentes!',
@@ -122,6 +125,7 @@ const updateUserController = async (req, res) => {
             });
         };
         if(dataResult.affectedRows !== 0){
+            logger.info('Usuário atualizado', {context: { email: dataUser[0].email, type: 'User update' }});
             return res.status(201).json({
                 statusCode: 201,
                 message: 'Dados atualizados!',
@@ -183,7 +187,6 @@ const deleteUserController = async (req, res) => {
 const recoverPassUser = async (req, res) => {
     try{
         const { email } = req.body;
-        let userLogger = getLogger('user');
 
         let dataUser = await getUserByEmailModel(email);
         if(!dataUser){
@@ -194,7 +197,7 @@ const recoverPassUser = async (req, res) => {
             });
         };
         if(dataUser.length === 0){
-            userLogger.warn('Email incorreto', {context: { email: email, type: 'Redefinição de senha' }});
+            logger.warn('Email incorreto', {context: { email: email, type: 'User recover' }});
             return res.status(200).json({
                 statusCode: 200,
                 message: 'Email incorreto!',
@@ -203,7 +206,7 @@ const recoverPassUser = async (req, res) => {
             });
         };
         if(dataUser[0].isBlocked == 1){
-            userLogger.warn('Operação inválida no momento', {context: { email: email, type: 'Redefinição de senha' }});
+            logger.warn('Operação inválida no momento', {context: { email: email, type: 'User recover' }});
             return res.status(200).json({
                 statusCode: 200,
                 message: 'Operação inválida no momento!',
@@ -223,7 +226,7 @@ const recoverPassUser = async (req, res) => {
             });
         };
         if(dataResult.affectedRows === 0){
-            userLogger.warn('Operação negada para esse email', {context: { email: email, type: 'Redefinição de senha' }});
+            logger.warn('Operação negada para esse email', {context: { email: email, type: 'User recover' }});
             return res.status(200).json({
                 statusCode: 200,
                 message: 'Operação negada para esse email!',
@@ -234,7 +237,8 @@ const recoverPassUser = async (req, res) => {
         
         /* Enviar email com nova senha */
         let responseEmail = await sendEmail(email, 'Recuperação de senha', templateEmailRecoverPass('Recuperação de senha', newPassword, contactSuport));
-        userLogger.info('Nova senha gerada', {context: { email: email, type: 'Redefinição de senha' }});
+        sendAlertUser(templateAlertDiscordUser('Redefinição de senha', getTimeZone(), email));
+        logger.info('Nova senha gerada', {context: { email: email, type: 'User recover' }});
         return res.status(201).json({
             statusCode: 201,
             message: `Nova senha encaminhada para o email!`,

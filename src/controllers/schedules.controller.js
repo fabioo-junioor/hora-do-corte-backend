@@ -1,6 +1,7 @@
 import { getScheduleModel, createScheduleModel, updateScheduleModel } from '../models/schedules.model.js';
 import { validAuthPk } from '../core/auth/auth.jwt.js';
 import { getTimeZone } from '../helpers/global.helper.js';
+import logger from '../core/security/logger.js';
 
 const getScheduleController = async (req, res) => {
     try{
@@ -82,7 +83,9 @@ const createScheduleController = async (req, res) => {
                 data: []
 
             });
-        };        
+        };
+
+        logger.info('Horário criado', {context: {pkUser: pkUser, pkProfessional: pkProfessional, type: 'Schedules' }});
         return res.status(201).json({
             statusCode: 201,
             message: 'Horário criado!',
@@ -126,6 +129,8 @@ const updateScheduleController = async (req, res) => {
                 
             });
         };
+
+        logger.info('Horário atualizado', {context: {pkUser: pkUser, pkProfessionalSchedule: pkProfessionalSchedule, type: 'Schedules' }});
         return res.status(201).json({
             statusCode: 201,
             message: 'Dados salvos!',

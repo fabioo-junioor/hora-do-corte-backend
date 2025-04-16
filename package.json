@@ -9,8 +9,7 @@
   },
   "scripts": {
     "dev": "nodemon ./server.js",
-    "start": "node ./server.js",
-    "production": "node ./server.js --mode production"
+    "start": "node ./server.js"
   },
   "author": "Fábio",
   "dependencies": {

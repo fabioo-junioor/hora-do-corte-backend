@@ -7,10 +7,11 @@ import { getUserByPkModel } from '../models/user.model.js';
 import { getUserDetailsByFkModel } from '../models/userDetails.model.js';
 import { getProfessionalByPkModel } from '../models/professional.model.js';
 import { validatorIsReserved, verifyService, convertStringToArray } from '../helpers/reservation.helper.js';
-import { getTimeZone } from '../helpers/global.helper.js';
 import { sendEmail } from '../core/communication/config.email.js';
-import { templateEmailReservation } from '../core/communication/templates.js';
-import getLogger from '../core/security/logger.js';
+import { sendAlertReservation } from '../core/communication/discord.js';
+import { templateEmailReservation, templateAlertDiscordReservation } from '../core/communication/templates.js';
+import { getTimeZone } from '../helpers/global.helper.js';
+import logger from '../core/security/logger.js';
 
 const isReservation = 1;
 const contactSuport = process.env.CONTACT_SUPORT;
@@ -105,7 +106,6 @@ const getReservationByProfessionalController = async (req, res) => {
 const createReservationController = async (req, res) => {
     try {
         const { pkUser, pkProfessional, services, dateReservation, timeReservation, price, duration, name, email, phone, observation } = req.body;
-        let reservationLogger = getLogger('reservation');
 
         let dataReservations = await getAllReservationByProfessionalModel(pkProfessional, dateReservation, isReservation);
         if(!dataReservations) {
@@ -169,7 +169,8 @@ const createReservationController = async (req, res) => {
         
         };
 
-        reservationLogger.info('Agendamento criado', {context: {pkUser: pkUser, phone: phone, name: name, dateReservation: dateReservation, timeReservation: timeReservation, type: 'Reserva' }});
+        sendAlertReservation(templateAlertDiscordReservation('Reserva criada', getTimeZone(), dataUser[0].email, phone, name, price));
+        logger.info('Agendamento criado', {context: {pkUser: pkUser, phone: phone, name: name, price: price, dateReservation: dateReservation, timeReservation: timeReservation, type: 'Reservation' }});
         return res.status(201).json({
             statusCode: 201,
             message: 'Agendamento criado!',
@@ -188,7 +189,6 @@ const deleteReservationController = async (req, res) => {
     try {
         const pkReservation = req.params.pk;
         const { pkUser } = req.body;
-        let reservationLogger = getLogger('reservation');
 
         if(!await validAuthPk(req, pkUser)){
             return res.status(400).json({
@@ -243,7 +243,7 @@ const deleteReservationController = async (req, res) => {
         
         };
         
-        reservationLogger.warn('Agendamento excluido', {context: {pkReservation: pkReservation, type: 'Reserva'}});
+        logger.info('Agendamento excluido', {context: {pkUser: pkUser, pkReservation: pkReservation, type: 'Reservation' }});
         return res.status(200).json({
             statusCode: 200,
             message: 'Agendamento excluido!',

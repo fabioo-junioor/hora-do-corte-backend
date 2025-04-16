@@ -112,10 +112,22 @@ const templateEmailRecoverPass = (titleTable, newPassword, contactSuport) => {
     </html>
 `
 };
+const templateAlertDiscordUser = (title, timestamp, email) => {
+    return `[${timestamp}] - [${title}] - [${email}]`;
+};
+const templateAlertDiscordPurchase = (title, timestamp, email, price) => {
+    return `[${timestamp}] - [${title}] - [${email}] - [${price}]`;
+};
+const templateAlertDiscordReservation = (title, timestamp, email, phone, name, price) => {
+    return `[${timestamp}] - [${title}] - [${email}] / [${phone}] - [${name}] - [${price}]`;
+};
 
 export {
     templateEmailRecoverPass,
     templateEmailReservation,
-    templateEmailBuyPlan
+    templateEmailBuyPlan,
+    templateAlertDiscordUser,
+    templateAlertDiscordPurchase,
+    templateAlertDiscordReservation
 
 };
