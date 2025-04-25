@@ -1,5 +1,6 @@
 import { getStatsReservationsModel, getLastPurchasePlanByPkModel, bestProfessionalsModel } from '../models/dashboard.model.js';
 import { validAuthPk } from '../core/auth/auth.jwt.js';
+import logger from '../core/security/logger.js';
 
 const isReservation = 1;
 
@@ -8,6 +9,7 @@ const statsReservationsController = async (req, res) => {
         const pkUser = req.params.pk;
 
         if(!await validAuthPk(req, pkUser)){
+            logger.warn('Operação inválida', { status: { code: 400, path: req.path }, context: { pkUser: pkUser } });
             return res.status(400).json({
                 statusCode: 400,
                 message: 'Operação inválida!'
@@ -17,6 +19,7 @@ const statsReservationsController = async (req, res) => {
 
         let dataResult = await getStatsReservationsModel(pkUser);
         if(!dataResult){
+            logger.error('Erro na conexão', { status: { code: 500, path: req.path }, context: { pkUser: pkUser } });
             return res.status(500).json({
                 statusCode: 500,
                 message: 'Algo deu errado na conexão!'
@@ -38,6 +41,7 @@ const statsReservationsController = async (req, res) => {
 
         });
     } catch(error){
+        logger.error(error.message, { status: { code: 500, path: req.path }});
         return res.status(500).json({
             statusCode: 500,
             message: error.message
@@ -50,6 +54,7 @@ const lastPurchasePlanController = async (req, res) => {
         const pkUser = req.params.pk;
 
         if(!await validAuthPk(req, pkUser)){
+            logger.warn('Operação inválida', { status: { code: 400, path: req.path }, context: { pkUser: pkUser } });
             return res.status(400).json({
                 statusCode: 400,
                 message: 'Operação inválida!'
@@ -59,6 +64,7 @@ const lastPurchasePlanController = async (req, res) => {
 
         let dataResult = await getLastPurchasePlanByPkModel(pkUser);
         if(!dataResult){
+            logger.error('Erro na conexão', { status: { code: 500, path: req.path }, context: { pkUser: pkUser } });
             return res.status(500).json({
                 statusCode: 500,
                 message: 'Algo deu errado na conexão!'
@@ -81,6 +87,7 @@ const lastPurchasePlanController = async (req, res) => {
         });
 
     } catch(error){
+        logger.error(error.message, { status: { code: 500, path: req.path }});
         return res.status(500).json({
             statusCode: 500,
             message: error.message
@@ -93,6 +100,7 @@ const bestProfessionalsController = async (req, res) => {
         const pkUser = req.params.pk;
 
         if(!await validAuthPk(req, pkUser)){
+            logger.warn('Operação inválida', { status: { code: 400, path: req.path }, context: { pkUser: pkUser } });
             return res.status(400).json({
                 statusCode: 400,
                 message: 'Operação inválida!'
@@ -102,6 +110,7 @@ const bestProfessionalsController = async (req, res) => {
 
         let dataResult = await bestProfessionalsModel(pkUser, isReservation);
         if(!dataResult){
+            logger.error('Erro na conexão', { status: { code: 500, path: req.path }, context: { pkUser: pkUser } });
             return res.status(500).json({
                 statusCode: 500,
                 message: 'Algo deu errado na conexão!'
@@ -124,6 +133,7 @@ const bestProfessionalsController = async (req, res) => {
         });
 
     } catch(error){
+        logger.error(error.message, { status: { code: 500, path: req.path }});
         return res.status(500).json({
             statusCode: 500,
             message: error.message

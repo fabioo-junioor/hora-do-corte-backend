@@ -8,9 +8,11 @@ const secret = process.env.SECRET_TOKEN;
 
 const verifyToken = (req, res, next) => {
     const token = req.header('Authorization')?.split(' ')[1];
-    
+    const statusCode = token == 'notToken' ? 401 : 403;
+    const message = token == 'notToken' ? 'Token inválido!' : 'Sessão expirou!';
+
     if(!token){
-        logger.warn('Não autorizado', {context: { type: 'Auth route' }});
+        logger.warn('Token não fornecido', { status: { code: 401, path: 'Auth rote' }});
         return res.status(401).json({
             statusCode: 401,
             message: 'Não autorizado!',
@@ -19,24 +21,14 @@ const verifyToken = (req, res, next) => {
         });
     };
     try {
-        jwt.verify(token, secret, (req, res, error) => {
-            if(error){
-                logger.warn(token == 'notToken' ? 'Token inválido' : 'Sessão expirou', {context: { type: 'Auth route' }});
-                return res.status(token == 'notToken' ? 401 : 403).json({
-                    statusCode: token == 'notToken' ? 401 : 403,
-                    message: token == 'notToken' ? 'Token inválido!' : 'Sessão expirou!',
-                    data: []
-        
-                });
-            };
-            next();
-    
-        });
-    } catch(error){
-        logger.warn(token == 'notToken' ? 'Token inválido' : 'Sessão expirou', {context: { type: 'Auth route' }});
-        return res.status(token == 'notToken' ? 401 : 403).json({
-            statusCode: token == 'notToken' ? 401 : 403,
-            message: token == 'notToken' ? 'Token inválido!' : 'Sessão expirou!',
+       jwt.verify(token, secret);
+       next();
+
+    } catch(error) {
+        logger.error(message, { status: { code: statusCode, path: 'Auth rote' }});
+        return res.status(statusCode).json({
+            statusCode: statusCode,
+            message: message,
             data: []
 
         });
@@ -44,9 +36,9 @@ const verifyToken = (req, res, next) => {
 };
 const createToken = (email, pkUser) => {
     const token = jwt.sign({ email: email, pkUser: String(pkUser) }, secret, {
-        //expiresIn: '15sec'
+        expiresIn: '120h'
+
     });
-    logger.info('Token criado', {context: { email: email, type: 'Auth route' }});
     return token;
 
 };
@@ -69,9 +61,10 @@ const validAuthPk = async (req, pkUser) => {
 };
 const checkUserStatus = async (req, res) => {
     const token = req.header('Authorization')?.split(' ')[1];
+    const statusCode = token == 'notToken' ? 401 : 403;
+    const message = token == 'notToken' ? 'Token inválido!' : 'Sessão expirou!';
     
     if(!token){
-        logger.warn('Não autorizado', {context: { type: 'Auth user' }});
         return res.status(401).json({
             statusCode: 401,
             message: 'Não autorizado!',
@@ -79,20 +72,19 @@ const checkUserStatus = async (req, res) => {
 
         });
     };
+
     try {
         let payload = jwt.verify(token, secret);
         if(!payload?.email){
-            logger.warn(token == 'notToken' ? 'Token inválido' : 'Sessão expirou', {context: { email: payload?.email, type: 'Auth user' }});
-            return res.status(token == 'notToken' ? 401 : 403).json({
-                statusCode: token == 'notToken' ? 401 : 403,
-                message: token == 'notToken' ? 'Token inválido!' : 'Sessão expirou!',
+            return res.status(statusCode).json({
+                statusCode: statusCode,
+                message: message,
                 data: []
     
             });
         };
     
         let dataResult = await getUserByEmailModel(payload?.email);
-        logger.info('Autorizado', {context: { email: payload?.email, type: 'Auth user' }});
         return res.status(200).json({
             statusCode: 200,
             message: 'Autorizado!',
@@ -101,11 +93,10 @@ const checkUserStatus = async (req, res) => {
 
             })
         });
-    } catch (error){
-        logger.warn(token == 'notToken' ? 'Token inválido' : 'Sessão expirou', {context: { type: 'Auth user' }});
-        return res.status(token == 'notToken' ? 401 : 403).json({
-            statusCode: token == 'notToken' ? 401 : 403,
-            message: token == 'notToken' ? 'Token inválido!' : 'Sessão expirou!',
+    } catch (error) {
+        return res.status(statusCode).json({
+            statusCode: statusCode,
+            message: message,
             data: []
 
         });

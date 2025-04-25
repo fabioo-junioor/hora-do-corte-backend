@@ -14,6 +14,7 @@ const loginAuthController = async (req, res) => {
         
         let dataResult = await loginAuthModel(email, isActive);
         if(!dataResult){
+            logger.error('Erro na conexão', { status: { code: 500, path: req.path }, context: { email: email }});
             return res.status(500).json({
                 statusCode: 500,
                 message: 'Algo deu errado na conexão!'
@@ -22,7 +23,7 @@ const loginAuthController = async (req, res) => {
         };
 
         if(dataResult.length === 0){
-            logger.warn('Email incorreto', {context: { email: email, type: 'Login user' }});
+            logger.warn('Email incorreto', { status: { code: 200, path: req.path }, context: { email: email }});
             return res.status(200).json({
                 statusCode: 200,
                 message: 'Email e/ou senha incorretos!',
@@ -33,7 +34,7 @@ const loginAuthController = async (req, res) => {
 
         let validHash = await comparePass(password, dataResult[0].password);
         if(!validHash){
-            logger.warn('Senha incorreta', {context: { email: email, type: 'Login user' }});
+            logger.warn('Senha incorreta', { status: { code: 200, path: req.path }, context: { email: email }});
             return res.status(200).json({
                 statusCode: 200,
                 message: 'Email e/ou senha incorretos!',
@@ -41,10 +42,9 @@ const loginAuthController = async (req, res) => {
 
             });
         };
-        
+
         let token = createToken(email, dataResult[0].pkUser);
-        sendAlertUser(templateAlertDiscordUser('Usuário logado', getTimeZone(), email));
-        logger.info('Login autorizado', {context: { email: email, type: 'Login user' }});
+        logger.info('Login autorizado', { status: { code: 200, path: req.path }, context: { email: email }});
         return res.status(200).json({
             statusCode: 200,
             message: 'Login autorizado!',
@@ -56,6 +56,7 @@ const loginAuthController = async (req, res) => {
             }
         });
     } catch (error){
+        logger.error(error.message, { status: { code: 500, path: req.path }});
         return res.status(500).json({
             statusCode: 500,
             message: error.message

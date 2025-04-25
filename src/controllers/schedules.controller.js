@@ -9,6 +9,7 @@ const getScheduleController = async (req, res) => {
         
         let dataResult = await getScheduleModel(pkProfessional);
         if(!dataResult){
+            logger.error('Erro na conexão', { status: { code: 500, path: req.path }, context: { pkProfessional: pkProfessional }});
             return res.status(500).json({
                 statusCode: 500,
                 message: 'Algo deu errado na conexão!'
@@ -32,6 +33,7 @@ const getScheduleController = async (req, res) => {
             )
         });
     } catch (error){
+        logger.error(error.message, { status: { code: 500, path: req.path }});
         return res.status(500).json({
             statusCode: 500,
             message: error.message
@@ -44,6 +46,7 @@ const createScheduleController = async (req, res) => {
         const { pkProfessional, schedules, pkUser } = req.body;
 
         if(!await validAuthPk(req, pkUser)){
+            logger.warn('Operação inválida', { status: { code: 400, path: req.path }, context: { pkUser: pkUser }});
             return res.status(400).json({
                 statusCode: 400,
                 message: 'Operação inválida!'
@@ -53,6 +56,7 @@ const createScheduleController = async (req, res) => {
 
         let dataSchedule = await getScheduleModel(pkProfessional);
         if(!dataSchedule){
+            logger.error('Erro na conexão', { status: { code: 500, path: req.path }, context: { pkProfessional: pkProfessional }});
             return res.status(500).json({
                 statusCode: 500,
                 message: 'Algo deu errado na conexão!'
@@ -60,6 +64,7 @@ const createScheduleController = async (req, res) => {
             });
         };
         if(dataSchedule.length !== 0){
+            logger.error('Horário já existe', { status: { code: 200, path: req.path }, context: { pkProfessional: pkProfessional }});
             return res.status(200).json({
                 statusCode: 200,
                 message: 'Horários já existe!',
@@ -70,6 +75,7 @@ const createScheduleController = async (req, res) => {
 
         let dataResult = await createScheduleModel(schedules, getTimeZone(), getTimeZone(), pkProfessional);
         if(!dataResult){
+            logger.error('Erro na conexão', { status: { code: 500, path: req.path }, context: { pkProfessional: pkProfessional }});
             return res.status(500).json({
                 statusCode: 500,
                 message: 'Algo deu errado na conexão!'
@@ -77,6 +83,7 @@ const createScheduleController = async (req, res) => {
             });
         };
         if(dataResult.affectedRows === 0){
+            logger.warn('Erro ao criar horário', { status: { code: 200, path: req.path }, context: { pkProfessional: pkProfessional }});
             return res.status(200).json({
                 statusCode: 200,
                 message: 'Algo de errado na criação dos horários!',
@@ -85,7 +92,7 @@ const createScheduleController = async (req, res) => {
             });
         };
 
-        logger.info('Horário criado', {context: {pkUser: pkUser, pkProfessional: pkProfessional, type: 'Schedules' }});
+        logger.info('Horário criado', { status: { code: 201, path: req.path }, context: { pkProfessional: pkProfessional }});
         return res.status(201).json({
             statusCode: 201,
             message: 'Horário criado!',
@@ -93,6 +100,7 @@ const createScheduleController = async (req, res) => {
 
         });
     } catch (error){
+        logger.error(error.message, { status: { code: 500, path: req.path }});
         return res.status(500).json({
             statusCode: 500,
             message: error.message
@@ -106,6 +114,7 @@ const updateScheduleController = async (req, res) => {
         const { schedules, pkUser } = req.body;
 
         if(!await validAuthPk(req, pkUser)){
+            logger.warn('Operação inválida', { status: { code: 400, path: req.path }, context: { pkUser: pkUser }});
             return res.status(400).json({
                 statusCode: 400,
                 message: 'Operação inválida!'
@@ -115,6 +124,7 @@ const updateScheduleController = async (req, res) => {
 
         let dataResult = await updateScheduleModel(schedules, getTimeZone(), pkProfessionalSchedule);
         if(!dataResult){
+            logger.error('Erro na conexão', { status: { code: 500, path: req.path }, context: { pkProfessionalSchedule: pkProfessionalSchedule }});
             return res.status(500).json({
                 statusCode: 500,
                 message: 'Algo deu errado na conexão!'
@@ -122,6 +132,7 @@ const updateScheduleController = async (req, res) => {
             });
         };
         if(dataResult.affectedRows === 0){
+            logger.warn('Erro ao atualizar o horário', { status: { code: 200, path: req.path }, context: { pkProfessionalSchedule: pkProfessionalSchedule }});
             return res.status(200).json({
                 statusCode: 200,
                 message: 'Algo de errado na atualização do horário!',
@@ -130,7 +141,7 @@ const updateScheduleController = async (req, res) => {
             });
         };
 
-        logger.info('Horário atualizado', {context: {pkUser: pkUser, pkProfessionalSchedule: pkProfessionalSchedule, type: 'Schedules' }});
+        logger.info('Horário atualizado', { status: { code: 201, path: req.path }, context: { pkProfessionalSchedule: pkProfessionalSchedule }});
         return res.status(201).json({
             statusCode: 201,
             message: 'Dados salvos!',
@@ -138,6 +149,7 @@ const updateScheduleController = async (req, res) => {
 
         });
     }catch(error){
+        logger.error(error.message, { status: { code: 500, path: req.path }});
         return res.status(500).json({
             statusCode: 500,
             message: 'Error ao criar o registro!'
