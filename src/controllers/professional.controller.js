@@ -12,6 +12,7 @@ const getAllProfessionalController = async (req, res) => {
         
         let dataResult = await getAllProfessionalModel(pkUser, isActive);
         if(!dataResult){
+            logger.error('Erro na conexão', { status: { code: 500, path: req.path }, context: { pkUser: pkUser }});
             return res.status(500).json({
                 statusCode: 500,
                 message: 'Algo deu errado na conexão!'
@@ -35,6 +36,7 @@ const getAllProfessionalController = async (req, res) => {
             )
         });
     } catch (error){
+        logger.error(error.message, { status: { code: 500, path: req.path }});
         return res.status(500).json({
             statusCode: 500,
             message: error.message
@@ -47,6 +49,7 @@ const createProfessionalController = async (req, res) => {
         const { name, image, instagram, isUnavailable, pkUser } = req.body;
         
         if(!await validAuthPk(req, pkUser)){
+            logger.warn('Operação inválida', { status: { code: 400, path: req.path }, context: { pkUser: pkUser }});
             return res.status(400).json({
                 statusCode: 400,
                 message: 'Operação inválida!'
@@ -56,6 +59,7 @@ const createProfessionalController = async (req, res) => {
 
         let dataUser = await getUserByPkModel(pkUser);
         if(dataUser[0].isBlocked == 1){
+            logger.warn('Operação inválida no momento', { status: { code: 200, path: req.path }, context: { pkUser: pkUser }});
             return res.status(200).json({
                 statusCode: 200,
                 message: 'Operação inválida no momento!',
@@ -66,6 +70,7 @@ const createProfessionalController = async (req, res) => {
 
         let dataResult = await createProfessionalModel(name, image, instagram, isUnavailable, isActive, getTimeZone(), getTimeZone(), pkUser);
         if(!dataResult){
+            logger.error('Erro na conexão', { status: { code: 500, path: req.path }, context: { pkUser: pkUser }});
             return res.status(500).json({
                 statusCode: 500,
                 message: 'Algo deu errado na conexão!'
@@ -73,6 +78,7 @@ const createProfessionalController = async (req, res) => {
             });
         };
         if(dataResult.affectedRows === 0){
+            logger.error('Erro ao criar profissional', { status: { code: 200, path: req.path }, context: { pkUser: pkUser }});
             return res.status(200).json({
                 statusCode: 200,
                 message: 'Algo de errado na criação do profissional!',
@@ -81,7 +87,7 @@ const createProfessionalController = async (req, res) => {
             });
         };
 
-        logger.info('Profissional criado', {context: { pkUser: pkUser, type: 'Professional' }});
+        logger.info('Profissional criado', { status: { code: 201, path: req.path }, context: { pkUser: pkUser }});
         return res.status(201).json({
             statusCode: 201,
             message: 'Profissional criado!',
@@ -89,6 +95,7 @@ const createProfessionalController = async (req, res) => {
 
         });
     } catch (error){
+        logger.error(error.message, { status: { code: 500, path: req.path }});
         return res.status(500).json({
             statusCode: 500,
             message: error.message
@@ -102,6 +109,7 @@ const updateProfessionalController = async (req, res) => {
         const { name, image, instagram, isUnavailable, pkUser } = req.body;
         
         if(!await validAuthPk(req, pkUser)){
+            logger.warn('Operação inválida', { status: { code: 400, path: req.path }, context: { pkProfessional: pkProfessional }});
             return res.status(400).json({
                 statusCode: 400,
                 message: 'Operação inválida!'
@@ -111,6 +119,7 @@ const updateProfessionalController = async (req, res) => {
         
         let dataResult = await updateProfessionalModel(pkProfessional, name, image, instagram, isUnavailable, isActive, getTimeZone(), pkUser);
         if(!dataResult){
+            logger.error('Erro na conexão', { status: { code: 500, path: req.path }, context: { pkProfessional: pkProfessional }});
             return res.status(500).json({
                 statusCode: 500,
                 message: 'Algo deu errado na conexão!'
@@ -118,6 +127,7 @@ const updateProfessionalController = async (req, res) => {
             });
         };
         if(dataResult.affectedRows === 0){
+            logger.error('Erro ao atualizar profissional', { status: { code: 200, path: req.path }, context: { pkProfessional: pkProfessional }});
             return res.status(200).json({
                 statusCode: 200,
                 message: 'Algo de errado na atualização do profissional!',
@@ -126,7 +136,7 @@ const updateProfessionalController = async (req, res) => {
             });
         };
 
-        logger.info('Profissional atualizado', {context: { pkProfessional: pkProfessional, type: 'Professional' }});
+        logger.info('Profissional atualizado', { status: { code: 201, path: req.path }, context: { pkProfessional: pkProfessional }});
         return res.status(201).json({
             statusCode: 201,
             message: 'Dados atualizados!',
@@ -134,6 +144,7 @@ const updateProfessionalController = async (req, res) => {
 
         });
     } catch (error){
+        logger.error(error.message, { status: { code: 500, path: req.path }});
         return res.status(500).json({
             statusCode: 500,
             message: error.message
@@ -147,6 +158,7 @@ const deleteProfessionalController = async (req, res) => {
         const { pkUser } = req.body;
 
         if(!await validAuthPk(req, pkUser)){
+            logger.warn('Operação inválida', { status: { code: 400, path: req.path }, context: { pkProfessional: pkProfessional }});
             return res.status(400).json({
                 statusCode: 400,
                 message: 'Operação inválida!'
@@ -156,6 +168,7 @@ const deleteProfessionalController = async (req, res) => {
         
         let dataResult = await deleteProfessionalModel(pkProfessional, !isActive, getTimeZone(), pkUser);
         if(!dataResult){
+            logger.error('Erro na conexão', { status: { code: 500, path: req.path }, context: { pkProfessional: pkProfessional }});
             return res.status(500).json({
                 statusCode: 500,
                 message: 'Algo deu errado na conexão!'
@@ -163,6 +176,7 @@ const deleteProfessionalController = async (req, res) => {
             });
         };
         if(dataResult.affectedRows === 0){
+            logger.error('Erro ao excluir profissional', { status: { code: 500, path: req.path }, context: { pkProfessional: pkProfessional }});
             return res.status(500).json({
                 statusCode: 500,
                 message: 'Algo deu errado ao excluir o profissional!'
@@ -170,7 +184,7 @@ const deleteProfessionalController = async (req, res) => {
             });
         };
 
-        logger.info('Profissional excluido', {context: { pkProfessional: pkProfessional, type: 'Professional' }});
+        logger.info('Profissional excluido', { status: { code: 200, path: req.path }, context: { pkProfessional: pkProfessional }});
         return res.status(200).json({
             statusCode: 200,
             message: 'Profissional excluido!',
@@ -178,6 +192,7 @@ const deleteProfessionalController = async (req, res) => {
 
         });
     } catch (error){
+        logger.error(error.message, { status: { code: 500, path: req.path }});
         return res.status(500).json({
             statusCode: 500,
             message: error.message

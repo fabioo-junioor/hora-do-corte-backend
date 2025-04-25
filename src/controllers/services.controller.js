@@ -9,6 +9,7 @@ const getServiceController = async (req, res) => {
         
         let dataResult = await getServiceModel(pkProfessional);
         if(!dataResult){
+            logger.error('Erro na conexão', { status: { code: 500, path: req.path }, context: { pkProfessional: pkProfessional }});
             return res.status(500).json({
                 statusCode: 500,
                 message: 'Algo deu errado na conexão!'
@@ -32,6 +33,7 @@ const getServiceController = async (req, res) => {
             )
         });
     } catch (error){
+        logger.error(error.message, { status: { code: 500, path: req.path }});
         return res.status(500).json({
             statusCode: 500,
             message: error.message
@@ -44,6 +46,7 @@ const createServiceController = async (req, res) => {
         const { pkProfessional, services, pkUser } = req.body;
 
         if(!await validAuthPk(req, pkUser)){
+            logger.warn('Operação inválida', { status: { code: 400, path: req.path }, context: { pkUser: pkUser }});
             return res.status(400).json({
                 statusCode: 400,
                 message: 'Operação inválida!'
@@ -53,6 +56,7 @@ const createServiceController = async (req, res) => {
     
         let dataService = await getServiceModel(pkProfessional);
         if(!dataService){
+            logger.error('Erro na conexão', { status: { code: 500, path: req.path }, context: { pkProfessional: pkProfessional }});
             return res.status(500).json({
                 statusCode: 500,
                 message: 'Algo deu errado na conexão!'
@@ -60,6 +64,7 @@ const createServiceController = async (req, res) => {
             });
         };
         if(dataService.length !== 0){
+            logger.warn('Serviço já existe', { status: { code: 200, path: req.path }, context: { pkProfessional: pkProfessional }});
             return res.status(200).json({
                 statusCode: 200,
                 message: 'Serviço ja existe!',
@@ -70,6 +75,7 @@ const createServiceController = async (req, res) => {
 
         let dataResult = await createServiceModel(services, getTimeZone(), getTimeZone(), pkProfessional);
         if(!dataResult){
+            logger.error('Erro na conexão', { status: { code: 500, path: req.path }, context: { pkProfessional: pkProfessional }});
             return res.status(500).json({
                 statusCode: 500,
                 message: 'Algo deu errado na conexão!'
@@ -77,6 +83,7 @@ const createServiceController = async (req, res) => {
             });
         };
         if(dataResult.affectedRows === 0){
+            logger.error('Erro na criação de serviço', { status: { code: 200, path: req.path }, context: { pkProfessional: pkProfessional }});
             return res.status(200).json({
                 statusCode: 200,
                 message: 'Algo de errado na criação dos serviços!',
@@ -85,7 +92,7 @@ const createServiceController = async (req, res) => {
             });
         };
 
-        logger.info('Serviço criado', {context: {pkUser: pkUser, pkProfessional: pkProfessional, type: 'Services' }});
+        logger.info('Serviço criado', { status: { code: 201, path: req.path }, context: { pkProfessional: pkProfessional }});
         return res.status(201).json({
             statusCode: 201,
             message: 'Seviço criado!',
@@ -93,6 +100,7 @@ const createServiceController = async (req, res) => {
 
         });
     } catch (error){
+        logger.error(error.message, { status: { code: 500, path: req.path }});
         return res.status(500).json({
             statusCode: 500,
             message: error.message
@@ -106,6 +114,7 @@ const updateServiceController = async (req, res) => {
         const { services, pkUser } = req.body;
 
         if(!await validAuthPk(req, pkUser)){
+            logger.warn('Operação inválida', { status: { code: 400, path: req.path }, context: { pkUser: pkUser }});
             return res.status(400).json({
                 statusCode: 400,
                 message: 'Operação inválida!'
@@ -115,6 +124,7 @@ const updateServiceController = async (req, res) => {
         
         let dataResult = await updateServiceModel(services, getTimeZone(), pkProfessionalServices);
         if(!dataResult){
+            logger.error('Erro na conexão', { status: { code: 500, path: req.path }, context: { pkProfessionalServices: pkProfessionalServices }});
             return res.status(500).json({
                 statusCode: 500,
                 message: 'Algo deu errado na conexão!'
@@ -122,6 +132,7 @@ const updateServiceController = async (req, res) => {
             });
         };
         if(dataResult.changedRows === 0){
+            logger.error('Erro ao atualizar o serviço', { status: { code: 200, path: req.path }, context: { pkProfessionalServices: pkProfessionalServices }});
             return res.status(200).json({
                 statusCode: 200,
                 message: 'Algo de errado na atualização do serviço!',
@@ -130,7 +141,7 @@ const updateServiceController = async (req, res) => {
             });
         };
 
-        logger.info('Serviço atualizado', {context: {pkUser: pkUser, pkProfessionalServices: pkProfessionalServices, type: 'Services' }});
+        logger.info('Serviço atualizado', { status: { code: 201, path: req.path }, context: { pkProfessionalServices: pkProfessionalServices }});
         return res.status(201).json({
             statusCode: 201,
             message: 'Dados salvos!',
@@ -138,6 +149,7 @@ const updateServiceController = async (req, res) => {
 
         });
     }catch(error){
+        logger.error(error.message, { status: { code: 500, path: req.path }});
         return res.status(500).json({
             statusCode: 500,
             message: error.message

@@ -1,3 +1,4 @@
+import * as dotenv from 'dotenv';
 import { getPlanByPkModel } from '../models/plan.model.js';
 import { createPurchasePlanModel, getLastPurchasePlanByPkModel } from '../models/purchasePlan.model.js';
 import { getUserByPkModel } from '../models/user.model.js';
@@ -9,6 +10,7 @@ import { templateEmailBuyPlan, templateAlertDiscordPurchase } from '../core/comm
 import { getTimeZone } from '../helpers/global.helper.js';
 import logger from '../core/security/logger.js';
 
+dotenv.config();
 const contactSuport = process.env.CONTACT_SUPORT;
 
 const getLastPurchasePlanController = async (req, res) => {
@@ -17,6 +19,7 @@ const getLastPurchasePlanController = async (req, res) => {
         
         let dataResult = await getLastPurchasePlanByPkModel(pkUser);
         if(!dataResult){
+            logger.error('Erro na conexão', { status: { code: 500, path: req.path }, context: { pkUser: pkUser }});
             return res.status(500).json({
                 statusCode: 500,
                 message: 'Algo deu errado na conexão!'
@@ -44,6 +47,7 @@ const getLastPurchasePlanController = async (req, res) => {
             })
         });
     } catch (error){
+        logger.error(error.message, { status: { code: 500, path: req.path }});
         return res.status(500).json({
             statusCode: 500,
             message: error.message
@@ -57,6 +61,7 @@ const createPurchasePlanController = async (req, res) => {
         const { pkPlan, purchaseDate, purchaseTime } = req.body;
         
         if(!await validAuthPk(req, pkUser)){
+            logger.warn('Operação inválida', { status: { code: 400, path: req.path }, context: { pkUser: pkUser }});
             return res.status(400).json({
                 statusCode: 400,
                 message: 'Operação inválida!'
@@ -66,6 +71,7 @@ const createPurchasePlanController = async (req, res) => {
 
         let dataUser = await getUserByPkModel(pkUser);
         if(dataUser[0].isBlocked == 1){
+            logger.warn('Operação inválida no momento', { status: { code: 200, path: req.path }, context: { email: dataUser[0].email }});
             return res.status(200).json({
                 statusCode: 200,
                 message: 'Operação inválida no momento!',
@@ -80,6 +86,7 @@ const createPurchasePlanController = async (req, res) => {
         let dataPlansLastBuy = await getLastPurchasePlanByPkModel(pkUser);
         if(name === 'Free'){
             if(dataPlansLastBuy.length !== 0){
+                logger.warn(`O plano ${name} já foi utilizado`, { status: { code: 200, path: req.path }, context: { email: dataUser[0].email }});
                 return res.status(200).json({
                     statusCode: 200,
                     message: `O plano ${name} já foi utilizado!`,
@@ -90,6 +97,7 @@ const createPurchasePlanController = async (req, res) => {
 
             let dataResult = await createPurchasePlanModel(pkUser, purchaseDate, purchaseTime, purchaseValidity, name, price, time, description, benefits, getTimeZone());
             if(dataResult.affectedRows === 0){
+                logger.error(`Erro ao comprar o plano ${dataPlan[0].name}`, { status: { code: 500, path: req.path }, context: { email: dataUser[0].email }});
                 return res.status(500).json({
                     statusCode: 500,
                     message: `Algo deu errado na compra do plano ${dataPlan[0].name}!`
@@ -111,7 +119,7 @@ const createPurchasePlanController = async (req, res) => {
                     contactSuport));
             
             sendAlertPurchase(templateAlertDiscordPurchase('Compra realizada', getTimeZone(), dataUser[0].email, price));
-            logger.info('Compra realizada', {context: { pkUser: pkUser, time: time, price: price, type: 'Purchase' }});
+            logger.info(`Compra realizada, plano ${name}`, { status: { code: 201, path: req.path }, context: { email: dataUser[0].email, time: time, price: price }});
             return res.status(201).json({
                 statusCode: 201,
                 message: `Compra realizada, plano [${name}]!`,
@@ -124,6 +132,7 @@ const createPurchasePlanController = async (req, res) => {
 
         let dataResult = await createPurchasePlanModel(pkUser, purchaseDate, purchaseTime, purchaseValidity, name, price, time, description, benefits, getTimeZone());
         if(dataResult.affectedRows === 0){
+            logger.error(`Erro na compra do plano ${dataPlan[0].name}`, { status: { code: 500, path: req.path }, context: { email: dataUser[0].email }});
             return res.status(500).json({
                 statusCode: 500,
                 message: `Algo deu errado na compra do plano ${dataPlan[0].name}!`
@@ -145,7 +154,7 @@ const createPurchasePlanController = async (req, res) => {
                 contactSuport));
         
         sendAlertPurchase(templateAlertDiscordPurchase('Compra realizada', getTimeZone(), dataUser[0].email, price));
-        logger.info('Compra realizada', {context: { pkUser: pkUser, time: time, price: price, type: 'Purchase' }});
+        logger.info(`Compra realizada, plano ${name}`, { status: { code: 201, path: req.path }, context: { email: dataUser[0].email, time: time, price: price }});
         return res.status(201).json({
             statusCode: 201,
             message: `Compra realizada, plano [${name}]!`,
@@ -153,6 +162,7 @@ const createPurchasePlanController = async (req, res) => {
             
         });
     } catch (error){
+        logger.error(error.message, { status: { code: 500, path: req.path }});
         return res.status(500).json({
             statusCode: 500,
             message: error.message

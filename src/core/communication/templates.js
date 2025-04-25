@@ -113,13 +113,13 @@ const templateEmailRecoverPass = (titleTable, newPassword, contactSuport) => {
 `
 };
 const templateAlertDiscordUser = (title, timestamp, email) => {
-    return `[${timestamp}] - [${title}] - [${email}]`;
+    return `[${timestamp}] | [${title}] | [${email}]`;
 };
 const templateAlertDiscordPurchase = (title, timestamp, email, price) => {
-    return `[${timestamp}] - [${title}] - [${email}] - [${price}]`;
+    return `[${timestamp}] | [${title}] | [${email}] | [R$${price}]`;
 };
 const templateAlertDiscordReservation = (title, timestamp, email, phone, name, price) => {
-    return `[${timestamp}] - [${title}] - [${email}] / [${phone}] - [${name}] - [${price}]`;
+    return `[${timestamp}] | [${title}] | [${email}] - [${phone}] | [${name}] | [R$${price}]`;
 };
 
 export {

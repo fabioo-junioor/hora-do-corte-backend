@@ -1,3 +1,4 @@
+import * as dotenv from 'dotenv';
 import { getAllReservationModel, getAllReservationByProfessionalModel,
     getReservationByPkReservationModel,
     createReservationModel, deleteReservationModel
@@ -13,6 +14,7 @@ import { templateEmailReservation, templateAlertDiscordReservation } from '../co
 import { getTimeZone } from '../helpers/global.helper.js';
 import logger from '../core/security/logger.js';
 
+dotenv.config();
 const isReservation = 1;
 const contactSuport = process.env.CONTACT_SUPORT;
 
@@ -22,6 +24,7 @@ const getReservationController = async (req, res) => {
         const { today } = req.body;
 
         if(!await validAuthPk(req, pkUser)){
+            logger.warn('Operação inválida', { status: { code: 400, path: req.path }, context: { pkUser: pkUser }});
             return res.status(400).json({
                 statusCode: 400,
                 message: 'Operação inválida!'
@@ -31,6 +34,7 @@ const getReservationController = async (req, res) => {
         
         let dataResult = await getAllReservationModel(pkUser, isReservation, today);
         if (!dataResult) {
+            logger.error('Erro na conexão', { status: { code: 500, path: req.path }, context: { pkUser: pkUser }});
             return res.status(500).json({
                 statusCode: 500,
                 message: 'Algo deu errado na conexão!'
@@ -54,6 +58,7 @@ const getReservationController = async (req, res) => {
             )
         });
     } catch (error) {
+        logger.error(error.message, { status: { code: 500, path: req.path }});
         return res.status(500).json({
             statusCode: 500,
             message: error.message
@@ -68,6 +73,7 @@ const getReservationByProfessionalController = async (req, res) => {
 
         let dataResult = await getAllReservationByProfessionalModel(pkProfessional, dateReservation, isReservation)
         if(!dataResult) {
+            logger.error('Erro na conexão', { status: { code: 500, path: req.path }, context: { pkProfessional: pkProfessional }});
             return res.status(500).json({
                 statusCode: 500,
                 message: 'Algo deu errado na conexão!'
@@ -96,6 +102,7 @@ const getReservationByProfessionalController = async (req, res) => {
             })
         });
     } catch (error) {
+        logger.error(error.message, { status: { code: 500, path: req.path }});
         return res.status(500).json({
             statusCode: 500,
             message: error.message
@@ -109,6 +116,7 @@ const createReservationController = async (req, res) => {
 
         let dataReservations = await getAllReservationByProfessionalModel(pkProfessional, dateReservation, isReservation);
         if(!dataReservations) {
+            logger.error('Erro na conexão', { status: { code: 500, path: req.path }, context: { pkUser: pkUser }});
             return res.status(500).json({
                 statusCode: 500,
                 message: 'Algo de errado no agendamento!'
@@ -118,7 +126,7 @@ const createReservationController = async (req, res) => {
 
         let validatorReserved = validatorIsReserved(dataReservations, timeReservation, duration);
         if(validatorReserved) {
-            reservationLogger.warn('Esse horário já foi agendado', {context: {pkUser: pkUser, phone: phone, name: name, dateReservation: dateReservation, timeReservation: timeReservation, type: 'Reserva' }});
+            logger.warn('Horário já foi agendado', { status: { code: 200, path: req.path }, context: { pkUser: pkUser, phone: phone, name: name, dateReservation: dateReservation, timeReservation: timeReservation }});
             return res.status(200).json({
                 statusCode: 200,
                 message: 'Esse horário já foi agendado!',
@@ -129,6 +137,7 @@ const createReservationController = async (req, res) => {
 
         let dataResult = await createReservationModel(pkUser, pkProfessional, services, dateReservation, timeReservation, price, duration, getTimeZone(), getTimeZone(), isReservation, name, email, phone, observation);
         if(dataResult.affectedRows === 0 || !dataResult) {
+            logger.error('Erro na conexão', { status: { code: 500, path: req.path }, context: { pkUser: pkUser }});
             return res.status(500).json({
                 statusCode: 500,
                 message: 'Algo de errado no agendamento!!'
@@ -170,7 +179,7 @@ const createReservationController = async (req, res) => {
         };
 
         sendAlertReservation(templateAlertDiscordReservation('Reserva criada', getTimeZone(), dataUser[0].email, phone, name, price));
-        logger.info('Agendamento criado', {context: {pkUser: pkUser, phone: phone, name: name, price: price, dateReservation: dateReservation, timeReservation: timeReservation, type: 'Reservation' }});
+        logger.info('Agendamento criado', { status: { code: 201, path: req.path }, context: { pkUser: pkUser, phone: phone, name: name, price: price, dateReservation: dateReservation, timeReservation: timeReservation }});
         return res.status(201).json({
             statusCode: 201,
             message: 'Agendamento criado!',
@@ -178,7 +187,8 @@ const createReservationController = async (req, res) => {
 
         });
     } catch (error) {
-        res.status(500).json({
+        logger.error(error.message, { status: { code: 500, path: req.path }});
+        return res.status(500).json({
             statusCode: 500,
             message: error.message
 
@@ -191,6 +201,7 @@ const deleteReservationController = async (req, res) => {
         const { pkUser } = req.body;
 
         if(!await validAuthPk(req, pkUser)){
+            logger.warn('Operação inválida', { status: { code: 400, path: req.path }, context: { pkUser: pkUser }});
             return res.status(400).json({
                 statusCode: 400,
                 message: 'Operação inválida!'
@@ -200,6 +211,7 @@ const deleteReservationController = async (req, res) => {
         
         let dataResult = await deleteReservationModel(pkReservation, !isReservation, getTimeZone(), pkUser);
         if (dataResult.affectedRows === 0 || !dataResult) {
+            logger.error('Erro ao excluir agendamento', { status: { code: 500, path: req.path }, context: { pkUser: pkUser }});
             return res.status(500).json({
                 statusCode: 500,
                 message: 'Algo deu errado ao excluir o agendamento!'
@@ -243,7 +255,7 @@ const deleteReservationController = async (req, res) => {
         
         };
         
-        logger.info('Agendamento excluido', {context: {pkUser: pkUser, pkReservation: pkReservation, type: 'Reservation' }});
+        logger.info('Agendamento excluido', { status: { code: 200, path: req.path }, context: { pkReservation: pkReservation }});
         return res.status(200).json({
             statusCode: 200,
             message: 'Agendamento excluido!',
@@ -251,6 +263,7 @@ const deleteReservationController = async (req, res) => {
 
         });
     } catch (error) {
+        logger.error(error.message, { status: { code: 500, path: req.path }});
         return res.status(500).json({
             statusCode: 500,
             message: error.message
